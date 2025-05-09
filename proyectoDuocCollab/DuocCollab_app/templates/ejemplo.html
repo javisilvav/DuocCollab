@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyectos</title>
+  <!--Bootstrap-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  <!--Icons-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!--Font-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+  <!--CSS-->
+  <link rel="stylesheet" href="{% static 'css/nav-footer.css' %}">
+  <link rel="stylesheet" href="{% static 'css/font.css' %}">
+  <!--jQuery-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <style>
+    .form-control::placeholder {
+      color: #918E8E; 
+      opacity: 1;
+    }
+    
+    #filtros button {
+      padding: 8px 16px;
+      border: 1px solid black;
+      background: white;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #filtros button.activo {
+      background: black;
+      color: white;
+    }
+    #filtros button:hover {
+      background: lightgray;
+    }
+
+    .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .tag {
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .tag:hover {
+            background-color: #d5d5d5;
+        }
+  </style>
+
+</head>
+<body>
+  <header class="header">
+    <nav class="navbar navbar-expand-lg custom-nav">
+      <div class="container-fluid p-0 bg-white">
+        <div class="d-flex align-items-center">
+          <a href="{% url 'Home' %}">
+            <img src="{% static 'img/logo_colabb.png' %}" alt="Logo" height="76px" class="d-inline-block align-text-top">
+          </a>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse color logo-container" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 px-5">
+            <li class="nav-item" style="padding-left: 40px;">
+              <a class="nav-link text-white" aria-current="page" href="#" style="font-size: 24px;">PROYECTOS</a>
+            </li>
+            <li class="nav-item" style="padding-left: 25px;">
+              <a class="nav-link text-white" href="#" style="font-size: 24px;">ESCUELAS</a>
+            </li>
+          </ul>
+          <div class="d-flex flex-column align-items-end">
+            <a href="#" class="btn-custom text-white" type="button" style="text-decoration: none; font-size: 18px;">INICIAR SESIÓN</a>
+            <a href="#" class="btn-custom text-white" type="button" style="background-color: #FFB800; text-decoration: none; font-weight: 700; font-size: 18px;">REGISTRARSE</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container-fluid p-5">
+      <div class="row align-items-center">
+        <div class="col">
+          <h2 style="font-size: 48px; font-weight: 700;">PROYECTOS</h2>
+        </div>
+        <div class="col text-end">
+          <form class="d-flex" role="search" style="height: 49px;">
+            <div class="input-group">
+              <span class="input-group-text text-dark" style="background-color: #D9D9D9;">
+                <i class="bi bi-search"></i> 
+              </span>
+              <input type="search" class="form-control" placeholder="Búsqueda" aria-label="Buscar" style="background-color: #D9D9D9; font-size: 16px; font-weight: 700;">
+            </div>
+          </form>
+        </div>    
+      </div> 
+      <div class="row align-items-center pt-5">
+        <div class="col d-flex gap-2" id="filtros">
+          <button data-categoria="novedades">Novedades</button>
+          <button data-categoria="poleras">Poleras y tops</button>
+          <button data-categoria="vestidos">Vestidos</button>
+          <button data-categoria="pantalones">Pantalones</button>
+          <button data-categoria="polerones">Polerones</button>
+          <button data-categoria="blusas">Blusas</button>
+          <button data-categoria="jeans">Jeans</button>
+          <button data-categoria="">Ver todo</button>
+        </div>
+        <div class="col text-end">
+          <button class="btn" style="font-size: 24px; font-weight: 700;">Filtros <i class="bi bi-filter"></i></button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="tag-container bg-black text-dark" >
+    <p>aaaaaaaaa</p>
+    <p>Total de etiquetas: {{ etiquetas|length }}</p>
+
+    {% for etiqueta in etiquetas %}
+        <div class="tag">{{ etiqueta.nombre }}</div>
+    {% endfor %}
+  </div>
+
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+</body>
+</html>
