@@ -1,0 +1,18 @@
+.profile-header {
+  background-image: url(../img/foto_portada.jpg);
+  background-size: cover;
+  background-position: center;
+  height: 460px;
+}
+
+.profile-image {
+  width: 349px;
+  height: 349px;
+  border: 13px solid white;
+  object-fit: cover;
+}
+
+hr {
+  border-top: 1px solid #999;
+  opacity: 1;
+}
