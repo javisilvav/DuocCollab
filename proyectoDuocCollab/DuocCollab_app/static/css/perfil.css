@@ -16,3 +16,12 @@ hr {
   border-top: 1px solid #999;
   opacity: 1;
 }
+
+.vertical-text {
+  writing-mode: sideways-lr;
+  text-orientation: mixed;
+  color: white;
+  height: 292px;
+  width: 41px; 
+  font-size: 14px;
+}

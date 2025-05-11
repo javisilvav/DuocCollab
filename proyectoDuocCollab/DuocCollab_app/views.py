@@ -14,3 +14,9 @@ def Perfil(request):
 
 def ProyectosDetail(request):
   return render(request, 'proyectos_detail.html')
+
+def MisPostulaciones(request):
+    return render(request, 'mispostulaciones.html')
+
+def MisProyectos(request):
+    return render(request, 'misproyectos.html')
