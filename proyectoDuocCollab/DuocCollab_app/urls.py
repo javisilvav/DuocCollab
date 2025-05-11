@@ -8,4 +8,6 @@ urlpatterns = [
     path('ejemplo/', views.Ejemplo , name='Ejemplo'),
     path('perfil/', views.Perfil , name='Perfil'),  # Profile page view
     path('proyectos_detail/', views.ProyectosDetail , name='ProyectosDetail'), # Project details page view
+    path('perfil/postulaciones/', views.MisPostulaciones, name='Postulaciones'),
+    path('perfil/proyectos/', views.MisProyectos, name='MisProyectos'),
 ]
