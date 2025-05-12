@@ -10,4 +10,7 @@ urlpatterns = [
     path('proyectos_detail/', views.ProyectosDetail , name='ProyectosDetail'), # Project details page view
     path('perfil/postulaciones/', views.MisPostulaciones, name='Postulaciones'),
     path('perfil/proyectos/', views.MisProyectos, name='MisProyectos'),
+    path('login/', views.Login , name='Login'),  # Login page view
+    path('signup/', views.Signup , name='Signup'),  # Signup page view
+    path('reset_password/', views.ResetPassword , name='ResetPassword'),  # Reset password page view
 ]

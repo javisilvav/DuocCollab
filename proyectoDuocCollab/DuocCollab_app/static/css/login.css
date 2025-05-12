@@ -1,0 +1,14 @@
+.portada{
+  background-image: url(../img/index_portada.jpg);
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
