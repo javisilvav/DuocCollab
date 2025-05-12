@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proyecto</title>
+  <title>Login</title>
   <!--Bootstrap-->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
   <!--Font-->
@@ -12,8 +12,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
   <!--CSS-->
-  <link rel="stylesheet" href="{% static 'css/proyectos-detail.css' %}">
   <link rel="stylesheet" href="{% static 'css/nav-footer.css' %}">
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body>
   <header class="header">
@@ -45,34 +45,36 @@
     </nav>
   </header>
 
-  <main class="container-fluid bg-light" style="height: 539px;">
-    <div class="row justify-content-start align-items-center h-100 px-5 portada">
-      <div class="col-12 text-center">
-        <h1 class="display-4 text-white" style="font-size: 96px; font-weight: 400;">API para veterinaria</h1>
+  <div class="portada">
+    <div class="login-box d-flex shadow rounded overflow-hidden">
+      <!-- Formulario -->
+      <div class="bg-light p-5" style="width: 382px;">
+        <h4 class="mb-4 text-center" style="font-size: 32px; font-weight: 400;">Inicia sesión</h4>
+        <form>
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="email" placeholder="pepa.diaz@duocuc.cl" style="font-style: italic;">
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password" placeholder="**********" style="font-style: italic;">
+          </div>
+          <div class="d-grid mb-3 d-flex justify-content-center">
+            <button type="submit" class="btn btn-dark" style="width: 86px;">Ingresar</button>
+          </div>
+          <div class="text-center">
+            <a href="{% url 'ResetPassword' %}" class="d-block small text-secondary">¿Olvidaste tu contraseña?</a>
+            <a href="{% url 'Signup' %}" class="d-block small text-secondary">Crea tu cuenta</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Logo -->
+      <div class="d-flex flex-column justify-content-center align-items-center p-4" style="width: 341px; background-color: #1C1C1C;">
+        <img src="{% static 'img/logo_collab_2.png' %}" alt="Logo" class="mb-3" style="height: 161px;">
       </div>
     </div>
-  </main>
-
-  <section class="container">
-    <div class="row justify-content-start align-items-center pt-5">
-      <div class="col-12 text-start">
-        <p style="font-size: 24px; font-weight: 400;">NOMBRE DEL PROYECTO</p>
-        <h2 style="font-size: 48px; font-weight: 700;">DATAVET</h2>
-      </div>
-    </div>
-    <div class="row justify-content-start align-items-center pt-4">
-      <div class="col-12 text-start">
-        <p class="text-start" style="font-size: 24px; font-weight: 400;">Somos un grupo de informáticos interesados en desarrollar una API que facilite la gestión de información en clínicas veterinarias. Antes de comenzar, queremos entender a fondo cómo funcionan los registros de pacientes, las citas, los tratamientos y otros procesos administrativos para asegurarnos de que nuestra solución realmente responda a las necesidades del sector.</p>
-        <p class="text-start" style="font-size: 24px; font-weight: 400;">Para ello, buscamos veterinarios, asistentes y administradores de clínicas que puedan orientarnos sobre su trabajo diario. No tomará mucho tiempo, solo queremos conocer su experiencia, los desafíos que enfrentan y qué herramientas utilizan actualmente.</p>
-        <p class="text-start" style="font-size: 24px; font-weight: 400;">Si te interesa compartir tu conocimiento y ayudarnos a diseñar una API útil y eficiente para el mundo veterinario, estaremos encantados de conversar contigo.</p>
-      </div>
-    </div>
-    <div>
-      <img src="{% static 'img/portada_proyecto.jpg' %}" alt="imagen" style="height: 410px; width: 100%;">
-    </div>
-
-
-  </section>
+  </div>
 
   <footer class="footer">
     <div class="container-fluid bg-dark text-white text-center py-4">

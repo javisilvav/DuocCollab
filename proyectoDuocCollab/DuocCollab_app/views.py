@@ -16,7 +16,16 @@ def ProyectosDetail(request):
   return render(request, 'proyectos_detail.html')
 
 def MisPostulaciones(request):
-    return render(request, 'mispostulaciones.html')
+  return render(request, 'mispostulaciones.html')
 
 def MisProyectos(request):
-    return render(request, 'misproyectos.html')
+  return render(request, 'misproyectos.html')
+
+def Login(request):
+  return render(request, 'login.html')
+
+def Signup(request):
+  return render(request, 'signup.html')
+
+def ResetPassword(request):
+  return render(request, 'reset_password.html')
