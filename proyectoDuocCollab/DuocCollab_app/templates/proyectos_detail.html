@@ -53,7 +53,7 @@
     </div>
   </main>
 
-  <section class="container">
+  <section class="container pb-5">
     <div class="row justify-content-start align-items-center pt-5">
       <div class="col-12 text-start">
         <p style="font-size: 24px; font-weight: 400;">NOMBRE DEL PROYECTO</p>
@@ -70,8 +70,34 @@
     <div>
       <img src="{% static 'img/portada_proyecto.jpg' %}" alt="imagen" style="height: 410px; width: 100%;">
     </div>
-
-
+    <div class="row justify-content-start align-items-center pt-4">
+      <div class="col-12 text-start">
+        <p style="font-size: 24px;"><strong>Integrantes: </strong>Alexis Carvajal, Juan José Menares, Claudia Zapata</p>
+        <p style="font-size: 24px;"><strong>Sede: </strong>San Bernardo</p>
+        <p style="font-size: 24px;"><strong>Carrera: </strong>Ingeniería en Informática</p>
+      </div>
+    </div>
+    <div class="row justify-content-start align-items-center pt-4">
+      <div class="col-12 text-start">
+        <h2 style="font-size: 40px; font-weight: 700;">REQUISITOS</h2>
+        <hr>
+        <p style="font-size: 24px;">Técnico Veterinario y Pecuario (desde 3er semestre en adelante)</p>
+        <p style="font-size: 24px;">Experiencia en sistemas veterinarios</p>
+        <p style="font-size: 24px;">Disponibilidad inmediata</p>
+    </div>
+    <div class="row justify-content-start align-items-center pt-4">
+      <div class="col-12 text-start">
+        <h2 style="font-size: 40px; font-weight: 700;">CONTÁCTANOS</h2>
+        <hr>
+        <form>
+          <div class="mb-3">
+            <textarea class="form-control" id="textArea1" rows="6" maxlength="3000" placeholder="Indicanos porque te gustaría trabajar con nosotros" style="background-color: #D9D9D9; resize: none;"></textarea>
+            <p id="contador">0 / 3000</p>
+          </div>
+          <button type="submit" class="btn px-4" style="background-color: #FFB800; font-size: 20px; font-weight: 700;">Postular</button>
+        </form>
+      </div>
+    </div>
   </section>
 
   <footer class="footer">
@@ -82,5 +108,13 @@
   
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+  <script>
+  const textarea = document.getElementById('textArea1');
+  const contador = document.getElementById('contador');
+
+  textarea.addEventListener('input', () => {
+    contador.textContent = `${textarea.value.length} / ${textarea.maxLength}`;
+  });
+</script>
 </body>
 </html>
