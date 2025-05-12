@@ -6,9 +6,6 @@ def Home(request):
 def Proyectos(request):
   return render(request, 'proyectos.html')
 
-def Ejemplo(request):
-  return render(request, 'ejemplo.html')
-
 def Perfil(request):
   return render(request, 'perfil.html')
 
