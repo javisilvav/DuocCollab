@@ -1,0 +1,24 @@
+.btn-custom {
+  width: 190px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.custom-nav {
+  background-color: white;
+  height: 97px;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.logo-container {
+  background-color: white;
+  clip-path: polygon(0 0, 100% 0%, 100% 100%, 5% 100%);  
+}
+
+.color{
+  background-color: #000000;
+}

@@ -1,0 +1,61 @@
+.portada{
+  background-image: url(../img/index_portada.jpg);
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.portada h1{
+  font-weight: 700; 
+  font-size: 36px;
+}
+
+.portada p{
+  font-weight: 400;
+  font-size: 24px;
+}
+
+.btn-portada{
+  width: 257px;
+  height: 63px;
+  font-size: 32px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #FFB800;
+  text-decoration: none;
+  border-radius: 10px;
+}
+
+.btn-escuela{
+  width: 233px; 
+  height: 67px; 
+  font-size: 14px; 
+  border-radius: 5px; 
+  border: none;
+}
+
+.vertical-text {
+  writing-mode: sideways-lr;
+  text-orientation: mixed;
+  color: white;
+  height: 292px;
+  width: 41px; 
+  font-size: 14px;
+}
+
+.btn-vermas{
+  background-color: #FFB800; 
+  text-decoration: none; 
+  color: black;
+  width: 143px; 
+  height: 53px; 
+  border-radius: 15px; 
+  font-size: 24px; 
+  font-weight: 700;
+}
