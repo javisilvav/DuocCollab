@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-BASE_API_URL = 'http://192.168.113.121:5000/api/'
+BASE_API_URL = 'http://127.0.0.1:5000/api/'
 API_TOKEN=os.getenv('API_TOKEN')
 
 def headers_auth():
