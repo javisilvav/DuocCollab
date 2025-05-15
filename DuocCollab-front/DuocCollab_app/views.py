@@ -11,18 +11,10 @@ def Home(request):
 def Proyectos(request):
   return render(request, 'proyectos.html')
 
-
 @login_required
 def Perfil(request):
   usuario = request.session.get('usuario')
   return render(request, 'perfil.html',{'usuario':usuario})
-
-
-
-
-
-
-
 
 def ProyectosDetail(request):
   return render(request, 'proyectos_detail.html')
@@ -50,8 +42,6 @@ def Login(request):
 def Logout(request):
     request.session.flush() 
     return redirect('Login')
-
-
 
 
 def obtener_ruta_sin_perfil():
@@ -98,10 +88,9 @@ def Signup(request):
         print(error)
       return redirect('Signup')
 
-    
-
-
-
 
 def ResetPassword(request):
   return render(request, 'reset_password.html')
+
+def SubirProyecto(request):
+  return render(request, 'subir_proyecto.html')

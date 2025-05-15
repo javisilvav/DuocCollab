@@ -13,4 +13,5 @@ urlpatterns = [
     path('logout/', views.Logout , name='Logout'),
     path('signup/', views.Signup , name='Signup'),  # Signup page view
     path('reset_password/', views.ResetPassword , name='ResetPassword'),  # Reset password page view
+    path('subir_proyecto/', views.SubirProyecto , name='SubirProyecto'),  # Upload project page view
 ]

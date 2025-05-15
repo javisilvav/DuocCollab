@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio</title>
+  <!--Bootstrap-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  <!--Font-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+  <!--CSS-->
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <link rel="stylesheet" href="{% static 'css/nav-footer.css' %}">
+
+  <style>
+    .preview-box {
+      height: 200px;
+      background-color: #f0f0f0;
+      border: 1px dashed #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 48px;
+    }
+    .vista-previa {
+      border-left: 1px solid #ccc;
+      padding-left: 30px;
+    }
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 20px;
+    }
+    /* Puedes agregarlo dentro del <style> del mismo archivo HTML */
+    input.form-control, textarea.form-control, select.form-select {
+      border: 1px solid #333;  /* Borde más grueso y oscuro */
+      box-shadow: none;        /* Opcional: quita el sombreado de Bootstrap */
+    }
+
+    input.form-control:focus,
+    textarea.form-control:focus,
+    select.form-select:focus {
+      border-color: #000;       /* Color del borde al enfocar */
+      outline: none;
+      box-shadow: none;         /* Opcional: sin resplandor azul */
+    }
+
+    input.form-control::placeholder,
+    textarea.form-control::placeholder {
+      color: #625F5F;
+      font-weight: 400;
+      font-size: 16px;
+      font-style: italic;
+    }
+
+    input.form-control,
+    textarea.form-control {
+      width: 516px;     /* largo (ancho) específico */
+      height: 39px;     /* alto específico */
+    }
+
+  </style>
+
+</head>
+<body>
+  <header class="header">
+    <nav class="navbar navbar-expand-lg custom-nav">
+      <div class="container-fluid p-0 bg-white">
+        <div class="d-flex align-items-center">
+          <a href="{% url 'Home' %}">
+            <img src="{% static 'img/logo_colabb.png' %}" alt="Logo" height="76px" class="d-inline-block align-text-top">
+          </a>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse color logo-container" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 px-5">
+            <li class="nav-item" style="padding-left: 40px;">
+              <a class="nav-link text-white" aria-current="page" href="{% url 'Proyectos' %}" style="font-size: 24px;">PROYECTOS</a>
+            </li>
+            <li class="nav-item" style="padding-left: 25px;">
+              <a class="nav-link text-white" href="#" style="font-size: 24px;">ESCUELAS</a>
+            </li>
+          </ul>
+          <div class="d-flex flex-column align-items-end">
+            <a href="{% url 'Login' %}" class="btn-custom text-white" type="button" style="text-decoration: none; font-size: 18px;">INICIAR SESIÓN</a>
+            <a href="{% url 'Signup' %}" class="btn-custom text-white" type="button" style="background-color: #FFB800; text-decoration: none; font-weight: 700; font-size: 18px;">REGISTRARSE</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container-fluid bg-white py-5" style="padding-left: 100px; padding-right: 100px;">
+    <h1 class="fw-bold mb-5" style="font-size: 96px;">Publica tu proyecto</h1>
+
+    <div class="row">
+      <!-- Formulario -->
+      <div class="col-md-6">
+        <div class="section-title fw-bold py-4" style="font-size: 24px;">Información general</div>
+        <form id="form-proyecto">
+          <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Título del proyecto" id="titulo">
+          </div>
+          <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Nombre del proyecto" id="nombre_proyecto">
+          </div>
+          <div class="mb-3">
+            <textarea class="form-control" rows="3" placeholder="Descripción" id="descripcion"></textarea>
+          </div>
+          <div class="mb-3">
+            <input type="file" class="form-control" id="archivo">
+          </div>
+
+          <div class="section-title py-4">Categoría y filtros</div>
+          <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Requisitos" id="requisitos">
+          </div>
+          <div class="input-group mb-3" style="width: 516px; height: 39px;">
+            <input type="text" class="form-control" placeholder="Etiquetas" id="hashtags">
+            <button class="btn btn-outline-secondary" type="button" id="agregar-hashtag">+</button>
+          </div>
+          <div class="mb-3" id="lista-hashtags"></div>
+          <div class="input-group mb-3" style="width: 516px; height: 39px;">
+            <input type="text" class="form-control" placeholder="Añadir colaboradores" id="colaboradores">
+            <button class="btn btn-outline-secondary" type="button" id="agregar-colaborador">+</button>
+          </div>
+          <div class="mb-3" id="lista-colaboradores"></div>
+          <select class="form-select mb-3" id="sede" style="width: 516px; height: 39px;">
+            <option disabled selected value="">Selecciona una sede</option>
+            <option>San Bernardo</option>
+            <option>Maipú</option>
+            <option>Puente Alto</option>
+            <option>Plaza Oeste</option>
+            <option>Sede Virtual</option>
+          </select>
+          <select class="form-select mb-3" id="carrera" style="width: 516px; height: 39px;">
+            <option disabled selected value="">Selecciona una carrera</option>
+            <option>Ingeniería en Informática</option>
+            <option>Ingeniería en Ciberseguridad</option>
+            <option>Analista Programador</option>
+            <option>Diseño y Desarrollo Web</option>
+          </select>
+          <button type="submit" class="btn fw-bold py-2 px-4" style="background-color: #FFB800; font-size: 20px;">PUBLICAR</button>
+        </form>
+      </div>
+
+      <!-- Vista previa -->
+      <div class="col-md-6 vista-previa">
+        <div class="section-title">Vista previa</div>
+        <h5 class="fst-italic fw-bold" id="prev-titulo">Lorem Ipsum</h5>
+        <p class="text-muted" style="font-size: 14px;">Nombre del proyecto</p>
+        <h3 class="fw-bold" id="prev-nombre">Lorem Ipsum</h3>
+        <p id="prev-descripcion">
+          Vivamus diam turpis, pretium sit amet euismod sed, faucibus in justo.
+        </p>
+        <div class="preview-box" id="prev-archivo">📎</div>
+        <p class="fst-italic text-muted">
+          <span class="fw-bold">Integrantes: </span> <span id="prev-colaboradores">autores, colaboradores</span>
+        </p>
+        <p class="fst-italic text-muted">
+          <span class="fw-bold">Sede: </span> <span id="prev-sede">San Bernardo</span>
+        </p>
+        <p class="fst-italic text-muted">
+          <span class="fw-bold">Carrera: </span> <span id="prev-carrera">Ingenieria en informatica</span>
+        </p>
+        <h3 class="fw-bold">REQUISITOS</h3>
+        <p class="text-muted" id="prev-req">requisitos</p>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container-fluid bg-dark text-white text-center py-4">
+      <p class="mb-0">© Duoc UC - COLLAB.</p>
+    </div>
+  </footer>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+  <script src="{% static 'js/subir_proyecto.js' %}"></script>
+
+</body>
+</html>

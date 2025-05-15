@@ -12,10 +12,6 @@ def headers_auth():
         'Content-Type':'application/json'
     }
 
-
-
-
-
 def iniciar_sesion(correo, contrasenia):
     response = requests.post(
         f'{BASE_API_URL}login', 
