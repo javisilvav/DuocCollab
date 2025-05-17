@@ -83,7 +83,7 @@ def Signup(request):
   if request.method == 'POST':
     data = {
       'NOMBRE': request.POST.get('nombre'),
-      'APELLIDO': 'APELLIDO',
+      'APELLIDO': request.POST.get('apellido'),
       'CORREO': request.POST.get('correo'),
       'CONTRASENIA': request.POST.get('contrasena'),
       'ID_CARRERA': request.POST.get('carrera'),

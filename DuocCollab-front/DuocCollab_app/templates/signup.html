@@ -48,7 +48,7 @@
   <div class="portada">
     <div class="login-box d-flex shadow rounded overflow-hidden">
       <!-- Formulario -->
-      <div class="p-5 text-light" style="width: 785px; height: 539px; background-color: #1C1C1C;">
+      <div class="p-5 text-light" style="width: 785px; height: 580px; background-color: #1C1C1C;">
         <h4 class="text-start" style="font-size: 32px; font-weight: 700;">Regístrate</h4>
         <hr class="mb-4">
         <form method="POST" enctype="multipart/form-data" action="{% url 'Signup' %}">
@@ -57,8 +57,12 @@
             <!-- Primera columna --> 
             <div class="col-6">
               <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre completo</label>
-                <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Nombre completo">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Pepito">
+              </div>
+              <div class="mb-3">
+                <label for="apellido" class="form-label">Apellido</label>
+                <input type="text" name="apellido" class="form-control" id="apellido" placeholder="Perez">
               </div>
               <div class="mb-3">
                 <label for="correo" class="form-label">Correo electrónico</label>
