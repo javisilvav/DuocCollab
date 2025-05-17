@@ -18,7 +18,8 @@ def Perfil(request):
 
   url_perfil, url_portada = trae_img_perfil(usuario['FOTO_PERFIL'], usuario['FOTO_PORTADA'])
 
-
+  print(url_perfil)
+  print(url_portada)
   contexto = {
     'usuario':usuario,
     'foto_perfil': url_perfil,
