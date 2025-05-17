@@ -1,19 +1,33 @@
 import requests
 import os
 from dotenv import load_dotenv
+from requests import request
+
 
 load_dotenv()
-BASE_API_URL = 'http://127.0.0.1:5000/api/'
+BASE_API_URL = 'http://127.0.0.1:5050/api/'
 API_TOKEN=os.getenv('API_TOKEN')
 
 def headers_auth():
     return {
         'Authorization': f'Bearer {API_TOKEN}',
-        'Content-Type':'application/json'
+        'Content-Type':'application/json',
+        #'X-User-ID': request.session.get('id_usuario')
     }
 
 
 
+def trae_img_perfil(perfil, portada):
+
+    url_perfil = f'{BASE_API_URL}uploads/imagenes/{perfil}'
+    url_portada = f'{BASE_API_URL}uploads/imagenes/{portada}'
+
+    return url_perfil, url_portada
+
+
+
+
+    
 
 
 def iniciar_sesion(correo, contrasenia):

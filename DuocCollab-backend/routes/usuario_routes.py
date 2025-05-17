@@ -19,7 +19,7 @@ def generar_nombre_archivo(nombre_original):
 def guardar_archivo(nombre):
     return '.' in nombre and nombre.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@usuario_bp.route('/api/uploads/imagenes/<filename>')
+@usuario_bp.route('/api/uploads/imagenes/<filename>', methods=['GET'])
 def obtener_imagen(filename):
     #verificar_token()
     return send_from_directory(UPLOAD_FOLDER, filename)
@@ -42,7 +42,7 @@ def usuarios():
                 filename = generar_nombre_archivo(archivo.filename)
                 ruta_completa = os.path.join(UPLOAD_FOLDER, filename)
                 archivo.save(ruta_completa)
-                datos[campo] = request.host_url + f'api/uploads/imagenes/{filename}'
+                datos[campo] = f'{filename}'
             else:
                 datos[campo] = None
 

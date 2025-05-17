@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .api_client import iniciar_sesion, consulta_sede, consulta_carrera, consulta_escuela, registrar_usuario
+from .api_client import iniciar_sesion, consulta_sede, consulta_carrera, consulta_escuela, registrar_usuario, trae_img_perfil
 import os
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -15,7 +15,19 @@ def Proyectos(request):
 @login_required
 def Perfil(request):
   usuario = request.session.get('usuario')
-  return render(request, 'perfil.html',{'usuario':usuario})
+
+  url_perfil, url_portada = trae_img_perfil(usuario['FOTO_PERFIL'], usuario['FOTO_PORTADA'])
+
+
+  contexto = {
+    'usuario':usuario,
+    'foto_perfil': url_perfil,
+    'foto_portada': url_portada
+  }
+
+
+  
+  return render(request, 'perfil.html', contexto)
 
 
 
@@ -31,6 +43,7 @@ def MisPostulaciones(request):
   return render(request, 'mispostulaciones.html')
 
 def MisProyectos(request):
+
   return render(request, 'misproyectos.html')
 
 def Login(request):
@@ -105,3 +118,8 @@ def Signup(request):
 
 def ResetPassword(request):
   return render(request, 'reset_password.html')
+
+
+
+def SubirProyecto(request):
+  return render(request, 'subir_proyecto.html')

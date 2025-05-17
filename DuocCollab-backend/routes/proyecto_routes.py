@@ -48,6 +48,24 @@ def proyectos():
         return jsonify(resp_json), status_code
     return jsonify({'error':'Tipo de contenido no soportado. Usa multipart/form-data.'}), 415
 
+
+
+
+@proyecto_bp.route('/api/mis-proyectos', methods=['GET'])
+def mis_proyectos():
+    verificar_token()
+    id_usuario = request.headers.get('X-User-ID')
+    if not id_usuario:
+        return jsonify({'error': 'ID de usuario no proporcionado'}), 400
+
+    proyectos = obtener_proyectos_por_usuario(id_usuario)
+    return jsonify(proyectos), 200
+
+
+
+
+
+
 # Etiqueta
 @proyecto_bp.route('/api/etiquetas', methods=['GET','POST'])
 def etiquetas():

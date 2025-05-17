@@ -50,6 +50,14 @@ def validar_proyecto(data):
 
 def list_proyectos(): return obtener_proyectos()
 
+def obtener_proyectos_por_usuario(id_usuario):
+    todos = obtener_proyectos()
+    filtrados = [p for p in todos if str(p.get('ID_USUARIO')) == str(id_usuario)]
+    return filtrados
+
+
+
+
 def add_proyecto(data): 
     try:
         errores = validar_proyecto(data)
@@ -69,6 +77,7 @@ def add_proyecto(data):
     
     
     
+
     
     
 
@@ -89,7 +98,6 @@ def list_proyecto_etiqueta():
     
     
     
-    
-    return obtener_proyecto_etiqueta()
+
 
 def add_proyecto_etiqueta(data): return crear_proyecto_etiqueta(data)
