@@ -2,21 +2,21 @@
 <div class="ps-5 pb-3">
   <h2 style="font-size: 36px; font-weight: 700;">EDITAR PERFIL</h2>
 </div>
-<form class="ps-5 pe-5" method="POST" enctype="multipart/form-data" action="{% url 'Signup' %}">
+<form class="ps-5 pe-5" method="POST" enctype="multipart/form-data" action="">
   {% csrf_token %}
   <div class="row">
     <!-- Primera columna -->
     <div class="col-6">
       <div class="mb-3">
         <label for="nombre" class="form-label">Nombre</label>
-        <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Pepito">
+        <input type="text" name="nombre" class="form-control" id="nombre" value="{{ usuario.NOMBRE }}">
       </div>
       <div class="mb-3">
         <label for="correo" class="form-label">Correo electrónico</label>
-        <input type="email" name="correo" class="form-control" id="correo" placeholder="correo@duocuc.cl">
+        <input type="email" name="correo" class="form-control" id="correo" value="{{ usuario.CORREO }}">
       </div>
       <div class="mb-3">
-        <label for="correo" class="form-label">Foto de perfil</label>
+        <label for="foto-perfil" class="form-label">Foto de perfil</label>
         <input type="file" class="form-control" id="archivo">
       </div>
       <div class="mb-3">
@@ -35,14 +35,14 @@
     <div class="col-md-6">
       <div class="mb-3">
         <label for="apellido" class="form-label">Apellido</label>
-        <input type="text" name="apellido" class="form-control" id="apellido" placeholder="Perez">
+        <input type="text" name="apellido" class="form-control" id="apellido" value="{{ usuario.APELLIDO }}">
       </div>
       <div class="mb-3">
         <label for="contrasena" class="form-label">Contraseña</label>
         <input type="password" name="contrasena" class="form-control" id="contrasena" placeholder="********">
       </div>
       <div class="mb-3">
-        <label for="correo" class="form-label">Foto de portada</label>
+        <label for="foto_portada" class="form-label">Foto de portada</label>
         <input type="file" class="form-control" id="archivo">
       </div>
     </div>

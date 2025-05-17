@@ -108,4 +108,15 @@ def SubirProyecto(request):
   return render(request, 'subir_proyecto.html')
 
 def EditarPerfil(request):
-  return render(request, 'editar_perfil.html')
+  usuario = request.session.get('usuario')
+
+    # Opcional: Traer imagen desde API
+  url_perfil, url_portada = trae_img_perfil(usuario['FOTO_PERFIL'], usuario['FOTO_PORTADA'])
+
+  contexto = {
+    'usuario': usuario,
+    'foto_perfil': url_perfil,
+    'foto_portada': url_portada
+  }
+
+  return render(request, 'editar_perfil.html', contexto)
