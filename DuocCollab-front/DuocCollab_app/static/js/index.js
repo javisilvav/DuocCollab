@@ -1,3 +1,5 @@
+let escuelaActual = null;
+
 const carreras = {
   informatica: [
     'Ingeniería en Informática',
@@ -63,15 +65,27 @@ const coloresEscuelas = {
 function mostrarCarreras(escuela) {
   const lista = document.getElementById("carreras-lista");
   const contenedor = document.getElementById("carreras-container");
-  lista.innerHTML = "";
 
+  // Si ya está visible y se volvió a seleccionar la misma escuela, se oculta
+  if (escuelaActual === escuela && contenedor.style.display === "block") {
+    contenedor.style.display = "none";
+    escuelaActual = null; // Se reinicia la selección
+    return;
+  }
+
+  // Se actualiza la lista de carreras
+  lista.innerHTML = "";
   carreras[escuela].forEach(carrera => {
     const li = document.createElement("li");
     li.textContent = carrera;
+    li.classList.add("text-decoration-underline");
     lista.appendChild(li);
   });
 
+  // Se actualiza el color y muestra el contenedor
   contenedor.style.backgroundColor = coloresEscuelas[escuela];
-
   contenedor.style.display = "block";
+
+  // Se guarda la escuela actual seleccionada
+  escuelaActual = escuela;
 }
