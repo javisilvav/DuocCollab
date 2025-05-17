@@ -4,7 +4,9 @@ DuocCollab-backend/.env
 DuocCollab-backend/bd/__pycache__
 DuocCollab-backend/routes/__pycache__
 DuocCollab-backend/services/__pycache__
+DuocCollab-backend/__pycache__
 DuocCollab-front/DuocCollab_app/.env
 DuocCollab-front/DuocCollab_app/__pycache__
 DuocCollab-front/proyectoDuocCollab/__pycache__
 DuocCollab-front/DuocCollab_app/migrations/ 
+
