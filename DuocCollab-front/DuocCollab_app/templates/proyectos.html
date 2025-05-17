@@ -74,8 +74,13 @@
             </li>
           </ul>
           <div class="d-flex flex-column align-items-end">
-            <a href="{% url 'Login' %}" class="btn-custom text-white" type="button" style="text-decoration: none; font-size: 18px;">INICIAR SESIÓN</a>
-            <a href="{% url 'Signup' %}" class="btn-custom text-white" type="button" style="background-color: #FFB800; text-decoration: none; font-weight: 700; font-size: 18px;">REGISTRARSE</a>
+            {% if request.session.usuario %}
+              <a href="{% url 'Logout' %}" class="btn-custom text-white" type="button" style="text-decoration: none; font-size: 18px;">CERRAR SESIÓN</a>
+              <a href="{% url 'Perfil' %}" class="btn-custom text-white" type="button" style="background-color: #FFB800; text-decoration: none; font-weight: 700; font-size: 18px;">MI PERFIL</a>
+            {% else %}
+              <a href="{% url 'Login' %}" class="btn-custom text-white" type="button" style="text-decoration: none; font-size: 18px;">INICIAR SESIÓN</a>
+              <a href="{% url 'Signup' %}" class="btn-custom text-white" type="button" style="background-color: #FFB800; text-decoration: none; font-weight: 700; font-size: 18px;">REGISTRARSE</a>
+            {% endif %}
           </div>
         </div>
       </div>

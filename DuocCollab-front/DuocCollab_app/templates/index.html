@@ -40,8 +40,13 @@
             </li>
           </ul>
           <div class="d-flex flex-column align-items-end">
-            <a href="{% url 'Login' %}" class="btn-custom text-white" type="button" style="text-decoration: none; font-size: 18px;">INICIAR SESIÓN</a>
-            <a href="{% url 'Signup' %}" class="btn-custom text-white" type="button" style="background-color: #FFB800; text-decoration: none; font-weight: 700; font-size: 18px;">REGISTRARSE</a>
+            {% if request.session.usuario %}
+              <a href="{% url 'Logout' %}" class="btn-custom text-white" type="button" style="text-decoration: none; font-size: 18px;">CERRAR SESIÓN</a>
+              <a href="{% url 'Perfil' %}" class="btn-custom text-white" type="button" style="background-color: #FFB800; text-decoration: none; font-weight: 700; font-size: 18px;">MI PERFIL</a>
+            {% else %}
+              <a href="{% url 'Login' %}" class="btn-custom text-white" type="button" style="text-decoration: none; font-size: 18px;">INICIAR SESIÓN</a>
+              <a href="{% url 'Signup' %}" class="btn-custom text-white" type="button" style="background-color: #FFB800; text-decoration: none; font-weight: 700; font-size: 18px;">REGISTRARSE</a>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -53,7 +58,7 @@
       <div class="col-12 text-start" style="width: 60%;">
         <h1 class="display-4 text-white">Muestra tu talento, conecta con la comunidad y haz crecer tus proyectos</h1>
         <p class="lead text-white">La plataforma creativa de Duoc UC, donde tus ideas cobran vida.</p>
-        <a href="#" class="btn-portada text-dark" role="button">Comienza aquí</a>
+        <a href="{% url 'Login' %}" class="btn-portada text-dark" role="button">Comienza aquí</a>
       </div>
     </div>
   </main>
@@ -66,31 +71,23 @@
       <div class="col-6">
         <h2 class="text-start px-4" style="font-size: 40px; font-weight: 700;">CONOCE NUESTRAS ESCUELAS</h2>
         <p class="text-start px-4" style="font-size: 24px;">Proyectos por escuela y carreras</p>
-        <div class="d-flex flex-column gap-3 px-4">
-          <a href="#" class="btn d-inline-flex align-items-center text-start text-white gap-2 btn-escuela" style="background-color: #307FE2;">
-            Escuela de Informática y Telecomunicaciones
-            <i class="bi bi-arrow-right"></i>
-          </a>
-          <a href="#" class="btn d-inline-flex align-items-center text-start text-white gap-2 btn-escuela" style="background-color: #43B02A;">
-            Escuela de Ingeniería y Recursos Naturales
-            <i class="bi bi-arrow-right"></i>
-          </a>
-          <a href="#" class="btn d-inline-flex align-items-center text-start text-white gap-2 btn-escuela" style="background-color: #AC4FC6;">
-            Escuela de Administración y Negocios
-            <i class="bi bi-arrow-right"></i>
-          </a>
-          <a href="#" class="btn d-inline-flex align-items-center text-start text-white gap-5 btn-escuela" style="background-color: #E87722;">
-            Escuela de Construcción
-            <i class="bi bi-arrow-right"></i>
-          </a>
-          <a href="#" class="btn d-inline-flex align-items-center text-start text-white gap-4 btn-escuela" style="background-color: #5BC2E7;">
-            Escuela de Salud y Bienestar
-            <i class="bi bi-arrow-right"></i>
-          </a>
-          <a href="#" class="btn d-inline-flex align-items-center text-start text-white gap-2 btn-escuela" style="background-color: #00A499;">
-            Escuela de Turismo y Hospitalidad
-            <i class="bi bi-arrow-right"></i>
-          </a>
+        <div class="row">
+          <div class="col-5">
+            <div class="d-flex flex-column gap-3 px-4">
+              <button onclick="mostrarCarreras('informatica')" class="btn d-inline-flex align-items-center text-start text-white gap-2 btn-escuela" style="background-color: #307FE2;">Escuela de Informática y Telecomunicaciones <i class="bi bi-arrow-right"></i></button>
+              <button onclick="mostrarCarreras('ingenieria')" class="btn d-inline-flex align-items-center text-start text-white gap-2 btn-escuela" style="background-color: #43B02A;">Escuela de Ingeniería y Recursos Naturales<i class="bi bi-arrow-right"></i></button>
+              <button onclick="mostrarCarreras('negocios')" class="btn d-inline-flex align-items-center text-start text-white gap-2 btn-escuela" style="background-color: #AC4FC6;">Escuela de Administración y Negocios<i class="bi bi-arrow-right"></i></button>
+              <button onclick="mostrarCarreras('construccion')" class="btn d-inline-flex align-items-center text-start text-white gap-5 btn-escuela" style="background-color: #E87722;">Escuela de Construcción<i class="bi bi-arrow-right"></i></button>
+              <button onclick="mostrarCarreras('salud')" class="btn d-inline-flex align-items-center text-start text-white gap-4 btn-escuela" style="background-color: #5BC2E7;">Escuela de Salud y Bienestar<i class="bi bi-arrow-right"></i></button>
+              <button onclick="mostrarCarreras('turismo')" class="btn d-inline-flex align-items-center text-start text-white gap-2 btn-escuela" style="background-color: #00A499;">Escuela de Turismo y Hospitalidad<i class="bi bi-arrow-right"></i></button>
+            </div>
+          </div>
+          <!-- Carreras dinámicas -->
+          <div class="col-6">
+            <div id="carreras-container" class="p-3 rounded" style="background-color: #307FE2; display: none;">
+              <ul id="carreras-lista" class="list-unstyled text-white text-decoration-underline" style="font-size: 14px;"></ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -143,5 +140,6 @@
   </footer>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+  <script src="{% static 'js/index.js' %}"></script>
 </body>
 </html>
