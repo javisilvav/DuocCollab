@@ -5,7 +5,7 @@ import os
 import uuid
 
 proyecto_bp = Blueprint('proyecto', __name__)
-UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'uploads', 'imagenes'))
+UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'uploads', 'imagenes_proyectos'))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -41,7 +41,7 @@ def proyectos():
                 filename = generar_nombre_archivo(archivo.filename)
                 ruta_completa = os.path.join(UPLOAD_FOLDER, filename)
                 archivo.save(ruta_completa)
-                datos[campo]=request.host_url + f'api/uploads/imagen_proyecto/{filename}'
+                datos[campo]=filename
             else:
                 datos[campo] = None
         resp_json, status_code = add_proyecto(datos)
@@ -55,6 +55,7 @@ def proyectos():
 def mis_proyectos():
     verificar_token()
     id_usuario = request.headers.get('X-User-ID')
+    print(id_usuario)
     if not id_usuario:
         return jsonify({'error': 'ID de usuario no proporcionado'}), 400
 

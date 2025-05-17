@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .api_client import iniciar_sesion, consulta_sede, consulta_carrera, consulta_escuela, registrar_usuario, trae_img_perfil
+from .api_client import iniciar_sesion, consulta_sede, consulta_carrera, consulta_escuela, registrar_usuario, trae_img_perfil, consulta_mis_proyectos
 import os
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -9,16 +9,18 @@ def Home(request):
   return render(request, 'index.html')  
 
 def Proyectos(request):
-  return render(request, 'proyectos.html')
+
+  contexto = {
+    'proyectos':consulta_mis_proyectos()
+  }
+
+  return render(request, 'proyectos.html', contexto)
 
 @login_required
 def Perfil(request):
   usuario = request.session.get('usuario')
-
   url_perfil, url_portada = trae_img_perfil(usuario['FOTO_PERFIL'], usuario['FOTO_PORTADA'])
-
   print(url_perfil)
-  print(url_portada)
   contexto = {
     'usuario':usuario,
     'foto_perfil': url_perfil,

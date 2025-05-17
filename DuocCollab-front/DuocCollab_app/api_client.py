@@ -18,7 +18,6 @@ def headers_auth():
 
 
 def trae_img_perfil(perfil, portada):
-
     url_perfil = f'{BASE_API_URL}uploads/imagenes/{perfil}'
     url_portada = f'{BASE_API_URL}uploads/imagenes/{portada}'
 
@@ -84,3 +83,12 @@ def registrar_usuario(data, archivos = None):
         headers=headers
     )
     return response
+
+
+def consulta_mis_proyectos():
+    response = requests.get(f'{BASE_API_URL}mis-proyectos', headers=headers_auth())
+    if response.ok:
+        return response.json()
+    else:
+        print(f'Error en la API: {response.status_code} - {response.text}')
+        return []

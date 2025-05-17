@@ -23,27 +23,27 @@ def add_postulacion(data): return crear_postulacion(data)
 def validar_proyecto(data):
     errores = []
     if not data.get('ID_USUARIO'):
-        errores.get('Error al encontrar propietario de proyecto.')
+        errores.append('Error al encontrar propietario de proyecto.')
     if not data.get('TITULO'):
-        errores.get('El Titulo es obligatorio')
+        errores.append('El Titulo es obligatorio')
     if not data.get('NOMBRE_PROYECTO'):
-        errores.get('El Nombre es obligatorio')
+        errores.append('El Nombre es obligatorio')
     if not data.get('DESCRIPCION'):
-        errores.get('La descripción es obligatoria')
+        errores.append('La descripción es obligatoria')
     if not data.get('FECHA_INICIO'):
-        errores.get('Error al cargar fecha de inicio.')
+        errores.append('Error al cargar fecha de inicio.')
     if not data.get('DURACION'):
-        errores.get('Agregar Duración de proyecto es obligatorio.')
+        errores.append('Agregar Duración de proyecto es obligatorio.')
     if not data.get('ID_SEDE'):
-        errores.get('Error al encontrar SEDE del usuario.')
+        errores.append('Error al encontrar SEDE del usuario.')
     if not data.get('REQUISITOS'):
-        errores.get('Los requisitos son obligatorios')
+        errores.append('Los requisitos son obligatorios')
     if not data.get('CARRERA_DESTINO'):
-        errores.get('Error al encontrar carrera destino.')
+        errores.append('Error al encontrar carrera destino.')
     if not data.get('FOTO_PROYECTO'):
-        errores.get('La Foto de proyecto es obligatoria.')
+        errores.append('La Foto de proyecto es obligatoria.')
     if not data.get('ESTADO'):
-        errores.get('El Estado es obligatorio')
+        errores.append('El Estado es obligatorio')
 
     return errores
 
@@ -61,11 +61,12 @@ def obtener_proyectos_por_usuario(id_usuario):
 def add_proyecto(data): 
     try:
         errores = validar_proyecto(data)
+       
         if errores:
             return {'ok':False, 'errores':errores},400
         resp = crear_proyecto(data)
         if resp.ok:
-            return {'mensaje':'Proyecto creado correctamente.'}, 400
+            return {'mensaje':'Proyecto creado correctamente.'}, 201
         else:
             try:
                 error_msg = resp.json().get('error','Error desconocido al crear proyecto.')
