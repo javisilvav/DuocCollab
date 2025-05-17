@@ -25,17 +25,8 @@ def Perfil(request):
     'foto_perfil': url_perfil,
     'foto_portada': url_portada
   }
-
-
   
   return render(request, 'perfil.html', contexto)
-
-
-
-
-
-
-
 
 def ProyectosDetail(request):
   return render(request, 'proyectos_detail.html')
@@ -44,7 +35,6 @@ def MisPostulaciones(request):
   return render(request, 'mispostulaciones.html')
 
 def MisProyectos(request):
-
   return render(request, 'misproyectos.html')
 
 def Login(request):
@@ -66,8 +56,6 @@ def Logout(request):
     return redirect('Login')
 
 
-
-
 def obtener_ruta_sin_perfil():
     ruta = os.path.join(settings.BASE_DIR, 'DuocCollab_app', 'static', 'img', 'sin_perfil.png')
     return ruta
@@ -87,7 +75,7 @@ def Signup(request):
       'CORREO': request.POST.get('correo'),
       'CONTRASENIA': request.POST.get('contrasena'),
       'ID_CARRERA': request.POST.get('carrera'),
-      'INTERESES': 'INTERESES',
+      'INTERESES': 'Sin intereses',
       'FOTO_PERFIL': '',
       'FOTO_PORTADA': ''
     }
@@ -112,15 +100,12 @@ def Signup(request):
         print(error)
       return redirect('Signup')
 
-    
-
-
-
 
 def ResetPassword(request):
   return render(request, 'reset_password.html')
 
-
-
 def SubirProyecto(request):
   return render(request, 'subir_proyecto.html')
+
+def EditarPerfil(request):
+  return render(request, 'editar_perfil.html')

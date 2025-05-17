@@ -9,6 +9,7 @@ urlpatterns = [
     path('proyectos_detail/', views.ProyectosDetail , name='ProyectosDetail'), # Project details page view
     path('perfil/postulaciones/', views.MisPostulaciones, name='Postulaciones'),
     path('perfil/proyectos/', views.MisProyectos, name='MisProyectos'),
+    path('perfil/editar/', views.EditarPerfil, name='EditarPerfil'),  # Edit profile page view
     path('login/', views.Login , name='Login'),  # Login page view
     path('logout/', views.Logout , name='Logout'),
     path('signup/', views.Signup , name='Signup'),  # Signup page view
