@@ -1,5 +1,14 @@
 from django.shortcuts import render, redirect
-from .api_client import iniciar_sesion, consulta_sede, consulta_carrera, consulta_escuela, registrar_usuario, trae_img_perfil, consulta_mis_proyectos
+from .api_client import (
+    iniciar_sesion,
+    consulta_sede,
+    consulta_carrera,
+    consulta_escuela, 
+    registrar_usuario, 
+    trae_img_perfil, 
+    consulta_mis_proyectos,
+    trae_img_proyecto
+)
 import os
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -9,18 +18,12 @@ def Home(request):
   return render(request, 'index.html')  
 
 def Proyectos(request):
-
-  contexto = {
-    'proyectos':consulta_mis_proyectos()
-  }
-
-  return render(request, 'proyectos.html', contexto)
+  return render(request, 'proyectos.html')
 
 @login_required
 def Perfil(request):
   usuario = request.session.get('usuario')
   url_perfil, url_portada = trae_img_perfil(usuario['FOTO_PERFIL'], usuario['FOTO_PORTADA'])
-  print(url_perfil)
   contexto = {
     'usuario':usuario,
     'foto_perfil': url_perfil,
@@ -36,7 +39,14 @@ def MisPostulaciones(request):
   return render(request, 'mispostulaciones.html')
 
 def MisProyectos(request):
-  return render(request, 'misproyectos.html')
+  data = consulta_mis_proyectos(request)
+  print('data ',data)
+  #url_proyecto = trae_img_proyecto(data['FOTO_PROYECTO'])
+  #print(url_proyecto)
+  contexto = {
+    'proyectos':data
+  }
+  return render(request, 'misproyectos.html', contexto)
 
 def Login(request):
   if request.method == 'GET':
@@ -47,6 +57,7 @@ def Login(request):
     
     respuesta = iniciar_sesion(correo, contra)
     if 'error' not in respuesta:
+      request.session['id_usuario'] = str(respuesta['ID_USUARIO'])
       request.session['usuario'] = respuesta
       return redirect('Home')
     else:
@@ -64,9 +75,9 @@ def obtener_ruta_sin_perfil():
 def Signup(request):
   if request.method == 'GET':
     contexto = {
-      'sedes':consulta_sede(),
-      'carreras':consulta_carrera(),
-      'escuelas':consulta_escuela()
+      'sedes':consulta_sede(request),
+      'carreras':consulta_carrera(request),
+      'escuelas':consulta_escuela(request)
     }
     return render(request, 'signup.html', contexto)
   if request.method == 'POST':

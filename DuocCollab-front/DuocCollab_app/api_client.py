@@ -8,11 +8,11 @@ load_dotenv()
 BASE_API_URL = 'http://127.0.0.1:5050/api/'
 API_TOKEN=os.getenv('API_TOKEN')
 
-def headers_auth():
+def headers_auth(request):
     return {
         'Authorization': f'Bearer {API_TOKEN}',
         'Content-Type':'application/json',
-        #'X-User-ID': request.session.get('id_usuario')
+        'X-User-ID': request.session.get('id_usuario')
     }
 
 
@@ -23,6 +23,10 @@ def trae_img_perfil(perfil, portada):
 
     return url_perfil, url_portada
 
+def trae_img_proyecto(proyecto):
+
+    url_proyecto = f'{BASE_API_URL}uploads/imagenes_proyecto/{proyecto}'
+    return url_proyecto
 
 
 
@@ -34,21 +38,21 @@ def iniciar_sesion(correo, contrasenia):
         f'{BASE_API_URL}login', 
         json={'CORREO':correo,'CONTRASENIA':contrasenia}
     )
-    print(response.status_code)
-    print(response.text)
+    #print(response.status_code)
+    #print(response.text)
     return response.json()
 
 
-def consulta_sede():
-    response = requests.get(f'{BASE_API_URL}sedes', headers=headers_auth())
+def consulta_sede(request):
+    response = requests.get(f'{BASE_API_URL}sedes', headers=headers_auth(request))
     if response.ok:
         return response.json()
     else:
         print(f'Error en la API: {response.status_code} - {response.text}')
         return []
     
-def consulta_carrera():
-    response = requests.get(f'{BASE_API_URL}carreras', headers=headers_auth())
+def consulta_carrera(request):
+    response = requests.get(f'{BASE_API_URL}carreras', headers=headers_auth(request))
     if response.ok:
         return response.json()
     else:
@@ -56,8 +60,8 @@ def consulta_carrera():
         return []
 
     
-def consulta_escuela():
-    response = requests.get(f'{BASE_API_URL}escuelas', headers=headers_auth())
+def consulta_escuela(request):
+    response = requests.get(f'{BASE_API_URL}escuelas', headers=headers_auth(request))
     if response.ok:
         return response.json()
     else:
@@ -65,8 +69,8 @@ def consulta_escuela():
         return []
     
 
-def consulta_escuela():
-    response = requests.get(f'{BASE_API_URL}escuelas', headers=headers_auth())
+def consulta_escuela(request):
+    response = requests.get(f'{BASE_API_URL}escuelas', headers=headers_auth(request))
     if response.ok:
         return response.json()
     else:
@@ -74,7 +78,7 @@ def consulta_escuela():
         return []
     
 def registrar_usuario(data, archivos = None):
-    headers = headers_auth()
+    headers = headers_auth(request)
     headers.pop('Content-Type', None)
     response = requests.post(
         f'{BASE_API_URL}usuarios', 
@@ -85,8 +89,8 @@ def registrar_usuario(data, archivos = None):
     return response
 
 
-def consulta_mis_proyectos():
-    response = requests.get(f'{BASE_API_URL}mis-proyectos', headers=headers_auth())
+def consulta_mis_proyectos(request):
+    response = requests.get(f'{BASE_API_URL}mis-proyectos', headers=headers_auth(request))
     if response.ok:
         return response.json()
     else:

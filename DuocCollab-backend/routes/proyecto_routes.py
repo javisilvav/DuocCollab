@@ -55,7 +55,6 @@ def proyectos():
 def mis_proyectos():
     verificar_token()
     id_usuario = request.headers.get('X-User-ID')
-    print(id_usuario)
     if not id_usuario:
         return jsonify({'error': 'ID de usuario no proporcionado'}), 400
 

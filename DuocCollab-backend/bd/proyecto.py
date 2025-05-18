@@ -19,13 +19,16 @@ def obtener_integrantes_proyecto():
     integrantes_proyectos = requests.get(table_url('INTEGRANTES_PROYECTO'), headers=headerApi()).json()
     integrantes = requests.get(table_url('USUARIO'), headers = headerApi()).json()
     proyectos = requests.get(table_url('PROYECTO'),headers=headerApi()).json()
+    
 
     dict_integrantes = {s['ID_USUARIO']: f"{s['NOMBRE']} {s['APELLIDO']}" for s in integrantes}
     dict_proyecto = {s['ID_PROYECTO']: s['NOMBRE_PROYECTO']for s in proyectos}
+    
 
     for item in integrantes_proyectos:
         item['USUARIO'] = dict_integrantes.get(item['ID_USUARIO'],'Desconocida')
         item['PROYECTO'] = dict_proyecto.get(item['ID_PROYECTO'], 'Desconocida')
+        
 
         
     return integrantes_proyectos
@@ -65,12 +68,17 @@ def obtener_proyectos():
     propietario = requests.get(table_url('USUARIO'), headers = headerApi()).json()
     sedes = requests.get(table_url('SEDE'), headers=headerApi()).json()
 
+
+
+
     dict_propietario = {s['ID_USUARIO']: f"{s['NOMBRE']} {s['APELLIDO']}" for s in propietario}
     dict_sedes = {s['ID_SEDE']: s['NOMBRE_SEDE'] for s in sedes}
+
 
     for item in proyectos_data:
         item['USUARIO'] = dict_propietario.get(item['ID_USUARIO'], 'Desconocida')
         item['SEDE'] = dict_sedes.get(item['ID_SEDE'],'Desconocida')
+
 
     return proyectos_data
 
