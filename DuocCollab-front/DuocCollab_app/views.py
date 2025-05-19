@@ -55,9 +55,11 @@ def Login(request):
         respuesta = iniciar_sesion(correo, contra)
         if 'error' not in respuesta:
             usuario = respuesta['usuario']
-            request.session['id_usuario'] = str(usuario['ID_USUARIO'])
+            token = respuesta['token']
+
+            request.session['jwt_token'] = token
             request.session['usuario'] = usuario
-            request.session['jwt_token'] = respuesta['token']
+
             return redirect('Home')
         else:
             return render(request, 'login.html', {'error': respuesta['error']})

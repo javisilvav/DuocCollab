@@ -1,3 +1,11 @@
+# Crear  .env en DuocCollab-backend  ya agregar siguientes variables
+
+SUPABASE_URL=
+SUPABASE_KEY=
+SECRET_KEY=
+JWT_ALGORITHM=HS256
+
+
 
 #Crear entorno
 python -m venv venv
@@ -9,10 +17,19 @@ python -m venv venv
 #pip necesarios a instalar
 pip install flask
 pip install flask-cors
+pip install requests
+pip install dotenv
+pip install django
+
 
 #Ruta e iniciar proyecto
 cd DuocCollab-backend
 python app.py  
+
+
+
+
+
 
 
 
@@ -26,5 +43,4 @@ python app.py
 #Ruta e iniciar proyecto
 cd DuocCollab-front
 python manage.py runserver
-
 
