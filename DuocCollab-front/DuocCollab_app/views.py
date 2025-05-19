@@ -12,7 +12,6 @@ def Home(request):
 def Proyectos(request):
   return render(request, 'proyectos.html')
 
-
 @login_required
 def Perfil(request):
   usuario = request.session.get('usuario')
