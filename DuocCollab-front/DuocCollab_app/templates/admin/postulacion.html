@@ -1,0 +1,80 @@
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Panel de Administración: Postulacion</h2>
+
+  <!-- Formulario -->
+  <div class="card mb-4 shadow">
+    <div class="card-body">
+      <form id="formRelacion">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="usuario" class="form-label">Usuario</label>
+            <select id="usuario" class="form-select" required>
+              <option selected>Seleccione un usuario</option>
+              {% for usuario in usuarios %}
+                <option value="{{ usuario.ID_USUARIO }}">{{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="proyecto" class="form-label">Proyecto</label>
+            <select id="proyecto" class="form-select" required>
+              <option selected>Seleccione un proyecto</option>
+              {% for proyecto in proyectos %}
+                <option value="{{ proyecto.ID_PROYECTO }}">{{ proyecto.NOMBRE_PROYECTO }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="fecha_post" class="form-label">Fecha postulación</label>
+            <input type="datetime-local" name="fecha_post" class="form-control" id="fecha_post" required>
+          </div>
+          <div class="col-md-6">
+            <label for="fecha_res" class="form-label">Fecha resolución</label>
+            <input type="datetime-local" name="fecha_res" class="form-control" id="fecha_res">
+          </div>
+        </div>
+        <div class="mt-4 text-end">
+          <button type="submit" class="btn btn-primary">Agregar Postulación</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabla de relaciones -->
+  <div class="card shadow">
+    <div class="card-body">
+      <h5 class="card-title">Postulaciones existentes</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle" id="tablaRelaciones">
+          <thead class="table-dark">
+            <tr>
+              <th>ID postulación</th>
+              <th>ID usuario</th>
+              <th>ID proyecto</th>
+              <th>Fecha postulación</th>
+              <th>Fecha resolución</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for postulacion in postulaciones %}
+              <tr>
+                <td>{{ postulacion.ID_POSTULACION }}</td>
+                <td>{{ postulacion.ID_USUARIO }}</td>
+                <td>{{ postulacion.ID_PROYECTO }}</td>
+                <td>{{ postulacion.FECHA_POSTULACION }}</td>
+                <td>{{ postulacion.FECHA_RESOLUCION }}</td>
+                <td>{{ postulacion.ESTADO }}</td>
+                <td>
+                  <button class="btn btn-sm btn-warning me-2">Editar</button>
+                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

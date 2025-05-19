@@ -1,0 +1,120 @@
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Panel de Administración: Proyecto</h2>
+
+  <!-- Formulario -->
+  <div class="card mb-4 shadow">
+    <div class="card-body">
+      <form id="formRelacion">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="usuario" class="form-label">Usuario</label>
+            <select id="usuario" class="form-select" required>
+              <option selected>Seleccione un usuario</option>
+              {% for usuario in usuarios %}
+                <option value="{{ usuario.ID_USUARIO }}">{{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="titulo" class="form-label">Titulo</label>
+            <input type="text" name="titulo" class="form-control" id="titulo" placeholder="API veterinaria" required>
+          </div>
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre proyecto</label>
+            <input type="text" name="nombre" class="form-control" id="nombre" placeholder="DATAVET" required>
+          </div>
+          <div class="col-md-6">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <input type="text" name="descripcion" class="form-control" id="descripcion" placeholder="Descripción del proyecto" required>
+          </div>
+          <div class="col-md-6">
+            <label for="fecha" class="form-label">Fecha inicio</label>
+            <input type="date" name="fecha" class="form-control" id="fecha" required>
+          </div>
+          <div class="col-md-6">
+            <label for="duracion" class="form-label">Duración</label>
+            <input type="text" name="duracion" class="form-control" id="duracion" required>
+          </div>
+          <div class="col-md-6">
+            <label for="sede" class="form-label">Sede</label>
+            <select id="sede" class="form-select" required>
+              <option selected>Seleccione una sede</option>
+              {% for sede in sedes %}
+                <option value="{{ sede.ID_SEDE }}">{{ sede.NOMBRE_SEDE }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="requisitos" class="form-label">Requisitos</label>
+            <input type="text" name="requisitos" class="form-control" id="requisitos" placeholder="Requisitos del proyecto" required>
+          </div>
+          <div class="col-md-6">
+            <label for="carrera" class="form-label">Carrera</label>
+            <select id="carrera" class="form-select" required>
+              <option selected>Seleccione una carrera</option>
+              {% for carrera in carreras %}
+                <option value="{{ carrera.ID_CARRERA }}">{{ carrera.NOMBRE }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="foto_proyecto" class="form-label">Foto de proyecto</label>
+            <input type="file" class="form-control" id="foto_proyecto">
+          </div>
+        </div>
+        <div class="mt-4 text-end">
+          <button type="submit" class="btn btn-primary">Agregar Proyecto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card shadow">
+    <div class="card-body">
+      <h5 class="card-title">Proyectos existentes</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle" id="tablaRelaciones">
+          <thead class="table-dark">
+            <tr>
+              <th>ID proyecto</th>
+              <th>ID usuario</th>
+              <th>Titulo</th>
+              <th>Nombre proyecto</th>
+              <th>Descripción</th>
+              <th>Fecha incio</th>
+              <th>Duración</th>
+              <th>Sede</th>
+              <th>Requisitos</th>
+              <th>Carrera destino</th>
+              <th>Foto proyecto</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for proyecto in proyectos %}
+            <tr>
+              <td>{{ proyecto.ID_PROYECTO }}</td>
+              <td>{{ proyecto.ID_USUARIO }}</td>
+              <td>{{ proyecto.TITULO }}</td>
+              <td>{{ proyecto.NOMBRE_PROYECTO }}</td>
+              <td>{{ proyecto.DESCRIPCION }}</td>
+              <td>{{ proyecto.FECHA_INICIO }}</td>
+              <td>{{ proyecto.DURACION }}</td>
+              <td>{{ proyecto.ID_SEDE }}</td>
+              <td>{{ proyecto.REQUISITOS }}</td>
+              <td>{{ proyecto.CARRERA_DESTINO }}</td>
+              <td>{{ proyecto.FOTO_PROYECTO }}</td>
+              <td>{{ proyecto.ESTADO }}</td>
+              <td>
+                <button class="btn btn-sm btn-warning me-2">Editar</button>
+                <button class="btn btn-sm btn-danger">Desactivar</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

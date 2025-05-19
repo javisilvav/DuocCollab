@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from .api_client import iniciar_sesion, consulta_sede, consulta_carrera, consulta_escuela, registrar_usuario, trae_img_perfil
+from .api_client import iniciar_sesion, consulta_sede, consulta_carrera, consulta_escuela, registrar_usuario, trae_img_perfil, consulta_sede_escuela, consulta_etiqueta, consulta_usuario, consulta_proyecto
+from .api_client import consuta_proyecto_etiqueta, consulta_integrantes, consulta_postulacion
 import os
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -120,3 +121,92 @@ def EditarPerfil(request):
   }
 
   return render(request, 'editar_perfil.html', contexto)
+
+
+def Admin(request):
+  return render(request, 'admin/admin.html')
+
+def Carreras(request):
+  if request.method == 'GET':
+    contexto = {
+      'carreras':consulta_carrera(),
+      'escuelas':consulta_escuela()
+    }
+  return render(request, 'admin/carrera.html', contexto)
+
+
+def Escuelas(request):
+  if request.method == 'GET':
+    contexto = {
+      'escuelas':consulta_escuela()
+    }
+  return render(request, 'admin/escuela.html', contexto)
+
+def Etiquetas(request):
+  if request.method == 'GET':
+    contexto = {
+      'etiquetas':consulta_etiqueta()
+    }
+  return render(request, 'admin/etiqueta.html', contexto)
+
+def IntegrantesProyecto(request):
+  if request.method == 'GET':
+    contexto = {
+      'integrantes':consulta_integrantes(),
+      'proyectos':consulta_proyecto(),
+      'usuarios':consulta_usuario()
+    }
+  return render(request, 'admin/integrantes_proyecto.html', contexto)
+
+def Postulaciones(request):
+  if request.method == 'GET':
+    contexto = {
+      'postulaciones':consulta_postulacion(),
+      'proyectos':consulta_proyecto(),
+      'usuarios':consulta_usuario()
+    }
+  return render(request, 'admin/postulacion.html', contexto)
+
+def ProyectoEtiqueta(request):
+  if request.method == 'GET':
+    contexto = {
+      'proyecto_etiqueta':consuta_proyecto_etiqueta(),
+      'etiquetas':consulta_etiqueta(),
+      'proyectos':consulta_proyecto()
+    }
+  return render(request, 'admin/proyecto_etiqueta.html', contexto)
+
+def ProyectosAdmin(request):
+  if request.method == 'GET':
+    contexto = {
+      'proyectos':consulta_proyecto(),
+      'carreras':consulta_carrera(),
+      'sedes':consulta_sede(),
+      'usuarios':consulta_usuario(),
+    }
+  return render(request, 'admin/proyecto.html', contexto)
+
+def SedeEscuela(request):
+  if request.method == 'GET':
+    contexto = {
+      'sedes':consulta_sede(),
+      'sede_escuela':consulta_sede_escuela(),
+      'escuelas':consulta_escuela()
+    }
+  return render(request, 'admin/sede_escuela.html', contexto)
+
+def Sede(request):
+  if request.method == 'GET':
+    contexto = {
+      'sedes':consulta_sede()
+    }
+  return render(request, 'admin/sede.html', contexto)
+
+def Usuarios(request):
+  if request.method == 'GET':
+    contexto = {
+      'usuarios':consulta_usuario(),
+      'carreras':consulta_carrera(),
+      'etiquetas':consulta_etiqueta(),
+    }
+  return render(request, 'admin/usuario.html', contexto)

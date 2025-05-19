@@ -1,0 +1,50 @@
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Panel de Administración: Escuela</h2>
+
+  <!-- Formulario -->
+  <div class="card mb-4 shadow">
+    <div class="card-body">
+      <form id="formEscuela">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre de la escuela</label>
+            <input type="text" name="nombre" class="form-control" id="nombre" placeholder="ADMINISTRACION" required>
+          </div>
+        </div>
+        <div class="mt-4 text-end">
+          <button type="submit" class="btn btn-primary">Agregar Escuela</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabla de relaciones -->
+  <div class="card shadow">
+    <div class="card-body">
+      <h5 class="card-title">Escuelas existentes</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle" id="tablaRelaciones">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Nombre Escuela</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for escuela in escuelas %}
+              <tr>
+                <td> {{ escuela.ID_ESCUELA }} </td>
+                <td> {{ escuela.NOMBRE_ESC }} </td>
+                <td>
+                  <button class="btn btn-sm btn-warning me-2">Editar</button>
+                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

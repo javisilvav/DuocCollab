@@ -1,0 +1,100 @@
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Panel de Administración: Usuario</h2>
+
+  <!-- Formulario -->
+  <div class="card mb-4 shadow">
+    <div class="card-body">
+      <form id="formRelacion">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Juanito" required>
+          </div>
+          <div class="col-md-6">
+            <label for="apellido" class="form-label">Apellido</label>
+            <input type="text" name="apellido" class="form-control" id="apellido" placeholder="Perez" required>
+          </div>
+          <div class="col-md-6">
+            <label for="email" class="form-label">Correo</label>
+            <input type="email" name="email" class="form-control" id="email" placeholder="hola@duocuc.cl" required>
+          </div>
+          <div class="col-md-6">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" name="password" class="form-control" id="password" placeholder="********" required>
+          </div>
+          <div class="col-md-6">
+            <label for="carrera" class="form-label">Carrera</label>
+            <select id="carrera" class="form-select" required>
+              <option selected>Seleccione una carrera</option>
+              {% for carrera in carreras %}
+                <option value="{{ carrera.ID_CARRERA }}">{{ carrera.NOMBRE }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="intereses" class="form-label">Intereses</label>
+            <select id="intereses" class="form-select" required>
+              <option selected>Seleccione un interes</option>
+              {% for etiqueta in etiquetas %}
+                <option value="{{ etiqueta.ID_ETIQUETA }}">{{ etiqueta.NOMBRE }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="foto_perfil" class="form-label">Foto de perfil</label>
+            <input type="file" class="form-control" id="archivo_perfil">
+          </div>
+          <div class="col-md-6">
+            <label for="foto_portada" class="form-label">Foto de portada</label>
+            <input type="file" class="form-control" id="archivo_portada">
+          </div>
+        </div>
+        <div class="mt-4 text-end">
+          <button type="submit" class="btn btn-primary">Agregar Usuario</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <div class="card shadow">
+    <div class="card-body">
+      <h5 class="card-title">Usuarios existentes</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle" id="tablaRelaciones">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Correo</th>
+              <th>Carrera</th>
+              <th>Intereses</th>
+              <th>Foto perfil</th>
+              <th>Foto portada</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for usuario in usuarios %}
+              <tr>
+                <td> {{ usuario.ID_USUARIO }} </td>
+                <td> {{ usuario.NOMBRE }} </td>
+                <td> {{ usuario.APELLIDO }} </td>
+                <td> {{ usuario.CORREO }} </td>
+                <td> {{ usuario.CARRERA }} </td>
+                <td> {{ usuario.INTERESES }} </td>
+                <td> {{ usuario.FOTO_PERFIL }} </td>
+                <td> {{ usuario.FOTO_PORTADA }} </td>
+                <td>
+                  <button class="btn btn-sm btn-warning me-2">Editar</button>
+                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,70 @@
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Panel de Administración: Integrantes Proyecto</h2>
+
+  <!-- Formulario -->
+  <div class="card mb-4 shadow">
+    <div class="card-body">
+      <form id="formRelacion">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="usuario" class="form-label">Usuario</label>
+            <select id="usuario" class="form-select" required>
+              <option selected>Seleccione un usuario</option>
+              {% for usuario in usuarios %}
+                <option value="{{ usuario.ID_USUARIO }}">{{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="proyecto" class="form-label">Proyecto</label>
+            <select id="proyecto" class="form-select" required>
+              <option selected>Seleccione un proyecto</option>
+              {% for proyecto in proyectos %}
+                <option value="{{ proyecto.ID_PROYECTO }}">{{ proyecto.NOMBRE_PROYECTO }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="rol" class="form-label">ROL</label>
+            <input type="text" name="rol" class="form-control" id="rol" placeholder="Integrante" required>
+          </div>
+        </div>
+        <div class="mt-4 text-end">
+          <button type="submit" class="btn btn-primary">Agregar Relación</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabla de relaciones -->
+  <div class="card shadow">
+    <div class="card-body">
+      <h5 class="card-title">Relaciones existentes</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle" id="tablaRelaciones">
+          <thead class="table-dark">
+            <tr>
+              <th>ID usuario</th>
+              <th>ID proyecto</th>
+              <th>ROL</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for integrante in integrantes %}
+              <tr>
+                <td>{{ integrante.ID_USUARIO }}</td>
+                <td>{{ integrante.ID_PROYECTO }}</td>
+                <td>{{ integrante.ROL }}</td>
+                <td>
+                  <button class="btn btn-sm btn-warning me-2">Editar</button>
+                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Panel de Administración: Carrera</h2>
+
+  <!-- Formulario -->
+  <div class="card mb-4 shadow">
+    <div class="card-body">
+      <form id="formCarrera">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre de la carrera</label>
+            <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Ingeniería en Computación" required>
+          </div>
+          <div class="col-md-6">
+            <label for="escuela" class="form-label">Escuela</label>
+            <select id="escuela" class="form-select" required>
+              <option selected>Seleccione una escuela</option>
+              {% for escuela in escuelas %}
+                <option value="{{ escuela.ID_ESCUELA }}">{{ escuela.NOMBRE_ESC }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="mt-4 text-end">
+          <button type="submit" class="btn btn-primary">Agregar Carrera</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card shadow">
+    <div class="card-body">
+      <h5 class="card-title">Carreras existentes</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle" id="tablaRelaciones">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Nombre Carrera</th>
+              <th>Escuela</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for carrera in carreras %}
+              <tr>
+                <td> {{ carrera.ID_CARRERA }} </td>
+                <td> {{ carrera.NOMBRE }} </td>
+                <td> {{ carrera.ID_ESCUELA }} </td>
+                <td>
+                  <button class="btn btn-sm btn-warning me-2">Editar</button>
+                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

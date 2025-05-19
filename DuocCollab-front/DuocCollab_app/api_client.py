@@ -84,3 +84,59 @@ def registrar_usuario(data, archivos = None):
         headers=headers
     )
     return response
+
+def consulta_sede_escuela():
+    response = requests.get(f'{BASE_API_URL}sedeEscuela', headers=headers_auth())
+    if response.ok:
+        return response.json()
+    else:
+        print(f'Error en la API: {response.status_code} - {response.text}')
+        return []
+    
+def consulta_etiqueta():
+    response = requests.get(f'{BASE_API_URL}etiquetas', headers=headers_auth())
+    if response.ok:
+        return response.json()
+    else:
+        print(f'Error en la API: {response.status_code} - {response.text}')
+        return []
+    
+def consulta_usuario():
+    response = requests.get(f'{BASE_API_URL}usuarios', headers=headers_auth())
+    if response.ok:
+        return response.json()
+    else:
+        print(f'Error en la API: {response.status_code} - {response.text}')
+        return []
+    
+def consulta_proyecto():
+    response = requests.get(f'{BASE_API_URL}proyectos', headers=headers_auth())
+    if response.ok:
+        return response.json()
+    else:
+        print(f'Error en la API: {response.status_code} - {response.text}')
+        return []
+    
+def consuta_proyecto_etiqueta():
+    response = requests.get(f'{BASE_API_URL}proyectoEtiqueta', headers=headers_auth())
+    if response.ok:
+        return response.json()
+    else:
+        print(f'Error en la API: {response.status_code} - {response.text}')
+        return []
+    
+def consulta_integrantes():
+    response = requests.get(f'{BASE_API_URL}integrantesProyectos', headers=headers_auth())
+    if response.ok:
+        return response.json()
+    else:
+        print(f'Error en la API: {response.status_code} - {response.text}')
+        return []
+    
+def consulta_postulacion():
+    response = requests.get(f'{BASE_API_URL}postulantes', headers=headers_auth())
+    if response.ok:
+        return response.json()
+    else:
+        print(f'Error en la API: {response.status_code} - {response.text}')
+        return []
