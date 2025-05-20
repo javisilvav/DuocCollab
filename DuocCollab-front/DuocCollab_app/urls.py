@@ -15,4 +15,5 @@ urlpatterns = [
     path('signup/', views.Signup, name='Signup'),
     path('reset_password/', views.ResetPassword, name='ResetPassword'),
     path('subir_proyecto/', views.SubirProyecto, name='SubirProyecto'),
+    path('imagen-protegida/<str:filename>/', views.ImagenProtegida, name='imagen_protegida'),
 ]

@@ -55,6 +55,11 @@ def obtener_proyectos_por_usuario(id_usuario):
     filtrados = [p for p in todos if str(p.get('ID_USUARIO')) == str(id_usuario)]
     return filtrados
 
+def obtener_postulaciones_por_usuario(id_usuario):
+    todos = obtener_postulaciones()
+    filtrados = [p for p in todos if str(p.get('ID_USUARIO')) == str(id_usuario)]
+    return filtrados
+
 
 
 

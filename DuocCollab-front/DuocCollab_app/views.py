@@ -7,8 +7,9 @@ from .api_client import (
     registrar_usuario, 
     trae_img_perfil, 
     consulta_mis_proyectos,
-    trae_img_proyecto
+    consulta_mis_postulaciones
 )
+import requests
 import os
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -34,16 +35,67 @@ def Perfil(request):
 def ProyectosDetail(request):
     return render(request, 'proyectos_detail.html')
 
-def MisPostulaciones(request):
-    return render(request, 'mispostulaciones.html')
+
+
+
+@login_required
+def ImagenProtegida(request, filename):
+    token = request.session.get('jwt_token')
+    if not token:
+        print('No autorizado: No hay token')
+        return
+
+    url = f'http://localhost:5000/api/uploads/imagen_proyecto/{filename}'
+    print(f"URL solicitada: {url}")
+    print(f"Usando token: {token}")
+
+    try:
+        response = requests.get(url, headers={
+            'Authorization': f'Bearer {token}'
+        }, stream=True)
+
+        if response.status_code == 200:
+            content_type = response.headers.get('Content-Type', 'image/jpeg')
+            print(f"[OK] Imagen obtenida. Content-Type: {content_type}, tamaño: {len(response.content)} bytes")
+        else:
+            print(f"[ERROR] No se pudo obtener la imagen. Código HTTP: {response.status_code}")
+            print(f"Respuesta: {response.text}")
+
+    except Exception as e:
+        print(f"[EXCEPCIÓN] Error al obtener la imagen: {e}")
 
 
 def MisProyectos(request):
     data = consulta_mis_proyectos(request)
+    for proyecto in data:
+        filename = proyecto.get('FOTO_PROYECTO')
+
+        if filename:
+            proyecto['FOTO_PROYECTO'] = f"http://127.0.0.1:5050/api/uploads/imagen_proyecto/{filename}"
+        else:
+            proyecto['FOTO_PROYECTO'] = '/static/img/sin_perfil.png'  # fallback local
     contexto = {
-        'proyectos': data
+        'proyectos': data,
     }
     return render(request, 'misproyectos.html', contexto)
+
+def MisPostulaciones(request):
+    data = consulta_mis_postulaciones(request)
+    
+    for postulacion in data:
+        proyecto = postulacion.get('PROYECTO', {})
+        filename = proyecto.get('FOTO_PROYECTO')
+        
+        if filename:
+            proyecto['FOTO_PROYECTO'] = f"http://127.0.0.1:5050/api/uploads/imagen_proyecto/{filename}"
+        else:
+            proyecto['FOTO_PROYECTO'] = '/static/img/sin_perfil.png'  # fallback local
+        print(proyecto['FOTO_PROYECTO'])
+    contexto = {
+        'postulaciones': data
+    }
+    return render(request, 'mispostulaciones.html', contexto)
+
 
 def Login(request):
     if request.method == 'GET':

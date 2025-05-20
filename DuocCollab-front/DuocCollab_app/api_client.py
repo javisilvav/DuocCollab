@@ -77,6 +77,18 @@ def consulta_mis_proyectos(request):
         print(f'Token inválido o ausente: {e}')
     return []
 
+
+def consulta_mis_postulaciones(request):
+    try:
+        response = requests.get(f'{BASE_API_URL}mis-postulaciones', headers=headers_auth(request))
+        if response.ok:
+            return response.json()
+        else:
+            print(f'Error en la API: {response.status_code} - {response.text}')
+    except Exception as e:
+        print(f'Token inválido o ausente: {e}')
+    return []
+
 # REGISTRO DE USUARIOS
 def registrar_usuario(request, data, archivos=None):
     try:

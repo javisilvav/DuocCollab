@@ -44,12 +44,6 @@ def crear_integrante(data: dict) -> requests.Response:
         })
     )
 
-def obtener_postulaciones():
-    resp = requests.get(table_url('POSTULACION'), headers=headerApi())
-
-    
-    return resp.json() if resp.ok else []
-
 def crear_postulacion(data: dict) -> requests.Response:
     return requests.post(
         table_url('POSTULACION'),
@@ -68,19 +62,26 @@ def obtener_proyectos():
     propietario = requests.get(table_url('USUARIO'), headers = headerApi()).json()
     sedes = requests.get(table_url('SEDE'), headers=headerApi()).json()
 
-
-
-
     dict_propietario = {s['ID_USUARIO']: f"{s['NOMBRE']} {s['APELLIDO']}" for s in propietario}
     dict_sedes = {s['ID_SEDE']: s['NOMBRE_SEDE'] for s in sedes}
-
-
     for item in proyectos_data:
         item['USUARIO'] = dict_propietario.get(item['ID_USUARIO'], 'Desconocida')
         item['SEDE'] = dict_sedes.get(item['ID_SEDE'],'Desconocida')
-
-
     return proyectos_data
+
+def obtener_postulaciones():
+    postulacion_data = requests.get(table_url('POSTULACION'), headers=headerApi()).json()
+    propietario = requests.get(table_url('USUARIO'), headers = headerApi()).json()
+    proyectos = requests.get(table_url('PROYECTO'), headers=headerApi()).json()
+
+    dict_propietario = {s['ID_USUARIO']: f"{s['NOMBRE']} {s['APELLIDO']}" for s in propietario}
+    dict_proyectos = {s['ID_PROYECTO']: {'NOMBRE_PROYECTO': s['NOMBRE_PROYECTO'], 'FOTO_PROYECTO': s['FOTO_PROYECTO'] } for s in proyectos}
+    for item in postulacion_data:
+        item['USUARIO'] = dict_propietario.get(item['ID_USUARIO'], 'Desconocida')
+        item['PROYECTO'] = dict_proyectos.get(item['ID_PROYECTO'],'Desconocida')
+        proyecto_foto = dict_proyectos.get(item['ID_PROYECTO'], {})
+        item['FOTO_PROYECTO'] = proyecto_foto.get('imagen', '')
+    return postulacion_data
 
 
 

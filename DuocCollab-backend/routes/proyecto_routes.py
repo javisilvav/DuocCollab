@@ -22,7 +22,7 @@ def guardar_archivo(nombre):
 # Imagen proyecto
 @proyecto_bp.route('/api/uploads/imagen_proyecto/<filename>', methods=['GET'])
 def obtener_imagen(filename):
-    verificar_token()
+    #verificar_token()
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 
@@ -59,6 +59,14 @@ def mis_proyectos():
 
     proyectos = obtener_proyectos_por_usuario(id_usuario)
     return jsonify(proyectos), 200
+
+# Mis Proyectos (filtrados por usuario que hace la solicitud)
+@proyecto_bp.route('/api/mis-postulaciones', methods=['GET'])
+def mis_postulaciones():
+    id_usuario = verificar_token()
+
+    postulaciones = obtener_postulaciones_por_usuario(id_usuario)
+    return jsonify(postulaciones), 200
 
 
 # Etiquetas
