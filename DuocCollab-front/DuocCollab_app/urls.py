@@ -27,4 +27,5 @@ urlpatterns = [
     path('admin/sede/', views.Sede , name='Sede'),  # Admin Campus page view
     path('admin/usuario/', views.Usuarios , name='Usuarios'),  # Admin Users page view
     path('admin/inicio/', views.Inicio , name='Inicio'),  # Admin Home page view
+    path('admin/login/', views.AdminLogin , name='AdminLogin'),  # Admin login page view
 ]

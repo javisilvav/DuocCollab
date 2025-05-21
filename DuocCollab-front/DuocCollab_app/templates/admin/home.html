@@ -29,65 +29,41 @@
   </div>
 
   <!-- Tabla de ejemplo -->
-  <div class="mt-5">
-    <h4>Últimos usuarios registrados</h4>
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Fecha registro</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Ana Torres</td>
-          <td>ana@example.com</td>
-          <td>20/05/2025</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Carlos Díaz</td>
-          <td>carlos@example.com</td>
-          <td>19/05/2025</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Laura Pérez</td>
-          <td>laura@example.com</td>
-          <td>18/05/2025</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="mt-5 card shadow">
+    <div class="card-body">
+      <h4 class="card-title">Últimos usuarios registrados</h4>
+      <table class="table table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Fecha registro</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Ana Torres</td>
+            <td>ana@example.com</td>
+            <td>20/05/2025</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Carlos Díaz</td>
+            <td>carlos@example.com</td>
+            <td>19/05/2025</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Laura Pérez</td>
+            <td>laura@example.com</td>
+            <td>18/05/2025</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-<canvas id="myChart" style="width:100%;max-width:600px"></canvas>
 
-
-<script>
-const xValues = [50,60,70,80,90,100,110,120,130,140,150];
-const yValues = [7,8,8,9,9,9,10,11,14,14,15];
-
-new Chart("myChart", {
-  type: "line",
-  data: {
-    labels: xValues,
-    datasets: [{
-      fill: false,
-      lineTension: 0,
-      backgroundColor: "rgba(0,0,255,1.0)",
-      borderColor: "rgba(0,0,255,0.1)",
-      data: yValues
-    }]
-  },
-  options: {
-    legend: {display: false},
-    scales: {
-      yAxes: [{ticks: {min: 6, max:16}}],
-    }
-  }
-});
-</script>

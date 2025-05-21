@@ -212,3 +212,6 @@ def Usuarios(request):
 
 def Inicio(request):
   return render(request, 'admin/home.html')
+
+def AdminLogin(request):
+  return render(request, 'admin/signin.html')
