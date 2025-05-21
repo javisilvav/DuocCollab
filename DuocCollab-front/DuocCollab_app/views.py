@@ -209,3 +209,6 @@ def Usuarios(request):
       'etiquetas':consulta_etiqueta(),
     }
   return render(request, 'admin/usuario.html', contexto)
+
+def Inicio(request):
+  return render(request, 'admin/home.html')

@@ -25,5 +25,5 @@ function cargarContenido(seccion) {
 }
 // Cargar la sección "postulaciones" por defecto al cargar la página
 document.addEventListener('DOMContentLoaded', function () {
-  cargarContenido('proyecto_etiqueta');
+  cargarContenido('inicio');
 });
