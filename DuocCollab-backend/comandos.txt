@@ -18,10 +18,14 @@ python -m venv venv
 
 #5- pip necesarios a instalar
 #Se pueden instalar ingresando a:
-#cd DuocCollab-backend      
-#y dentro de carpeta backend ejecutar:
-#pip install -r requirements.txt
+cd DuocCollab-backend      
 
+#y dentro de carpeta backend ejecutar:
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+#Luego ya puedes iniciar tu proyecto 
+python app.py 
 
 #O instalar de manera manual
 python -m pip install --upgrade pip
