@@ -129,13 +129,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-# Usa sesiones basadas en cookies firmadas
+# Sesiones en cookies firmadas
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
-# Protege las cookies de sesión
+# Protege cookies
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = False  # Actívalo si usas HTTPS
 SESSION_COOKIE_SAMESITE = 'Lax'  # O 'Strict' si es necesario
 
-# Asegúrate de tener una clave secreta fuerte
 SECRET_KEY = 'Newww2Tok3nMagistral20392.new'

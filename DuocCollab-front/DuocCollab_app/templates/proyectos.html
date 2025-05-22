@@ -23,7 +23,6 @@
       color: #918E8E; 
       opacity: 1;
     }
-
     .tag-container {
       display: flex;
       flex-wrap: wrap;
@@ -50,7 +49,6 @@
       font-size: 14px;
     }
   </style>
-
 </head>
 <body>
   <header class="header">
@@ -104,129 +102,70 @@
           </form>
         </div>    
       </div> 
+
       <div class="row align-items-center pt-5">
         <div class="col tag-container">
           {% for etiqueta in etiquetas %}
             <a href="#" class="tag">{{ etiqueta.nombre }}</a>
           {% endfor %}
-          <a href="#" class="tag">AWS</a>
-          <a href="#" class="tag">Python</a>
-          <a href="#" class="tag">Negocios</a>
-          <a href="#" class="tag">Rural</a>
-          <a href="#" class="tag">Arte</a>
-          <a href="#" class="tag">SQL</a>
-          <a href="#" class="tag">Investigación</a>
         </div>
         <div class="col text-end">
           <button class="btn" style="font-size: 24px; font-weight: 700;">Filtros <i class="bi bi-filter"></i></button>
         </div>
       </div>
+
       <div class="row align-items-center pt-5" id="proyectos-container">
-        <div class="col-3 pb-3">
-          <div class="d-flex align-items-center">
-            <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #5BC2E7;">
-              SALUD Y BIENESTAR
+        {% for proyecto in proyectos %}
+          <div class="col-3 pb-3 proyecto-item" style="display: none;">
+            <div class="d-flex align-items-center">
+              <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #5BC2E7;">
+                {{ proyecto.NOMBRE_PROYECTO }}
+              </div>
+              <img src="{{ proyecto.FOTO_PROYECTO }}" alt="Foto" class="img-fluid" style="height: 292px;">
             </div>
-            <a href="{% url 'ProyectosDetail' %}">
-              <img src="{% static 'img/p_desc_2.jpg' %}" alt="Foto" class="img-fluid" style="height: 292px;">
-            </a>
           </div>
-        </div>
-        <div class="col-3 pb-3">
-          <div class="d-flex align-items-center">
-            <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #5BC2E7;">
-              SALUD Y BIENESTAR
-            </div>
-            <img src="{% static 'img/p_desc_2.jpg' %}" alt="Foto" class="img-fluid" style="height: 292px;">
-          </div>
-        </div>
-        <div class="col-3 pb-3">
-          <div class="d-flex align-items-center">
-            <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #43B02A;">
-              INGENIERIA Y RECURSOS NATURALES
-            </div>
-            <img src="{% static 'img/p_desc_1.jpg' %}" alt="Foto" class="img-fluid" style="width: 364px; height: 292px;">
-          </div>
-        </div>
-        <div class="col-3 pb-3">
-          <div class="d-flex align-items-center">
-            <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #5BC2E7;">
-              SALUD Y BIENESTAR
-            </div>
-            <img src="{% static 'img/p_desc_2.jpg' %}" alt="Foto" class="img-fluid" style="height: 292px;">
-          </div>
-        </div>
-        <div class="col-3 pb-3">
-          <div class="d-flex align-items-center">
-            <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #43B02A;">
-              INGENIERIA Y RECURSOS NATURALES
-            </div>
-            <img src="{% static 'img/p_desc_1.jpg' %}" alt="Foto" class="img-fluid" style="width: 364px; height: 292px;">
-          </div>
-        </div>
-        <div class="col-3 pb-3">
-          <div class="d-flex align-items-center">
-            <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #43B02A;">
-              INGENIERIA Y RECURSOS NATURALES
-            </div>
-            <img src="{% static 'img/p_desc_1.jpg' %}" alt="Foto" class="img-fluid" style="width: 364px; height: 292px;">
-          </div>
-        </div>
-        <div class="col-3 pb-3">
-          <div class="d-flex align-items-center">
-            <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #5BC2E7;">
-              SALUD Y BIENESTAR
-            </div>
-            <img src="{% static 'img/p_desc_2.jpg' %}" alt="Foto" class="img-fluid" style="height: 292px;">
-          </div>
-        </div>
-        <div class="col-3 pb-3">
-          <div class="d-flex align-items-center">
-            <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #5BC2E7;">
-              SALUD Y BIENESTAR
-            </div>
-            <img src="{% static 'img/p_desc_2.jpg' %}" alt="Foto" class="img-fluid" style="height: 292px;">
-          </div>
-        </div>
-        <div class="col-3 pb-3">
-          <div class="d-flex align-items-center">
-            <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #43B02A;">
-              INGENIERIA Y RECURSOS NATURALES
-            </div>
-            <img src="{% static 'img/p_desc_1.jpg' %}" alt="Foto" class="img-fluid" style="width: 364px; height: 292px;">
-          </div>
-        </div>
-        <div class="col-3 pb-3">
-          <div class="d-flex align-items-center">
-            <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #43B02A;">
-              INGENIERIA Y RECURSOS NATURALES
-            </div>
-            <img src="{% static 'img/p_desc_1.jpg' %}" alt="Foto" class="img-fluid" style="width: 364px; height: 292px;">
-          </div>
-        </div>
+        {% endfor %}
       </div>
+
       <div class="row align-items-center pt-5">
         <div class="col text-center">
-          <button class="btn" style="font-size: 24px; font-weight: 700; border: 1px solid black">Ver más proyectos</button>
+          <button id="ver-mas-btn" class="btn" style="font-size: 24px; font-weight: 700; border: 1px solid black">Ver más proyectos</button>
         </div>
       </div>
     </div>
   </main>
 
-  
-
-  
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+
   <script>
-    $(document).ready(function(){
+    const cantidadPorPagina = 8;
+    let cantidadMostrada = 0;
+
+    function mostrarSiguientesProyectos() {
+      const proyectos = $(".proyecto-item");
+      const total = proyectos.length;
+      proyectos.slice(cantidadMostrada, cantidadMostrada + cantidadPorPagina).fadeIn();
+      cantidadMostrada += cantidadPorPagina;
+
+      if (cantidadMostrada >= total) {
+        $("#ver-mas-btn").hide();
+      }
+    }
+
+    $(document).ready(function() {
+      mostrarSiguientesProyectos();
+
+      $("#ver-mas-btn").on("click", function() {
+        mostrarSiguientesProyectos();
+      });
+
       $("#search-input").on("keyup", function() {
         var value = $(this).val().toLowerCase();
-        $("#proyectos-container *").filter(function() {
+        $(".proyecto-item").filter(function() {
           $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
       });
     });
-    </script>
+  </script>
 </body>
 </html>

@@ -66,6 +66,18 @@ def consulta_escuela(request):
         print(f'Token inválido o ausente: {e}')
     return []
 
+def consulta_proyectos(request):
+    try:
+        response = requests.get(f'{BASE_API_URL}proyectos', headers=headers_auth(request))
+        if response.ok:
+            return response.json()
+        else:
+            print(f'Error en la API: {response.status_code} - {response.text}')
+    except Exception as e:
+        print(f'Token inválido o ausente: {e}')
+    return []
+
+
 def consulta_mis_proyectos(request):
     try:
         response = requests.get(f'{BASE_API_URL}mis-proyectos', headers=headers_auth(request))

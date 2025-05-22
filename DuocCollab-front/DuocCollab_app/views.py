@@ -7,7 +7,8 @@ from .api_client import (
     registrar_usuario, 
     trae_img_perfil, 
     consulta_mis_proyectos,
-    consulta_mis_postulaciones
+    consulta_mis_postulaciones,
+    consulta_proyectos
 )
 import requests
 import os
@@ -19,7 +20,18 @@ def Home(request):
     return render(request, 'index.html')  
 
 def Proyectos(request):
-    return render(request, 'proyectos.html')
+    data = consulta_proyectos(request)
+    for proyecto in data:
+        filename = proyecto.get('FOTO_PROYECTO')
+
+        if filename:
+            proyecto['FOTO_PROYECTO'] = f"http://127.0.0.1:5050/api/uploads/imagen_proyecto/{filename}"
+        else:
+            proyecto['FOTO_PROYECTO'] = '/static/img/sin_perfil.png'  # fallback local
+    contexto = {
+        'proyectos': data,
+    }
+    return render(request, 'proyectos.html', contexto)
 
 @login_required
 def Perfil(request):

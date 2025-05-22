@@ -1,4 +1,4 @@
-# Crear  .env en DuocCollab-backend  ya agregar siguientes variables
+# 1-   Crear archivo .env en DuocCollab-backend y agregar siguientes variables
 
 SUPABASE_URL=
 SUPABASE_KEY=
@@ -7,40 +7,45 @@ JWT_ALGORITHM=HS256
 
 
 
-#Crear entorno
+# 2- Abrir visual Studio y la terminal en CMD
+
+# 3- Crear entorno
 python -m venv venv
 
-#Inicializar entorno
+# 4- Inicializar entorno
 ..\venv\Scripts\activate
 
 
-#pip necesarios a instalar
+#5- pip necesarios a instalar
+#Se pueden instalar ingresando a:
+#cd DuocCollab-backend      
+#y dentro de carpeta backend ejecutar:
+#pip install -r requirements.txt
+
+
+#O instalar de manera manual
+python -m pip install --upgrade pip
 pip install flask
 pip install flask-cors
 pip install requests
 pip install dotenv
 pip install django
+pip install pyjwt
 
 
-#Ruta e iniciar proyecto
+#6- Ruta e iniciar proyecto backend
 cd DuocCollab-backend
 python app.py  
 
 
 
 
+#7- Abrir otra terminal
 
-
-
-
-
-
-#********En otra terminal
-
-#Inicializar entorno
+#8- Inicializar entorno
 ..\venv\Scripts\activate
 
-#Ruta e iniciar proyecto
+#9- Ruta e iniciar proyecto front
 cd DuocCollab-front
 python manage.py runserver
 
