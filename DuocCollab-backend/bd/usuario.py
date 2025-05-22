@@ -38,3 +38,29 @@ def crear_usuario(data: dict) -> requests.Response:
         'FOTO_PORTADA': data.get('FOTO_PORTADA')
     }
     return requests.post(table_url('USUARIO'), headers=headerApi(), data=json.dumps(payload))
+
+
+
+def obtener_usuario_por_id(id_usuario):
+    usuarios = obtener_usuarios()
+    for u in usuarios:
+        if u['ID_USUARIO'] == id_usuario:
+            return u
+    return None
+
+
+def modificar_usuario(id_usuario:int, data:dict)-> requests.Response:
+    payload = {
+        'NOMBRE': data.get('NOMBRE'),
+        'APELLIDO': data.get('APELLIDO'),
+        'CORREO': data.get('CORREO'),
+        'ID_CARRERA': data.get('ID_CARRERA'),
+        'INTERESES': data.get('INTERESES'),
+        'FOTO_PERFIL': data.get('FOTO_PERFIL'),
+        'FOTO_PORTADA': data.get('FOTO_PORTADA')
+    }
+    if data.get('contrasena'):
+        payload['CONTRASENIA'] = generate_password_hash(data['contrasena'])
+    url = table_url(f'USUARIO/{id_usuario}')
+    return requests.put(url, headers=headerApi(), data=json.dumps(payload))
+        

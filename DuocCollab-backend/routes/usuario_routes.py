@@ -66,3 +66,29 @@ def login_usuario():
         return jsonify({'token': token, 'usuario': usuario}), 200
 
     return jsonify({'error': 'Credenciales inválidas'}), 401
+
+
+
+
+
+@usuario_bp.route('/api/usuarios', methods=['PUT'])
+def actualizar_usuario():
+    id_usuario = verificar_token()
+
+    if request.content_type.startswith('multipart/form-data'):
+        datos = request.form.to_dict()
+        archivos = request.files
+
+        for campo in ['FOTO_PERFIL', 'FOTO_PORTADA']:
+            archivo = archivos.get(campo)
+            if archivo and archivo.filename and guardar_archivo(archivo.filename):
+                filename = generar_nombre_archivo(archivo.filename)
+                archivo.save(os.path.join(UPLOAD_FOLDER, filename))
+                datos[campo] = filename
+
+        from services.usuario_service import update_usuario
+        resp_json, status_code = update_usuario(id_usuario, datos)
+        return jsonify(resp_json), status_code
+    return jsonify({'error': 'Tipo de contenido no soportdado. Usa multipart/form-data.'})
+
+

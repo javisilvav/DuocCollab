@@ -1,4 +1,4 @@
-from bd.usuario import obtener_usuarios, crear_usuario, buscar_usuario_por_correo
+from bd.usuario import obtener_usuarios, crear_usuario, buscar_usuario_por_correo, modificar_usuario, obtener_usuario_por_id
 from werkzeug.security import check_password_hash
 import re
 
@@ -79,3 +79,28 @@ def validar_credenciales(correo:str, contrasenia:str):
         if usuario['CORREO'] == correo and check_password_hash(usuario['CONTRASENIA'],contrasenia):
             return usuario
     return None
+
+
+
+def update_usuario(id_usuario: int, data: dict):
+    try:
+        usuario_actual = obtener_usuario_por_id(id_usuario)
+        if not usuario_actual:
+            return {'error':'Usuario no encontrado'}, 404
+        
+        errores = validar_usuario(data)
+        if errores:
+            return {'ok': False, 'errores':errores}, 400
+        
+        if 'CONTRASENIA' in data and data['CONTRASENA']:
+            pass
+        else:
+            data['CONTRASENA'] = None
+
+        resp = modificar_usuario(id_usuario, data)
+        if resp.ok:
+            return {'mensaje':'Usuario actualizado correctamente'},200
+        else:
+            return {'error': resp.text}, resp.status_code
+    except Exception as e:
+        return {'error': f'Excepción interna: {str(e)}'},500

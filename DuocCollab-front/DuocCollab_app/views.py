@@ -8,7 +8,8 @@ from .api_client import (
     trae_img_perfil, 
     consulta_mis_proyectos,
     consulta_mis_postulaciones,
-    consulta_proyectos
+    consulta_proyectos,
+    actualizar_usuario
 )
 import requests
 import os
@@ -186,13 +187,43 @@ def SubirProyecto(request):
 
 @login_required
 def EditarPerfil(request):
-    usuario = request.session.get('usuario')
-    url_perfil, url_portada = trae_img_perfil(usuario['FOTO_PERFIL'], usuario['FOTO_PORTADA'])
+    if request.method == 'GET':
+        usuario = request.session.get('usuario')
+        url_perfil, url_portada = trae_img_perfil(usuario['FOTO_PERFIL'], usuario['FOTO_PORTADA'])
 
-    contexto = {
-        'usuario': usuario,
-        'foto_perfil': url_perfil,
-        'foto_portada': url_portada
-    }
+        contexto = {
+            'usuario': usuario,
+            'foto_perfil': url_perfil,
+            'foto_portada': url_portada
+        }
 
-    return render(request, 'editar_perfil.html', contexto)
+        return render(request, 'editar_perfil.html', contexto)
+
+    if request.method == 'POST':
+        data = {
+            'NOMBRE': request.POST.get('nombre'),
+            'APELLIDO': request.POST.get('apellido'),
+            'CORREO': request.POST.get('correo'),
+        }
+
+        archivos = {}
+        if 'foto_perfil' in request.FILES:
+            archivos['FOTO_PERFIL'] = request.FILES['foto_perfil']
+        if 'foto_portada' in request.FILES:
+            archivos['FOTO_PORTADA'] = request.FILES['foto_portada']
+
+        response = actualizar_usuario(request, data, archivos)
+
+        if response and response.ok:
+            # Actualizamos los datos del usuario en la sesión
+            usuario_actualizado = response.json().get('usuario')
+            if usuario_actualizado:
+                request.session['usuario'] = usuario_actualizado
+            return redirect('Perfil')
+        else:
+            error = "Error al actualizar el perfil"
+            try:
+                error = response.json().get('error', error)
+            except Exception:
+                pass
+            return render(request, 'editar_perfil.html', {'error': error})
