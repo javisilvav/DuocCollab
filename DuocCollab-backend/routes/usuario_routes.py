@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, send_from_directory
-from services.usuario_service import list_usuarios, add_usuario, validar_credenciales
+from services.usuario_service import list_usuarios, add_usuario, validar_credenciales, update_usuario
 from .auth import generar_token, verificar_token
 import os
 import uuid
@@ -25,31 +25,49 @@ def obtener_imagen(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 
-@usuario_bp.route('/api/usuarios', methods=['GET', 'POST'])
+@usuario_bp.route('/api/usuarios', methods=['GET', 'POST', 'PUT'])
 def usuarios():
-    id_usuario = verificar_token()  
-
     if request.method == 'GET':
         return jsonify(list_usuarios())
+    
+    id_usuario = verificar_token()  
+    if request.method == 'POST':
+        # POST con multipart/form-data (con archivos)
+        if request.content_type.startswith('multipart/form-data'):
+            datos = request.form.to_dict()
+            archivos = request.files
 
-    # POST con multipart/form-data (con archivos)
-    if request.content_type.startswith('multipart/form-data'):
-        datos = request.form.to_dict()
-        archivos = request.files
+            for campo in ['FOTO_PERFIL', 'FOTO_PORTADA']:
+                archivo = archivos.get(campo)
+                if archivo and archivo.filename and guardar_archivo(archivo.filename):
+                    filename = generar_nombre_archivo(archivo.filename)
+                    archivo.save(os.path.join(UPLOAD_FOLDER, filename))
+                    datos[campo] = filename
+                else:
+                    datos[campo] = None
 
-        for campo in ['FOTO_PERFIL', 'FOTO_PORTADA']:
-            archivo = archivos.get(campo)
-            if archivo and archivo.filename and guardar_archivo(archivo.filename):
-                filename = generar_nombre_archivo(archivo.filename)
-                archivo.save(os.path.join(UPLOAD_FOLDER, filename))
-                datos[campo] = filename
-            else:
-                datos[campo] = None
+            resp_json, status_code = add_usuario(datos)
+            return jsonify(resp_json), status_code
 
-        resp_json, status_code = add_usuario(datos)
-        return jsonify(resp_json), status_code
+        return jsonify({'error': 'Tipo de contenido no soportado. Usa multipart/form-data.'}), 415
+    if request.method == 'PUT':
+        print('id_usuario')
+        if request.content_type.startswith('multipart/form-data'):
+            datos = request.form.to_dict()
+            archivos = request.files
 
-    return jsonify({'error': 'Tipo de contenido no soportado. Usa multipart/form-data.'}), 415
+            for campo in ['FOTO_PERFIL', 'FOTO_PORTADA']:
+                archivo = archivos.get(campo)
+                if archivo and archivo.filename and guardar_archivo(archivo.filename):
+                    filename = generar_nombre_archivo(archivo.filename)
+                    archivo.save(os.path.join(UPLOAD_FOLDER, filename))
+                    datos[campo] = filename
+
+            resp_json, status_code = update_usuario(id_usuario, datos)
+            return jsonify(resp_json), status_code
+        return jsonify({'error': 'Tipo de contenido no soportdado. Usa multipart/form-data.'})
+
+
 
 @usuario_bp.route('/api/login', methods=['POST'])
 def login_usuario():
@@ -69,26 +87,5 @@ def login_usuario():
 
 
 
-
-
-@usuario_bp.route('/api/usuarios', methods=['PUT'])
-def actualizar_usuario():
-    id_usuario = verificar_token()
-
-    if request.content_type.startswith('multipart/form-data'):
-        datos = request.form.to_dict()
-        archivos = request.files
-
-        for campo in ['FOTO_PERFIL', 'FOTO_PORTADA']:
-            archivo = archivos.get(campo)
-            if archivo and archivo.filename and guardar_archivo(archivo.filename):
-                filename = generar_nombre_archivo(archivo.filename)
-                archivo.save(os.path.join(UPLOAD_FOLDER, filename))
-                datos[campo] = filename
-
-        from services.usuario_service import update_usuario
-        resp_json, status_code = update_usuario(id_usuario, datos)
-        return jsonify(resp_json), status_code
-    return jsonify({'error': 'Tipo de contenido no soportdado. Usa multipart/form-data.'})
 
 

@@ -120,7 +120,7 @@ def registrar_usuario(request, data, archivos=None):
 def actualizar_usuario(request, datos, archivos=None):
     try:
         headers = headers_auth(request)
-        headers.pop('Content-Type', None)  # Se quita para multipart/form-data
+        headers.pop('Content-Type', None)
 
         response = requests.put(
             f'{BASE_API_URL}usuarios',
@@ -128,7 +128,6 @@ def actualizar_usuario(request, datos, archivos=None):
             files=archivos,
             headers=headers
         )
-
         return response
     except Exception as e:
         print(f'Error al actualizar usuario: {e}')

@@ -103,7 +103,6 @@ def MisPostulaciones(request):
             proyecto['FOTO_PROYECTO'] = f"http://127.0.0.1:5050/api/uploads/imagen_proyecto/{filename}"
         else:
             proyecto['FOTO_PROYECTO'] = '/static/img/sin_perfil.png'  # fallback local
-        print(proyecto['FOTO_PROYECTO'])
     contexto = {
         'postulaciones': data
     }
@@ -185,6 +184,7 @@ def ResetPassword(request):
 def SubirProyecto(request):
     return render(request, 'subir_proyecto.html')
 
+
 @login_required
 def EditarPerfil(request):
     if request.method == 'GET':
@@ -204,18 +204,18 @@ def EditarPerfil(request):
             'NOMBRE': request.POST.get('nombre'),
             'APELLIDO': request.POST.get('apellido'),
             'CORREO': request.POST.get('correo'),
+            'CONTRASENA': request.POST.get('contrasena'),
+            'INTERESES': request.POST.getlist('intereses[]'),  # <- importante
         }
 
         archivos = {}
-        if 'foto_perfil' in request.FILES:
-            archivos['FOTO_PERFIL'] = request.FILES['foto_perfil']
-        if 'foto_portada' in request.FILES:
-            archivos['FOTO_PORTADA'] = request.FILES['foto_portada']
+        if request.FILES.get('FOTO_PERFIL'):
+            archivos['FOTO_PERFIL'] = request.FILES['FOTO_PERFIL']
+        if request.FILES.get('FOTO_PORTADA'):
+            archivos['FOTO_PORTADA'] = request.FILES['FOTO_PORTADA']
 
         response = actualizar_usuario(request, data, archivos)
-
         if response and response.ok:
-            # Actualizamos los datos del usuario en la sesión
             usuario_actualizado = response.json().get('usuario')
             if usuario_actualizado:
                 request.session['usuario'] = usuario_actualizado
@@ -226,4 +226,4 @@ def EditarPerfil(request):
                 error = response.json().get('error', error)
             except Exception:
                 pass
-            return render(request, 'editar_perfil.html', {'error': error})
+            return redirect('Perfil')

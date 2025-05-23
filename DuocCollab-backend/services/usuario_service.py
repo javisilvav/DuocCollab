@@ -8,48 +8,63 @@ def list_usuarios():
     return obtener_usuarios()
 
 
-def validar_usuario(data):
+import re
+
+def validar_usuario(data, modo='crear'):
     errores = []
+
     nombre = data.get('NOMBRE')
-    if not nombre:
-        errores.append('El nombre es obligatorio.')
-    if not data.get('APELLIDO'):
-        errores.append('El apellido es obligatorio.')
-    correo = data.get("CORREO","")
-    if not correo or not correo.endswith('@duocuc.cl'):
-        errores.append('El correo debe tener extensión @duocuc.cl')
+    if modo == 'crear' or 'NOMBRE' in data:
+        if not nombre or not nombre.strip():
+            errores.append('El nombre es obligatorio.')
 
-    if not data.get("ID_CARRERA"):
-        errores.append('El ID de carrera es obligatorio.')
-    if not data.get("INTERESES"):
-        errores.append('Agregar almenos un interes es obligatorio.')
-    
-    
-    contrasenia = data.get("CONTRASENIA","")
-    if len(contrasenia) < 8:
-        errores.append("Debe tener al menos 8 caracteres.")
+    apellido = data.get('APELLIDO')
+    if modo == 'crear' or 'APELLIDO' in data:
+        if not apellido or not apellido.strip():
+            errores.append('El apellido es obligatorio.')
 
-    if correo and correo.split('@')[0].lower() in contrasenia.lower():
-        errores.append("No puede contener parte del correo.")
-    if nombre and nombre.lower() in contrasenia.lower():
-        errores.append("No puede contener el nombre.")
-    if not re.search(r'[A-Z]', contrasenia):
-        errores.append("Debe tener al menos una letra mayúscula.")
-    if not re.search(r'[a-z]', contrasenia):
-        errores.append("Debe tener al menos una letra minúscula.")
-    if not re.search(r'\d', contrasenia):
-        errores.append("Debe tener al menos un número.")
-    if not re.search(r'[!@#$%^&*()_\-+=\[\]{};:\'",.<>?/\\|`~]', contrasenia):
-        errores.append("Debe tener al menos un símbolo especial.")
+    correo = data.get("CORREO")
+    if modo == 'crear' or 'CORREO' in data:
+        if not correo or not correo.endswith('@duocuc.cl'):
+            errores.append('El correo debe tener extensión @duocuc.cl')
 
-    
-    
+    if modo == 'crear' or 'ID_CARRERA' in data:
+        if not data.get("ID_CARRERA"):
+            errores.append('El ID de carrera es obligatorio.')
+
+    if modo == 'crear' or 'INTERESES' in data:
+        intereses = data.get("INTERESES")
+        if not intereses or not isinstance(intereses, list) or len(intereses) == 0:
+            errores.append('Agregar al menos un interés es obligatorio.')
+
+    contrasenia = data.get("CONTRASENIA")
+    if modo == 'crear' or contrasenia:
+        if not contrasenia:
+            errores.append("La contraseña es obligatoria.")
+        else:
+            if len(contrasenia) < 8:
+                errores.append("Debe tener al menos 8 caracteres.")
+
+            if correo and correo.split('@')[0].lower() in contrasenia.lower():
+                errores.append("No puede contener parte del correo.")
+            if nombre and nombre.lower() in contrasenia.lower():
+                errores.append("No puede contener el nombre.")
+            if not re.search(r'[A-Z]', contrasenia):
+                errores.append("Debe tener al menos una letra mayúscula.")
+            if not re.search(r'[a-z]', contrasenia):
+                errores.append("Debe tener al menos una letra minúscula.")
+            if not re.search(r'\d', contrasenia):
+                errores.append("Debe tener al menos un número.")
+            if not re.search(r'[!@#$%^&*()_\-+=\[\]{};:\'",.<>?/\\|`~]', contrasenia):
+                errores.append("Debe tener al menos un símbolo especial.")
+
     return errores
+
 
 
 def add_usuario(data: dict):
     try:
-        errores = validar_usuario(data)
+        errores = validar_usuario(data, modo='crear')
         if errores:
             return {'ok': False, 'errores': errores}, 400 
 
@@ -86,21 +101,20 @@ def update_usuario(id_usuario: int, data: dict):
     try:
         usuario_actual = obtener_usuario_por_id(id_usuario)
         if not usuario_actual:
-            return {'error':'Usuario no encontrado'}, 404
-        
-        errores = validar_usuario(data)
+            return {'error': 'Usuario no encontrado'}, 404
+
+        errores = validar_usuario(data, modo='editar')
         if errores:
-            return {'ok': False, 'errores':errores}, 400
-        
-        if 'CONTRASENIA' in data and data['CONTRASENA']:
-            pass
-        else:
+            return {'ok': False, 'errores': errores}, 400
+
+        if not data.get('CONTRASENA'):
             data['CONTRASENA'] = None
 
         resp = modificar_usuario(id_usuario, data)
         if resp.ok:
-            return {'mensaje':'Usuario actualizado correctamente'},200
+            return {'mensaje': 'Usuario actualizado correctamente'}, 200
         else:
             return {'error': resp.text}, resp.status_code
+
     except Exception as e:
-        return {'error': f'Excepción interna: {str(e)}'},500
+        return {'error': f'Excepción interna: {str(e)}'}, 500

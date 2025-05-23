@@ -2,7 +2,7 @@
 <div class="ps-5 pb-3">
   <h2 style="font-size: 36px; font-weight: 700;">EDITAR PERFIL</h2>
 </div>
-<form class="ps-5 pe-5" method="POST" enctype="multipart/form-data" action="">
+<form class="ps-5 pe-5" method="POST" enctype="multipart/form-data" action="{% url 'EditarPerfil' %}">
   {% csrf_token %}
   <div class="row">
     <!-- Primera columna -->
@@ -17,7 +17,7 @@
       </div>
       <div class="mb-3">
         <label for="foto-perfil" class="form-label">Foto de perfil</label>
-        <input type="file" class="form-control" id="archivo">
+        <input type="file" class="form-control" id="archivo_perfil" name='FOTO_PERFIL'>
       </div>
       <div class="mb-3">
         <label for="intereses" class="form-label">Intereses</label>
@@ -43,7 +43,7 @@
       </div>
       <div class="mb-3">
         <label for="foto_portada" class="form-label">Foto de portada</label>
-        <input type="file" class="form-control" id="archivo">
+        <input type="file" class="form-control" id="archivo_portada", name="FOTO_PORTADA">
       </div>
     </div>
   </div>

@@ -49,18 +49,19 @@ def obtener_usuario_por_id(id_usuario):
     return None
 
 
-def modificar_usuario(id_usuario:int, data:dict)-> requests.Response:
+def modificar_usuario(id_usuario: int, data: dict) -> requests.Response:
     payload = {
         'NOMBRE': data.get('NOMBRE'),
         'APELLIDO': data.get('APELLIDO'),
         'CORREO': data.get('CORREO'),
         'ID_CARRERA': data.get('ID_CARRERA'),
-        'INTERESES': data.get('INTERESES'),
+        'INTERESES': ','.join(data.get('INTERESES', [])) if isinstance(data.get('INTERESES'), list) else data.get('INTERESES'),
         'FOTO_PERFIL': data.get('FOTO_PERFIL'),
         'FOTO_PORTADA': data.get('FOTO_PORTADA')
     }
-    if data.get('contrasena'):
-        payload['CONTRASENIA'] = generate_password_hash(data['contrasena'])
+
+    if data.get('CONTRASENA'):
+        payload['CONTRASENIA'] = generate_password_hash(data['CONTRASENA'])
+
     url = table_url(f'USUARIO/{id_usuario}')
     return requests.put(url, headers=headerApi(), data=json.dumps(payload))
-        
