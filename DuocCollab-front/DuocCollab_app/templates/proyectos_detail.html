@@ -53,7 +53,7 @@
   <main class="container-fluid bg-light" style="height: 539px;">
     <div class="row justify-content-start align-items-center h-100 px-5 portada">
       <div class="col-12 text-center">
-        <h1 class="display-4 text-white" style="font-size: 96px; font-weight: 400;">API para veterinaria</h1>
+        <h1 class="display-4 text-white" style="font-size: 96px; font-weight: 400;">{{ detalle_proyectos.TITULO }}</h1>
       </div>
     </div>
   </main>
@@ -61,25 +61,27 @@
   <section class="container pb-5">
     <div class="row justify-content-start align-items-center pt-5">
       <div class="col-12 text-start">
-        <p style="font-size: 24px; font-weight: 400;">NOMBRE DEL PROYECTO</p>
-        <h2 style="font-size: 48px; font-weight: 700;">DATAVET</h2>
+        <p style="font-size: 24px; font-weight: 400;">NOMBRE DEL PROYECTO: {{ detalle_proyectos.NOMBRE_PROYECTO }}</p>
+        <h2 style="font-size: 48px; font-weight: 700;">{{ detalle_proyectos.NOMBRE_PROYECTO }}</h2>
       </div>
     </div>
     <div class="row justify-content-start align-items-center pt-4">
       <div class="col-12 text-start">
-        <p class="text-start" style="font-size: 24px; font-weight: 400;">Somos un grupo de informáticos interesados en desarrollar una API que facilite la gestión de información en clínicas veterinarias. Antes de comenzar, queremos entender a fondo cómo funcionan los registros de pacientes, las citas, los tratamientos y otros procesos administrativos para asegurarnos de que nuestra solución realmente responda a las necesidades del sector.</p>
-        <p class="text-start" style="font-size: 24px; font-weight: 400;">Para ello, buscamos veterinarios, asistentes y administradores de clínicas que puedan orientarnos sobre su trabajo diario. No tomará mucho tiempo, solo queremos conocer su experiencia, los desafíos que enfrentan y qué herramientas utilizan actualmente.</p>
-        <p class="text-start" style="font-size: 24px; font-weight: 400;">Si te interesa compartir tu conocimiento y ayudarnos a diseñar una API útil y eficiente para el mundo veterinario, estaremos encantados de conversar contigo.</p>
+        <p class="text-start" style="font-size: 24px; font-weight: 400;">{{ detalle_proyectos.DESCRIPCION }}</p>
       </div>
     </div>
     <div>
-      <img src="{% static 'img/portada_proyecto.jpg' %}" alt="imagen" style="height: 410px; width: 100%;">
+      <img src="{{ detalle_proyectos.FOTO_PROYECTO }}" alt="imagen" style="height: 410px; width: 100%;">
     </div>
     <div class="row justify-content-start align-items-center pt-4">
       <div class="col-12 text-start">
-        <p style="font-size: 24px;"><strong>Integrantes: </strong>Alexis Carvajal, Juan José Menares, Claudia Zapata</p>
-        <p style="font-size: 24px;"><strong>Sede: </strong>San Bernardo</p>
-        <p style="font-size: 24px;"><strong>Carrera: </strong>Ingeniería en Informática</p>
+        <p style="font-size: 24px;"><strong>Integrantes: </strong>
+          {% for integrante in integrantes %}
+            <li style="font-size: 24px;">{{ integrante.nombre_completo }}</li>
+          {% endfor %}
+          </p>
+        <p style="font-size: 24px;"><strong>Sede: </strong>{{ detalle_proyectos.SEDE.NOMBRE_SEDE }}</p>
+        <p style="font-size: 24px;"><strong>Carrera: </strong>{{ detalle_proyectos.CARRERA_DESTINO }}</p>
       </div>
     </div>
     <div class="row justify-content-start align-items-center pt-4">

@@ -1,0 +1,64 @@
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Panel de Administración: Sede - Escuela</h2>
+
+  <!-- Formulario -->
+  <div class="card mb-4 shadow">
+    <div class="card-body">
+      <form id="formRelacion">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="sede" class="form-label">Sede</label>
+            <select id="sede" class="form-select" required>
+              <option selected>Seleccione una sede</option>
+              {% for sede in sedes %}
+                <option value="{{ sede.ID_SEDE }}">{{ sede.NOMBRE_SEDE }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="escuela" class="form-label">Escuela</label>
+            <select id="escuela" class="form-select" required>
+              <option selected>Seleccione una escuela</option>
+              {% for escuela in escuelas %}
+                <option value="{{ escuela.ID_ESCUELA }}">{{ escuela.NOMBRE_ESC }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="mt-4 text-end">
+          <button type="submit" class="btn btn-primary">Crear Relación</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabla de relaciones -->
+  <div class="card shadow">
+    <div class="card-body">
+      <h5 class="card-title">Relaciones existentes</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle" id="tablaRelaciones">
+          <thead class="table-dark">
+            <tr>
+              <th>ID SEDE</th>
+              <th>ID ESCUELA</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sede in sede_escuela %}
+            <tr>
+              <td>{{ sede.ID_SEDE }}</td>
+              <td>{{ sede.ID_ESCUELA }}</td>
+              <td>
+                <button class="btn btn-sm btn-warning me-2">Editar</button>
+                <button class="btn btn-sm btn-danger">Eliminar</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,134 +1,134 @@
 import requests
 import os
 from dotenv import load_dotenv
+from requests import request
+
 
 load_dotenv()
-BASE_API_URL = 'http://127.0.0.1:5050/api/'
+API_URL = 'http://127.0.0.1:5050/api'
+#API_TOKEN=os.getenv('API_TOKEN')
 
-# FUNCIONES AUXILIARES
-def headers_auth(request):
-    token = request.session.get('jwt_token')
-    if not token:
-        raise Exception("Token no encontrado en sesión")
-    return {
-        'Authorization': f'Bearer {token}',
-        'Content-Type': 'application/json',
-    }
 
-# IMÁGENES
-def trae_img_perfil(perfil, portada):
-    url_perfil = f'{BASE_API_URL}uploads/imagenes/{perfil}'
-    url_portada = f'{BASE_API_URL}uploads/imagenes/{portada}'
-    return url_perfil, url_portada
-
-def trae_img_proyecto(proyecto):
-    return f'{BASE_API_URL}uploads/imagenes_proyecto/{proyecto}'
-
-# AUTENTICACIÓN
-def iniciar_sesion(correo, contrasenia):
-    response = requests.post(
-        f'{BASE_API_URL}login',
-        json={'CORREO': correo, 'CONTRASENIA': contrasenia}
-    )
-    return response.json()
-
-# CONSULTAS VARIAS (con headers JWT)
-def consulta_sede(request):
+def api_request(method, endpoint, token=None, **kwargs):
+    headers = kwargs.pop('headers',{})
+    if token:
+        headers['Authorization'] = f'Bearer {token}'
     try:
-        response = requests.get(f'{BASE_API_URL}sedes', headers=headers_auth(request))
-        if response.ok:
-            return response.json()
-        else:
-            print(f'Error en la API: {response.status_code} - {response.text}')
-    except Exception as e:
-        print(f'Token inválido o ausente: {e}')
-    return []
-
-def consulta_carrera(request):
-    try:
-        response = requests.get(f'{BASE_API_URL}carreras', headers=headers_auth(request))
-        if response.ok:
-            return response.json()
-        else:
-            print(f'Error en la API: {response.status_code} - {response.text}')
-    except Exception as e:
-        print(f'Token inválido o ausente: {e}')
-    return []
-
-def consulta_escuela(request):
-    try:
-        response = requests.get(f'{BASE_API_URL}escuelas', headers=headers_auth(request))
-        if response.ok:
-            return response.json()
-        else:
-            print(f'Error en la API: {response.status_code} - {response.text}')
-    except Exception as e:
-        print(f'Token inválido o ausente: {e}')
-    return []
-
-def consulta_proyectos(request):
-    try:
-        response = requests.get(f'{BASE_API_URL}proyectos', headers=headers_auth(request))
-        if response.ok:
-            return response.json()
-        else:
-            print(f'Error en la API: {response.status_code} - {response.text}')
-    except Exception as e:
-        print(f'Token inválido o ausente: {e}')
-    return []
+        response = requests.request(method,f'{API_URL}{endpoint}',headers=headers,**kwargs)
+        
+        if response.status_code == 401 and endpoint not in ['/auth/login', '/auth/registro']:
+            return {'expired': True, 'message': 'Sesión expirada, favor iniciar sesión nuevamente'}
+        return {'expired': False,'response':response}
+    except requests.exceptions.RequestException as e:
+        return {'expired':False,'error':f'Error de conexión: {str(e)}'}
 
 
-def consulta_mis_proyectos(request):
-    try:
-        response = requests.get(f'{BASE_API_URL}mis-proyectos', headers=headers_auth(request))
-        if response.ok:
-            return response.json()
-        else:
-            print(f'Error en la API: {response.status_code} - {response.text}')
-    except Exception as e:
-        print(f'Token inválido o ausente: {e}')
-    return []
 
 
-def consulta_mis_postulaciones(request):
-    try:
-        response = requests.get(f'{BASE_API_URL}mis-postulaciones', headers=headers_auth(request))
-        if response.ok:
-            return response.json()
-        else:
-            print(f'Error en la API: {response.status_code} - {response.text}')
-    except Exception as e:
-        print(f'Token inválido o ausente: {e}')
-    return []
+def ruta_img_perfil_portada(perfil, portada):
+    img_perfil = f'{API_URL}/auth/imagen/perfil/{perfil}'
+    img_portada = f'{API_URL}/auth/imagen/portada/{portada}'
+    return img_perfil, img_portada
 
-# REGISTRO DE USUARIOS
-def registrar_usuario(request, data, archivos=None):
-    try:
-        headers = headers_auth(request)
-        headers.pop('Content-Type', None)  # Para permitir multipart/form-data
-        response = requests.post(
-            f'{BASE_API_URL}usuarios',
-            data=data,
-            files=archivos,
-            headers=headers
-        )
-        return response
-    except Exception as e:
-        print(f'Error al registrar usuario: {e}')
-        return None
+def ruta_img_proyecto(img):
+    img_proyecto = f'{API_URL}/proyecto/imagen/proyecto/{img}'
+    return img_proyecto
 
-def actualizar_usuario(request, datos, archivos=None):
-    try:
-        headers = headers_auth(request)
-        headers.pop('Content-Type', None)
 
-        response = requests.put(
-            f'{BASE_API_URL}usuarios',
-            data=datos,
-            files=archivos,
-            headers=headers
-        )
-        return response
-    except Exception as e:
-        print(f'Error al actualizar usuario: {e}')
-        return None
+
+
+
+
+
+
+
+#
+#def trae_img_perfil(perfil, portada):
+#
+#    url_perfil = f'{BASE_API_URL}uploads/imagenes/{perfil}'
+#    url_portada = f'{BASE_API_URL}uploads/imagenes/{portada}'
+#
+#    return url_perfil, url_portada
+#
+#
+#
+#
+#    
+#
+
+
+#
+#    
+#def consulta_escuela():
+#    response = requests.get(f'{BASE_API_URL}escuelas', headers=headers_auth())
+#    if response.ok:
+#        return response.json()
+#    else:
+#        print(f'Error en la API: {response.status_code} - {response.text}')
+#        return []
+#    
+#
+#def consulta_escuela():
+#    response = requests.get(f'{BASE_API_URL}escuelas', headers=headers_auth())
+#    if response.ok:
+#        return response.json()
+#    else:
+#        print(f'Error en la API: {response.status_code} - {response.text}')
+#        return []
+#    
+#
+#def consulta_sede_escuela():
+#    response = requests.get(f'{BASE_API_URL}sedeEscuela', headers=headers_auth())
+#    if response.ok:
+#        return response.json()
+#    else:
+#        print(f'Error en la API: {response.status_code} - {response.text}')
+#        return []
+#    
+#def consulta_etiqueta():
+#    response = requests.get(f'{BASE_API_URL}etiquetas', headers=headers_auth())
+#    if response.ok:
+#        return response.json()
+#    else:
+#        print(f'Error en la API: {response.status_code} - {response.text}')
+#        return []
+#    
+#def consulta_usuario():
+#    response = requests.get(f'{BASE_API_URL}usuarios', headers=headers_auth())
+#    if response.ok:
+#        return response.json()
+#    else:
+#        print(f'Error en la API: {response.status_code} - {response.text}')
+#        return []
+#    
+#def consulta_proyecto():
+#    response = requests.get(f'{BASE_API_URL}proyectos', headers=headers_auth())
+#    if response.ok:
+#        return response.json()
+#    else:
+#        print(f'Error en la API: {response.status_code} - {response.text}')
+#        return []
+#    
+#def consuta_proyecto_etiqueta():
+#    response = requests.get(f'{BASE_API_URL}proyectoEtiqueta', headers=headers_auth())
+#    if response.ok:
+#        return response.json()
+#    else:
+#        print(f'Error en la API: {response.status_code} - {response.text}')
+#        return []
+#    
+#def consulta_integrantes():
+#    response = requests.get(f'{BASE_API_URL}integrantesProyectos', headers=headers_auth())
+#    if response.ok:
+#        return response.json()
+#    else:
+#        print(f'Error en la API: {response.status_code} - {response.text}')
+#        return []
+#    
+#def consulta_postulacion():
+#    response = requests.get(f'{BASE_API_URL}postulantes', headers=headers_auth())
+#    if response.ok:
+#        return response.json()
+#    else:
+#        print(f'Error en la API: {response.status_code} - {response.text}')
+#        return []

@@ -17,11 +17,11 @@
       </div>
       <div class="mb-3">
         <label for="foto-perfil" class="form-label">Foto de perfil</label>
-        <input type="file" class="form-control" id="archivo_perfil" name='FOTO_PERFIL'>
+        <input type="file" class="form-control" id="foto-perfil" name="foto_perfil">
       </div>
       <div class="mb-3">
         <label for="intereses" class="form-label">Intereses</label>
-        <select class="form-control" id="intereses" name="intereses[]" multiple>
+        <select class="form-control" id="intereses" name="intereses" value="{{ usuario.INTERESES }}" multiple>
           <option>Desarrollo Web</option>
           <option>IoT</option>
           <option>Inteligencia Artificial</option>
@@ -43,7 +43,7 @@
       </div>
       <div class="mb-3">
         <label for="foto_portada" class="form-label">Foto de portada</label>
-        <input type="file" class="form-control" id="archivo_portada", name="FOTO_PORTADA">
+        <input type="file" class="form-control" id="foto_portada" name="foto_portada">
       </div>
     </div>
   </div>

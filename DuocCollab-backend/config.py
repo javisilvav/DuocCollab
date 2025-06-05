@@ -1,20 +1,21 @@
 import os
 from dotenv import load_dotenv
-
+from datetime import timedelta
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-API_TOKEN = os.getenv("API_TOKEN")
+class Config:
+    SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    #hours=1
+    #minutes
 
-def headerApi():
-    return {
-        "apikey": SUPABASE_KEY,
-        "Authorization": f"Bearer {SUPABASE_KEY}",
-        "Content-Type": "application/json"
-    }
+UPLOAD_FOLDER = 'uploads/'
+ALLOWED_EXTENSIONS = ['png','jpg','jpeg','gif', 'jpeg']
 
-def table_url(table_name: str) -> str:
-    return f"{SUPABASE_URL}/rest/v1/{table_name}?select=*"
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)

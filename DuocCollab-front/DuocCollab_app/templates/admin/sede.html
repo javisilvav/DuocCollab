@@ -1,0 +1,50 @@
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Panel de Administración: Sede</h2>
+
+  <!-- Formulario -->
+  <div class="card mb-4 shadow">
+    <div class="card-body">
+      <form id="formSede">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre de la sede</label>
+            <input type="text" name="nombre" class="form-control" id="nombre" placeholder="PLAZA OESTE" required>
+          </div>
+        </div>
+        <div class="mt-4 text-end">
+          <button type="submit" class="btn btn-primary">Agregar Sede</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabla de relaciones -->
+  <div class="card shadow">
+    <div class="card-body">
+      <h5 class="card-title">Sedes existentes</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle" id="tablaRelaciones">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Nombre Sede</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sede in sedes %}
+              <tr>
+                <td> {{ sede.ID_SEDE }} </td>
+                <td> {{ sede.NOMBRE_SEDE }} </td>
+                <td>
+                  <button class="btn btn-sm btn-warning me-2">Editar</button>
+                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

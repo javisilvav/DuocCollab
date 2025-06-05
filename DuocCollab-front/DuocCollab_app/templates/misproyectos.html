@@ -6,21 +6,17 @@
   </a>
 </div>
 <div class="row ps-5">
-  {% for project in proyectos %}
-    <div class="col-6 pb-3">
+  {% for proyecto in proyectos %}
+    <div class="col-3 pb-3">
       <div class="d-flex align-items-center">
-        <div class="vertical-text d-flex justify-content-start align-items-center pb-3"
-          style="background-color: #5BC2E7;">
-          {{ project.NOMBRE_PROYECTO }}
-          
+        <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #5BC2E7;">
+          {{ proyecto.NOMBRE_PROYECTO }}
         </div>
-        <a href="{% url 'ProyectosDetail' %}">
-          <img src="{{ project.FOTO_PROYECTO }}" alt="Imagen del proyecto">
 
-        </a>
+        <img src="{{ proyecto.FOTO_PROYECTO }}" alt="Foto" class="img-fluid" style="height: 292px; cursor: pointer;"
+           onclick="verProyecto({{ proyecto.ID_PROYECTO }})">
       </div>
     </div>
   {% endfor %}
-
-
+  
 </div>
