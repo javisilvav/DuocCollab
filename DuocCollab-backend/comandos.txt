@@ -45,6 +45,8 @@ pip install dotenv
 pip install supabase
 pip install httpx[http2]
 pip install django
+pip install requests
+
 
 #6- Ruta e iniciar proyecto backend
 cd DuocCollab-backend
