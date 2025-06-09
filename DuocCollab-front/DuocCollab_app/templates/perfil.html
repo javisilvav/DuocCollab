@@ -18,6 +18,8 @@
   <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
   <!-- Select2 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- SweetAlert2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
 </head>
 <body>
@@ -38,7 +40,7 @@
               <a class="nav-link text-white" aria-current="page" href="{% url 'Proyectos' %}" style="font-size: 24px;">PROYECTOS</a>
             </li>
             <li class="nav-item" style="padding-left: 25px;">
-              <a class="nav-link text-white" href="#" style="font-size: 24px;">ESCUELAS</a>
+              <a class="nav-link text-white" href="{% url 'Escuelas' %}" style="font-size: 24px;">ESCUELAS</a>
             </li>
           </ul>
           <div class="d-flex flex-column align-items-end">
@@ -116,6 +118,29 @@
   <!-- Select2 JS -->
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <script src="{% static 'js/perfil.js' %}"></script>
+
+  
+     <!--SweetAlert2-->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    {% if sweet_alert %}
+      Swal.fire({
+        icon: '{{ sweet_alert.icon|escapejs }}',
+        title: '{{ sweet_alert.title|escapejs }}',
+        text: '{{ sweet_alert.text|escapejs }}',
+        confirmButtonText: 'OK'
+      });
+    {% endif %}
+  });
+  </script>
+
+    <!-- Función JS para redirigir con el parámetro oculto -->
+  <script>
+  function verProyecto(idProyecto) {
+      window.location.href = "{% url 'ProyectosDetail' %}" + "?id_proyecto=" + idProyecto;
+  }
+  </script>
 
 
 

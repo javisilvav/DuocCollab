@@ -1,30 +1,66 @@
+# 1-   Crear archivo .env en DuocCollab-backend y agregar siguientes variables
 
-#Crear entorno
+SUPABASE_URL=
+SUPABASE_KEY=
+SECRET_KEY=
+JWT_ALGORITHM=HS256
+
+SECRET_KEY=Newww2Tok3nMagistral20392.new
+
+JWT_SECRET_KEY= 2313
+JWT_ALGORITHM=HS256
+
+EMAIL_HOST=smtp.migadu.com
+EMAIL_PORT=587
+EMAIL_USER=duoccollab@astronautmarkus.dev
+EMAIL_PASS= appPortafolio023NuevaApp.
+
+
+# 2- Abrir visual Studio y la terminal en CMD
+
+# 3- Crear entorno
 python -m venv venv
 
-#Inicializar entorno
+# 4- Inicializar entorno
 ..\venv\Scripts\activate
 
 
-#pip necesarios a instalar
-pip install flask
-pip install flask-cors
+#5- pip necesarios a instalar
+#Se pueden instalar ingresando a:
+cd DuocCollab-backend      
 
-#Ruta e iniciar proyecto
+#y dentro de carpeta backend ejecutar:
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+#Luego ya puedes iniciar tu proyecto 
+python app.py 
+
+#O instalar de manera manual
+python -m pip install --upgrade pip
+#Nuevo backend
+pip install flask
+pip install flask_jwt_extended
+pip install dotenv
+pip install supabase
+pip install httpx[http2]
+pip install django
+pip install requests
+
+
+#6- Ruta e iniciar proyecto backend
 cd DuocCollab-backend
 python app.py  
 
 
 
 
+#7- Abrir otra terminal
 
-#********En otra terminal
-
-#Inicializar entorno
+#8- Inicializar entorno
 ..\venv\Scripts\activate
 
-#Ruta e iniciar proyecto
+#9- Ruta e iniciar proyecto front
 cd DuocCollab-front
 python manage.py runserver
-
 

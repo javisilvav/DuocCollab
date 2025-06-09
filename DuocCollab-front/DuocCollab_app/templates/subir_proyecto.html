@@ -14,7 +14,8 @@
   <!--CSS-->
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
   <link rel="stylesheet" href="{% static 'css/nav-footer.css' %}">
-
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <style>
     .preview-box {
       height: 200px;
@@ -63,6 +64,49 @@
       height: 39px;     /* alto específico */
     }
 
+    /* Estilo para el contenedor principal del select2 */
+    .select2-container--default .select2-selection--multiple {
+      height: 39px !important;
+      width: 516px !important;
+      border: 1px solid #333 !important; /* Borde oscuro como los inputs */
+      border-radius: 4px;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      box-shadow: none !important;
+      padding: 0 4px;
+      font-size: 16px;
+      font-style: italic;
+      font-weight: 400;
+      color: #625F5F;
+    }
+
+    /* Ajustes al campo de búsqueda dentro de select2 */
+    .select2-container--default .select2-selection--multiple .select2-search__field {
+      height: 25px !important;
+      margin-top: 0 !important;
+      border: none !important;
+      font-style: italic;
+      font-size: 16px;
+      color: #625F5F;
+    }
+
+    /* Placeholder estilo */
+    .select2-container--default .select2-selection--multiple .select2-search--inline .select2-search__field::placeholder {
+      color: #625F5F;
+      font-style: italic;
+    }
+
+    /* Estilo al enfocar */
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+      border-color: #000 !important;
+      box-shadow: none !important;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+      margin-top: 15px !important; 
+    }
+
   </style>
 
 </head>
@@ -84,7 +128,7 @@
               <a class="nav-link text-white" aria-current="page" href="{% url 'Proyectos' %}" style="font-size: 24px;">PROYECTOS</a>
             </li>
             <li class="nav-item" style="padding-left: 25px;">
-              <a class="nav-link text-white" href="#" style="font-size: 24px;">ESCUELAS</a>
+              <a class="nav-link text-white" href="{% url 'Escuelas' %}" style="font-size: 24px;">ESCUELAS</a>
             </li>
           </ul>
           <div class="d-flex flex-column align-items-end">
@@ -104,38 +148,45 @@
   <div class="container-fluid bg-white py-5" style="padding-left: 100px; padding-right: 100px;">
     <h1 class="fw-bold mb-5" style="font-size: 96px;">Publica tu proyecto</h1>
 
+    <form method="POST" enctype="multipart/form-data">
     <div class="row">
       <!-- Formulario -->
+        
+        {% csrf_token %}   
       <div class="col-md-6">
         <div class="section-title fw-bold py-4" style="font-size: 24px;">Información general</div>
         <form id="form-proyecto">
           <div class="mb-3">
-            <input type="text" class="form-control" placeholder="Título del proyecto" id="titulo">
+            <input type="text" class="form-control" placeholder="Título del proyecto" id="titulo" name="titulo">
           </div>
           <div class="mb-3">
-            <input type="text" class="form-control" placeholder="Nombre del proyecto" id="nombre_proyecto">
+            <input type="text" class="form-control" placeholder="Nombre del proyecto" id="nombre_proyecto" name="nombre_proyecto">
           </div>
           <div class="mb-3">
-            <textarea class="form-control" rows="3" placeholder="Descripción" id="descripcion"></textarea>
+            <textarea class="form-control" rows="3" placeholder="Descripción" id="descripcion" name="descripcion"></textarea>
           </div>
           <div class="mb-3">
-            <input type="file" class="form-control" id="archivo">
+            <input type="file" class="form-control" id="foto_proyecto" name="foto_proyecto">
           </div>
 
           <div class="section-title py-4">Categoría y filtros</div>
           <div class="mb-3">
             <input type="text" class="form-control" placeholder="Requisitos" id="requisitos">
           </div>
-          <div class="input-group mb-3" style="width: 516px; height: 39px;">
-            <input type="text" class="form-control" placeholder="Etiquetas" id="hashtags">
-            <button class="btn btn-outline-secondary" type="button" id="agregar-hashtag">+</button>
+          <div class="mb-3">
+            <select class="form-select mb-3" id="intereses" style="height: 39px;" name="intereses[]" multiple>
+              {% for etiqueta in etiquetas %}
+                <option value="{{ etiqueta.ID_ETIQUETA }}">{{ etiqueta.NOMBRE }}</option>
+              {% endfor %}
+            </select>
           </div>
-          <div class="mb-3" id="lista-hashtags"></div>
-          <div class="input-group mb-3" style="width: 516px; height: 39px;">
-            <input type="text" class="form-control" placeholder="Añadir colaboradores" id="colaboradores">
-            <button class="btn btn-outline-secondary" type="button" id="agregar-colaborador">+</button>
+          <div class="mb-3">
+            <select class="form-select mb-3" id="colaboradores" style="height: 39px;" name="colaboradores[]" multiple>
+              {% for usuario in usuarios %}
+                <option value="{{ usuario.ID_USUARIO }}" data-nombre="{{ usuario.NOMBRE }}" data-apellido="{{ usuario.APELLIDO }}">{{ usuario.CORREO }}</option>
+              {% endfor %}
+            </select>
           </div>
-          <div class="mb-3" id="lista-colaboradores"></div>
           <select class="form-select mb-3" id="sede" style="width: 516px; height: 39px;">
             <option disabled selected value="">Selecciona una sede</option>
             <option>San Bernardo</option>
@@ -152,34 +203,35 @@
             <option>Diseño y Desarrollo Web</option>
           </select>
           <button type="submit" class="btn fw-bold py-2 px-4" style="background-color: #FFB800; font-size: 20px;">PUBLICAR</button>
-        </form>
-      </div>
 
-      <!-- Vista previa -->
-      <div class="col-md-6 vista-previa">
-        <div class="section-title">Vista previa</div>
-        <h5 class="fst-italic fw-bold" id="prev-titulo">Lorem Ipsum</h5>
-        <p class="text-muted" style="font-size: 14px;">Nombre del proyecto</p>
-        <h3 class="fw-bold" id="prev-nombre">Lorem Ipsum</h3>
-        <p id="prev-descripcion">
-          Vivamus diam turpis, pretium sit amet euismod sed, faucibus in justo.
-        </p>
-        <div class="preview-box" id="prev-archivo">📎</div>
-        <p class="fst-italic text-muted">
-          <span class="fw-bold">Integrantes: </span> <span id="prev-colaboradores">autores, colaboradores</span>
-        </p>
-        <p class="fst-italic text-muted">
-          <span class="fw-bold">Sede: </span> <span id="prev-sede">San Bernardo</span>
-        </p>
-        <p class="fst-italic text-muted">
-          <span class="fw-bold">Carrera: </span> <span id="prev-carrera">Ingenieria en informatica</span>
-        </p>
-        <h3 class="fw-bold">REQUISITOS</h3>
-        <p class="text-muted" id="prev-req">requisitos</p>
-
+        </div>
+      
+        <!-- Vista previa -->
+        <div class="col-md-6 vista-previa">
+          <div class="section-title">Vista previa</div>
+          <h5 class="fst-italic fw-bold" id="prev-titulo">Lorem Ipsum</h5>
+          <p class="text-muted" style="font-size: 14px;">Nombre del proyecto</p>
+          <h3 class="fw-bold" id="prev-nombre">Lorem Ipsum</h3>
+          <p id="prev-descripcion">
+            Vivamus diam turpis, pretium sit amet euismod sed, faucibus in justo.
+          </p>
+          <div class="preview-box" id="prev-archivo">📎</div>
+          <p class="fst-italic text-muted">
+            <span class="fw-bold">Integrantes: </span> <span id="prev-colaboradores">autores, colaboradores</span>
+          </p>
+          <p class="fst-italic text-muted">
+            <span class="fw-bold">Sede: </span> <span id="prev-sede">San Bernardo</span>
+          </p>
+          <p class="fst-italic text-muted">
+            <span class="fw-bold">Carrera: </span> <span id="prev-carrera">Ingenieria en informatica</span>
+          </p>
+          <h3 class="fw-bold">REQUISITOS</h3>
+          <p class="text-muted" id="prev-req">requisitos</p>
+          
+        </div>
       </div>
     </div>
-  </div>
+  </form>
 
   <footer class="footer">
     <div class="container-fluid bg-dark text-white text-center py-4">
@@ -189,6 +241,10 @@
   
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Select2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <script src="{% static 'js/subir_proyecto.js' %}"></script>
 
 </body>

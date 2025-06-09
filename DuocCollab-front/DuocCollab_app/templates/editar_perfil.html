@@ -2,7 +2,7 @@
 <div class="ps-5 pb-3">
   <h2 style="font-size: 36px; font-weight: 700;">EDITAR PERFIL</h2>
 </div>
-<form class="ps-5 pe-5" method="POST" enctype="multipart/form-data" action="">
+<form class="ps-5 pe-5" method="POST" enctype="multipart/form-data" action="{% url 'EditarPerfil' %}">
   {% csrf_token %}
   <div class="row">
     <!-- Primera columna -->
@@ -17,11 +17,11 @@
       </div>
       <div class="mb-3">
         <label for="foto-perfil" class="form-label">Foto de perfil</label>
-        <input type="file" class="form-control" id="archivo">
+        <input type="file" class="form-control" id="foto-perfil" name="foto_perfil">
       </div>
       <div class="mb-3">
         <label for="intereses" class="form-label">Intereses</label>
-        <select class="form-control" id="intereses" name="intereses[]" multiple>
+        <select class="form-control" id="intereses" name="intereses" value="{{ usuario.INTERESES }}" multiple>
           <option>Desarrollo Web</option>
           <option>IoT</option>
           <option>Inteligencia Artificial</option>
@@ -43,7 +43,7 @@
       </div>
       <div class="mb-3">
         <label for="foto_portada" class="form-label">Foto de portada</label>
-        <input type="file" class="form-control" id="archivo">
+        <input type="file" class="form-control" id="foto_portada" name="foto_portada">
       </div>
     </div>
   </div>
