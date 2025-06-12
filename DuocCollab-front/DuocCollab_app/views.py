@@ -346,6 +346,32 @@ def MisProyectos(request):
         else:
             error_msg = response.json().get('error', 'Error desconocido al mostrar proyectos')
             return render(request, 'misproyectos.html', {'error': error_msg})
+    if request.method == 'POST':
+        if request.POST.get('accion') == 'aceptar':
+            id_postulacion = request.POST.get('id_postulacion')
+            datos = {
+                "ID_POSTULACION":id_postulacion,
+                "ESTADO":"Aceptada"
+            }
+            print(datos)
+            result = verificar_token_y_api(request,'POST', '/proyecto/editar_postulacion', 'Perfil', json=datos)
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            
+            response = result['response']
+            if response.status_code == 200:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Postulación aceptada.')
+                return redirect('Perfil')
+            else:
+                try:
+                    error_data = response.json().get('errores', [])
+                    texto_error = format_errors(error_data)
+                    request.session['sweet_alert'] = alert('error', 'Error al aceptar postulación.', texto_error)
+                    return redirect('Perfil')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Perfil')    
    
 
 def MisPostulaciones(request):

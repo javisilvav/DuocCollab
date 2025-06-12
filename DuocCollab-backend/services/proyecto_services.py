@@ -8,7 +8,15 @@ def obtener_proyecto_usuario(id_usuario):
 
         resultado = supabase.table("PROYECTO").select("*,SEDE(NOMBRE_SEDE), INTEGRANTES_PROYECTO(ROL, USUARIO(NOMBRE, APELLIDO)), POSTULACION(*,USUARIO(NOMBRE, APELLIDO, CORREO))").eq("ID_USUARIO", id_usuario).execute()
         if resultado.data:
-            return resultado.data, 200
+            proyectos = resultado.data
+            for proyecto in proyectos:
+                if "POSTULACION" in proyecto:
+                    proyecto["POSTULACION"] = [
+                        p for p in proyecto["POSTULACION"]
+                        if p.get("ESTADO") in ["Solicitado"]
+                    ]
+
+            return proyectos, 200
         else:
             return {"error": "Proyectos del usuario no encontrado."}, 404
     except Exception as e:
