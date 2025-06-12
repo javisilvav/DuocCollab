@@ -116,7 +116,7 @@ def cargar_postulacion(id_usuario, datos_postulacion):
 
 def obtener_postulacion_usuario(id_usuario):
     try:
-        resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO, FOTO_PROYECTO)').eq("ID_USUARIO", id_usuario).execute()
+        resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO))').eq("ID_USUARIO", id_usuario).execute()
         if resultado.data:
             return resultado.data, 200
         else:

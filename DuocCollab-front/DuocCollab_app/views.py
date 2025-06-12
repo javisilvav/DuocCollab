@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 #from .decorators import login_required
 from django.utils.html import strip_tags
-
+from datetime import datetime
 
 from .api_client import (
   api_request,
@@ -334,6 +334,9 @@ def MisPostulaciones(request):
     if response.status_code == 200:
         postulacion = response.json()
         for i in postulacion:
+            fecha = i.get('FECHA_POSTULACION')
+            fecha_formateada = datetime.fromisoformat(fecha)
+            i['FECHA_POSTULACION'] = fecha_formateada.strftime("%d/%m/%Y")
             proyecto = i.get('PROYECTO',{})
             filename = proyecto.get('FOTO_PROYECTO')
             if filename:
