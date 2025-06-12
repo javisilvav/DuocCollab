@@ -68,7 +68,15 @@
                   <input type="hidden" name="accion" value="aceptar">
                   <button class="btn btn-success mb-2 w-100">Aceptar</button>
                 </form>
-                <button class="btn btn-danger w-100">Rechazar</button>
+
+
+                <form id="formRechazar{{ pos.ID_POSTULACION }}" method="POST" action="{% url 'MisProyectos' %}" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="id_postulacion" value="{{ pos.ID_POSTULACION }}">
+                  <input type="hidden" name="accion" value="rechazar">
+                  <button class="btn btn-danger w-100">Rechazar</button>
+                </form>
+                
               </div>
             </div>
           </div>
