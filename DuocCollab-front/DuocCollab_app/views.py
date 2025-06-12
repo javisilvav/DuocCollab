@@ -304,16 +304,33 @@ def EditarPerfil(request):
 
 
 def MisProyectos(request):
-    result = verificar_token_y_api(request,'GET', '/proyecto/mis_proyectos', 'Perfil')
+    result = verificar_token_y_api(request, 'GET', '/proyecto/mis_proyectos', 'Perfil')
     if isinstance(result, HttpResponseRedirect):
         return result
+    
     response = result['response']
     if response.status_code == 200:
         proyecto = response.json()
         for i in proyecto:
+            # Formatear FECHA_INICIO
+            fecha = i.get('FECHA_INICIO')
+            if fecha:
+                fecha_formateada = datetime.fromisoformat(fecha)
+                i['FECHA_INICIO'] = fecha_formateada.strftime("%d/%m/%Y")
+            
+            # Formatear FECHA_POSTULACION dentro de POSTULACION[]
+            postulaciones = i.get('POSTULACION', [])
+            for postulacion in postulaciones:
+                fecha_postulacion = postulacion.get('FECHA_POSTULACION')
+                if fecha_postulacion:
+                    fecha_postulacion_dt = datetime.fromisoformat(fecha_postulacion)
+                    postulacion['FECHA_POSTULACION'] = fecha_postulacion_dt.strftime("%d/%m/%Y")
+            
+            # Imagen
             filename = i.get('FOTO_PROYECTO')
             if filename:
-                filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)      
+                i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)      
+
         sweet_alert = request.session.pop('sweet_alert', None)
         context = {
             'proyectos': proyecto

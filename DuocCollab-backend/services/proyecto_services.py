@@ -5,13 +5,15 @@ from .proyecto_consistencia import validar_carga_img, guardar_imagen
 
 def obtener_proyecto_usuario(id_usuario):
     try:
-        resultado = supabase.table("PROYECTO").select("*").eq("ID_USUARIO", id_usuario).execute()
+
+        resultado = supabase.table("PROYECTO").select("*,SEDE(NOMBRE_SEDE), INTEGRANTES_PROYECTO(ROL, USUARIO(NOMBRE, APELLIDO)), POSTULACION(*,USUARIO(NOMBRE, APELLIDO, CORREO))").eq("ID_USUARIO", id_usuario).execute()
         if resultado.data:
             return resultado.data, 200
         else:
             return {"error": "Proyectos del usuario no encontrado."}, 404
     except Exception as e:
         return {"error": f"Error al consultar proyectos del usuario: {str(e)}"}, 500
+
     
 def obtener_detalle_proyecto(data_proyecto):
     try:
