@@ -43,7 +43,13 @@
           </blockquote>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar postulación</button>
+          
+          <form id="formCancelar{{ p.ID_POSTULACION }}" method="POST" action="{% url 'Postulaciones' %}" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="id_postulacion" value="{{ p.ID_POSTULACION }}">
+            <input type="hidden" name="accion" value="cancelar">
+            <button type="submit" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar postulación</button>
+          </form>
           <button type="button" class="btn" onclick="verProyecto({{ p.ID_PROYECTO }})"
                   style="font-size: 16px; font-weight: 700; background-color: #FFB800; border-radius: 5px;">
             Ver detalles del proyecto
@@ -55,4 +61,5 @@
   
   {% endfor %}
 </div>
+
 

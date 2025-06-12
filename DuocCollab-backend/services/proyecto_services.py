@@ -84,6 +84,7 @@ def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
 def cargar_postulacion(id_usuario, datos_postulacion):
     errores = []
     id_proyecto = datos_postulacion.get('ID_PROYECTO')
+    comentario = datos_postulacion.get('COMENTARIO')
     if not id_proyecto or not str(id_proyecto).strip():
         errores.append('ID_PROYECTO: Campo obligatorio.')
 
@@ -94,10 +95,15 @@ def cargar_postulacion(id_usuario, datos_postulacion):
     if errores:
         return {"errores": errores}, 400 
 
+    propietario = supabase.table("PROYECTO").select("*").eq("ID_PROYECTO", id_proyecto).eq("ID_USUARIO", id_usuario).execute()
+    if propietario.data:
+        return {"errores":"No puedes postular a tus proyectos."}, 409
+        
     existente = supabase.table("POSTULACION").select("*").match({
         "ID_USUARIO": id_usuario,
         "ID_PROYECTO": id_proyecto
     }).execute()
+    print(existente)
     if existente.data:
         return {"errores": ["Ya existe una postulación a este proyecto."]}, 409
 
@@ -105,8 +111,9 @@ def cargar_postulacion(id_usuario, datos_postulacion):
         "ID_USUARIO": id_usuario,
         "ID_PROYECTO": id_proyecto,
         "FECHA_POSTULACION": datetime.now().isoformat(),
-        "ESTADO": 1,
-        "FECHA_RESOLUCION": None
+        "ESTADO": "Solicitado",
+        "FECHA_RESOLUCION": None,
+        'comentario':comentario
     }
 
     try:
@@ -118,10 +125,22 @@ def cargar_postulacion(id_usuario, datos_postulacion):
 
 def obtener_postulacion_usuario(id_usuario):
     try:
-        resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO))').eq("ID_USUARIO", id_usuario).execute()
+        resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO))').eq("ID_USUARIO", id_usuario).neq("ESTADO",'Cancelada').execute()
         if resultado.data:
             return resultado.data, 200
         else:
             return {"error": "Proyectos del usuario no encontrado."}, 404
     except Exception as e:
         return {"error": f"Error al consultar proyectos del usuario: {str(e)}"}, 500
+    
+def editar_estado_postulacion(datos):
+    try:
+        id_postulacion = datos.get('ID_POSTULACION')
+        estado = datos.get('ESTADO')
+        resultado = supabase.table("POSTULACION").update({"ESTADO":estado, "FECHA_RESOLUCION": datetime.now().isoformat()}).eq("ID_POSTULACION",id_postulacion).execute()
+        if resultado.data:
+            return resultado.data, 200
+        else:
+            return {"error": "Postulación no encontrada."}, 404
+    except Exception as e:
+        return {"error": f"Error al modificar postulación del usuario: {str(e)}"}, 500

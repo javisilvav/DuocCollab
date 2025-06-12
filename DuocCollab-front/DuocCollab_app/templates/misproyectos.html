@@ -16,7 +16,7 @@
           {{ proyecto.NOMBRE_PROYECTO }}
         </div>
         <div class="position-relative img-standard-container">
-          <img src="{% static 'img/p_desc_2.jpg' %}" alt="Foto" class="img-fluid">
+          <img src="{{ proyecto.FOTO_PROYECTO }}" alt="Foto" class="img-fluid">
           <div
             class="position-absolute top-50 start-0 translate-middle-y text-white fw-bold d-flex align-items-center justify-content-center"
             style="width: 100%; background-color: rgba(0, 0, 0, 0.6); padding: 15px 15px; text-align: center;">
@@ -45,8 +45,10 @@
             <p><strong>Etiquetas:</strong> #salud #comunidad #bienestar</p>
 
           </div>
+          {% if proyecto.POSTULACION %}
           <div style="border-bottom: 3px solid #FFB800; font-size: 18px; font-weight: 700;">Postulaciones recibidas</div>
           <br>
+          {% endif %}
 
           {% for pos in proyecto.POSTULACION %}
 
@@ -71,7 +73,11 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Desactivar proyecto</button>
           <button class="btn btn-outline-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Editar proyecto</button>
-          <a href="{% url 'ProyectosDetail' %}" type="button" class="btn" style="font-size: 16px; font-weight: 700; background-color: #FFB800; border-radius: 5px;">Ver proyecto</a>
+
+          <button type="button" class="btn" onclick="verProyecto({{ proyecto.ID_PROYECTO }})"
+                  style="font-size: 16px; font-weight: 700; background-color: #FFB800; border-radius: 5px;">
+            Ver proyecto
+          </button>
         </div>
       </div>
     </div>

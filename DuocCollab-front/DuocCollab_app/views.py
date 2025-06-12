@@ -304,70 +304,107 @@ def EditarPerfil(request):
 
 
 def MisProyectos(request):
-    result = verificar_token_y_api(request, 'GET', '/proyecto/mis_proyectos', 'Perfil')
-    if isinstance(result, HttpResponseRedirect):
-        return result
-    
-    response = result['response']
-    if response.status_code == 200:
-        proyecto = response.json()
-        for i in proyecto:
-            # Formatear FECHA_INICIO
-            fecha = i.get('FECHA_INICIO')
-            if fecha:
-                fecha_formateada = datetime.fromisoformat(fecha)
-                i['FECHA_INICIO'] = fecha_formateada.strftime("%d/%m/%Y")
-            
-            # Formatear FECHA_POSTULACION dentro de POSTULACION[]
-            postulaciones = i.get('POSTULACION', [])
-            for postulacion in postulaciones:
-                fecha_postulacion = postulacion.get('FECHA_POSTULACION')
-                if fecha_postulacion:
-                    fecha_postulacion_dt = datetime.fromisoformat(fecha_postulacion)
-                    postulacion['FECHA_POSTULACION'] = fecha_postulacion_dt.strftime("%d/%m/%Y")
-            
-            # Imagen
-            filename = i.get('FOTO_PROYECTO')
-            if filename:
-                i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)      
+    if request.method == 'GET':
+        result = verificar_token_y_api(request, 'GET', '/proyecto/mis_proyectos', 'Perfil')
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        
+        response = result['response']
+        if response.status_code == 200:
+            proyecto = response.json()
+            for i in proyecto:
+                # Formatear FECHA_INICIO
+                fecha = i.get('FECHA_INICIO')
+                if fecha:
+                    fecha_formateada = datetime.fromisoformat(fecha)
+                    i['FECHA_INICIO'] = fecha_formateada.strftime("%d/%m/%Y")
+                
+                # Formatear FECHA_POSTULACION dentro de POSTULACION[]
+                postulaciones = i.get('POSTULACION', [])
+                for postulacion in postulaciones:
+                    fecha_postulacion = postulacion.get('FECHA_POSTULACION')
+                    if fecha_postulacion:
+                        try:
+                            fecha_formateada = datetime.strptime(fecha_postulacion, "%Y-%m-%dT%H:%M:%S.%f")
+                        except ValueError:
+                        # En caso de que no tenga microsegundos, prueba sin ellos
+                            fecha_formateada = datetime.strptime(fecha_postulacion, "%Y-%m-%dT%H:%M:%S")
+                        postulacion['FECHA_POSTULACION'] = fecha_formateada.strftime("%d/%m/%Y")
+                
+                # Imagen
+                filename = i.get('FOTO_PROYECTO')
+                if filename:
+                    i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)      
 
-        sweet_alert = request.session.pop('sweet_alert', None)
-        context = {
-            'proyectos': proyecto
-        }
-        if sweet_alert:
-            context['sweet_alert'] = sweet_alert
-        return render(request, 'misproyectos.html', context)
-    else:
-        error_msg = response.json().get('error', 'Error desconocido al mostrar proyectos')
-        return render(request, 'misproyectos.html', {'error': error_msg})
-
+            sweet_alert = request.session.pop('sweet_alert', None)
+            context = {
+                'proyectos': proyecto
+            }
+            if sweet_alert:
+                context['sweet_alert'] = sweet_alert
+            return render(request, 'misproyectos.html', context)
+        else:
+            error_msg = response.json().get('error', 'Error desconocido al mostrar proyectos')
+            return render(request, 'misproyectos.html', {'error': error_msg})
+   
 
 def MisPostulaciones(request):
-    result = verificar_token_y_api(request,'GET', '/proyecto/mis_postulaciones', 'Home')
-    if isinstance(result, HttpResponseRedirect):
-        return result
-    response = result['response']
-    if response.status_code == 200:
-        postulacion = response.json()
-        for i in postulacion:
-            fecha = i.get('FECHA_POSTULACION')
-            fecha_formateada = datetime.fromisoformat(fecha)
-            i['FECHA_POSTULACION'] = fecha_formateada.strftime("%d/%m/%Y")
-            proyecto = i.get('PROYECTO',{})
-            filename = proyecto.get('FOTO_PROYECTO')
-            if filename:
-                filename = proyecto['FOTO_PROYECTO'] = ruta_img_proyecto(filename)      
-        sweet_alert = request.session.pop('sweet_alert', None)
-        context = {
-            'postulaciones': postulacion
-        }
-        if sweet_alert:
-            context['sweet_alert'] = sweet_alert
-        return render(request, 'mispostulaciones.html', context)
-    else:
-        error_msg = response.json().get('error', 'Error desconocido al mostrar postulaciones.')
-        return render(request, 'mispostulaciones.html', {'error': error_msg})
+    if request.method == 'GET':
+        result = verificar_token_y_api(request,'GET', '/proyecto/mis_postulaciones', 'Home')
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        response = result['response']
+        if response.status_code == 200:
+            postulacion = response.json()
+            for i in postulacion:
+                fecha = i.get('FECHA_POSTULACION')
+                if fecha:
+                    try:
+                        fecha_formateada = datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S.%f")
+                    except ValueError:
+                    # En caso de que no tenga microsegundos, prueba sin ellos
+                        fecha_formateada = datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S")
+                i['FECHA_POSTULACION'] = fecha_formateada.strftime("%d/%m/%Y")
+                proyecto = i.get('PROYECTO',{})
+                filename = proyecto.get('FOTO_PROYECTO')
+                if filename:
+                    filename = proyecto['FOTO_PROYECTO'] = ruta_img_proyecto(filename)      
+            sweet_alert = request.session.pop('sweet_alert', None)
+            context = {
+                'postulaciones': postulacion
+            }
+            if sweet_alert:
+                context['sweet_alert'] = sweet_alert
+            return render(request, 'mispostulaciones.html', context)
+        else:
+            error_msg = response.json().get('error', 'Error desconocido al mostrar postulaciones.')
+            return render(request, 'mispostulaciones.html', {'error': error_msg})
+    if request.method == 'POST':
+        if request.POST.get('accion') == 'cancelar':
+            id_postulacion = request.POST.get('id_postulacion')
+            datos = {
+                "ID_POSTULACION":id_postulacion,
+                "ESTADO":"Cancelada"
+            }
+            result = verificar_token_y_api(request,'POST', '/proyecto/editar_postulacion', 'Perfil', json=datos)
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            
+            response = result['response']
+            if response.status_code == 200:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Postulación cancelada.')
+                return redirect('Perfil')
+            else:
+                try:
+                    error_data = response.json().get('errores', [])
+                    texto_error = format_errors(error_data)
+                    request.session['sweet_alert'] = alert('error', 'Error al cancelar postulación.', texto_error)
+                    return redirect('Perfil')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Perfil')      
+
 
 
 def ProyectosDetail(request):
@@ -428,6 +465,33 @@ def ProyectosDetail(request):
         else:
             error_msg = response.json().get('error', 'Error desconocido al mostrar el detalle de proyecto.')
             return render(request, 'proyectos_detail.html', {'error': error_msg})
+    if request.method == 'POST':
+
+
+        datos = {"ID_PROYECTO": request.session['id_proyecto']}
+        comentario = request.POST.get('comentario')
+        if comentario:
+            datos["COMENTARIO"] = comentario
+
+
+
+        result = verificar_token_y_api(request, 'POST', '/proyecto/crear_postulacion', 'Perfil', json=datos, headers={'Content-Type': 'application/json'})
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        response = result['response']
+        if response.status_code == 201:
+            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Postulación creada correctamente.')
+            return redirect('Perfil')
+        else:
+            try:
+                error_data = response.json()['errores']
+                texto_error = format_errors(error_data)
+                request.session['sweet_alert'] = alert('error', 'Error al crear postulación.', texto_error)
+                return redirect('Perfil')
+            except ValueError:
+                error = f"Error inesperado ({response.status_code}): {response.text}"
+                request.session['sweet_alert'] = alert('error', 'Error', error)
+                return redirect('Perfil')
 
 
 
