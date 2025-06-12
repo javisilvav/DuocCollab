@@ -64,6 +64,7 @@ def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
 
     nombre_imagen = guardar_imagen('proyecto', archivo_imagen)
 
+
     try:
         nuevo_proyecto = {
             "ID_USUARIO": id_usuario,
@@ -85,7 +86,15 @@ def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
         for i in datos_proyecto['INTERESES']:
             datos = {"ID_PROYECTO":nuevo_id_proyecto,"ID_ETIQUETA":int(i)}
             supabase.table("PROYECTO_ETIQUETA").insert(datos).execute() 
-            
+
+
+        for i in datos_proyecto['COLABORADOR']:
+            resultado = supabase.table("USUARIO").select("ID_USUARIO").eq("CORREO",i).execute()
+            if resultado.data:
+                print(resultado.data[0]["ID_USUARIO"])
+                colaboradores = {"ID_USUARIO": resultado.data[0]["ID_USUARIO"], "ID_PROYECTO":nuevo_id_proyecto,"ROL":'Sin rol especificado'}
+                supabase.table("INTEGRANTES_PROYECTO").insert(colaboradores).execute() 
+                
         return {"mensaje": "Proyecto creado correctamente."}, 201
     except Exception as e:
         return {"error": f"Error al crear proyecto: {str(e)}"}, 500

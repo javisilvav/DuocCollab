@@ -565,7 +565,8 @@ def SubirProyecto(request):
             'ID_SEDE': request.POST.get('sede'),
             'REQUISITOS':request.POST.get('requisitos'),
             'CARRERA_DESTINO':request.POST.get('carrera'),
-            'INTERESES':request.POST.getlist('intereses[]')
+            'INTERESES':request.POST.getlist('intereses[]'),
+            'COLABORADOR':request.POST.getlist('colaboradores[]')
         }
 
         archivos = {}
