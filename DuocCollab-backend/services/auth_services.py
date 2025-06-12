@@ -160,3 +160,18 @@ def restablecer_contrasena(datos):
         return {"mensaje": f"Contraseña actualizada y reenviada al correo {correo}"}, 200
     except Exception as e:
         return {"error": f"Error al actualizar contraseña: {str(e)}"}, 500
+    
+
+
+
+
+
+def obtener_correos():
+    try:
+        resultado = supabase.table("USUARIO").select("CORREO").execute()
+        if resultado.data:
+            return resultado.data, 200
+        else:
+            return {"error": "Correos no encontrados."}, 404
+    except Exception as e:
+        return {"error": f"Error al consultar los correos: {str(e)}"}, 500

@@ -9,6 +9,7 @@ from services.proyecto_services import (
     obtener_detalle_proyecto,
     obtener_proyetos,
     editar_estado_postulacion,
+    obtener_etiquetas,
 
 )
 
@@ -83,10 +84,18 @@ def proyectos_usuario():
 @jwt_required()
 def crear_proyecto():
     id_usuario = get_jwt_identity()
-    datos = request.form.to_dict()
+    datos = request.form.to_dict(flat=False)
     imagen = request.files.get('FOTO_PROYECTO')
 
     resultado, status = cargar_proyecto(id_usuario, datos, imagen)
     return jsonify(resultado), status
 
 
+
+
+
+@proyecto_bp.route('/etiquetas', methods=['GET'])
+@jwt_required()
+def etiquetas():
+    etiqueta, status = obtener_etiquetas()
+    return jsonify(etiqueta), status

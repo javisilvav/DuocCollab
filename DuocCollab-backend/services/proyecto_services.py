@@ -46,9 +46,12 @@ def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
     errores = []
     campos_obligatorios = ['TITULO', 'NOMBRE_PROYECTO', 'DESCRIPCION',
                            'DURACION', 'ID_SEDE', 'REQUISITOS', 'CARRERA_DESTINO']
+    
+
+
 
     for campo in campos_obligatorios:
-        if campo not in datos_proyecto or not datos_proyecto[campo].strip():
+        if campo not in datos_proyecto or not datos_proyecto[campo][0].strip():
             errores.append(f'{campo}: Campo obligatorio.')
 
     if not archivo_imagen:
@@ -64,18 +67,25 @@ def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
     try:
         nuevo_proyecto = {
             "ID_USUARIO": id_usuario,
-            "TITULO": datos_proyecto['TITULO'],
-            "NOMBRE_PROYECTO": datos_proyecto['NOMBRE_PROYECTO'],
-            "DESCRIPCION": datos_proyecto['DESCRIPCION'],
+            "TITULO": datos_proyecto['TITULO'][0],
+            "NOMBRE_PROYECTO": datos_proyecto['NOMBRE_PROYECTO'][0],
+            "DESCRIPCION": datos_proyecto['DESCRIPCION'][0],
             "FECHA_INICIO": date.today().isoformat(),
-            "DURACION": datos_proyecto['DURACION'],
-            "ID_SEDE": datos_proyecto['ID_SEDE'],
-            "REQUISITOS": datos_proyecto['REQUISITOS'],
-            "CARRERA_DESTINO": datos_proyecto['CARRERA_DESTINO'],
+            "DURACION": datos_proyecto['DURACION'][0],
+            "ID_SEDE": datos_proyecto['ID_SEDE'][0],
+            "REQUISITOS": datos_proyecto['REQUISITOS'][0],
+            "CARRERA_DESTINO": datos_proyecto['CARRERA_DESTINO'][0],
             "FOTO_PROYECTO": nombre_imagen,
             "ESTADO": 1
         }
-        supabase.table("PROYECTO").insert(nuevo_proyecto).execute()
+        
+        respuesta = supabase.table("PROYECTO").insert(nuevo_proyecto).execute() 
+        nuevo_id_proyecto = respuesta.data[0]['ID_PROYECTO']  
+
+        for i in datos_proyecto['INTERESES']:
+            datos = {"ID_PROYECTO":nuevo_id_proyecto,"ID_ETIQUETA":int(i)}
+            supabase.table("PROYECTO_ETIQUETA").insert(datos).execute() 
+            
         return {"mensaje": "Proyecto creado correctamente."}, 201
     except Exception as e:
         return {"error": f"Error al crear proyecto: {str(e)}"}, 500
@@ -144,3 +154,21 @@ def editar_estado_postulacion(datos):
             return {"error": "Postulación no encontrada."}, 404
     except Exception as e:
         return {"error": f"Error al modificar postulación del usuario: {str(e)}"}, 500
+    
+
+
+
+
+
+
+
+
+def obtener_etiquetas():
+    try:
+        resultado = supabase.table("ETIQUETA").select("*").execute()
+        if resultado.data:
+            return resultado.data, 200
+        else:
+            return {"error": "Etiquetas no encontradas."}, 404
+    except Exception as e:
+        return {"error": f"Error al consultar los etiquetas: {str(e)}"}, 500

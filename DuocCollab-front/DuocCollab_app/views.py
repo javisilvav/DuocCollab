@@ -498,19 +498,74 @@ def ProyectosDetail(request):
 
 def SubirProyecto(request):
   if request.method == 'GET':
+    #Obtener Etiquetas
+    result_etiqueta = verificar_token_y_api(request, 'GET', '/proyecto/etiquetas', 'Perfil')
+    if isinstance(result_etiqueta, HttpResponseRedirect):
+        return result_etiqueta
+    response_etiqueta = result_etiqueta['response']
+    if response_etiqueta.status_code == 200:
+        etiquetas = response_etiqueta.json()
+    else:
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener las etiquetas.')
+        return redirect('Perfil')
+    
 
-    return render(request, 'subir_proyecto.html')
+
+    result_correo = verificar_token_y_api(request, 'GET', '/auth/correos', 'Perfil')
+    if isinstance(result_correo, HttpResponseRedirect):
+        return result_correo
+    response_correo = result_correo['response']
+    if response_correo.status_code == 200:
+        correos = response_correo.json()
+    else:
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los correos.')
+        return redirect('Perfil')
+    
+    #Obtener carreras
+    result_carrera = verificar_token_y_api(request, 'GET', '/institucion/carreras', 'Login', False)
+    if isinstance(result_carrera, HttpResponseRedirect):
+        return result_carrera
+    response_carrera = result_carrera['response']
+    if response_carrera.status_code == 200:
+        carreras = response_carrera.json()
+    else:
+      request.session['sweet_alert'] = alert('error', 'Error', "No se pudieron obtener las carreras")
+      return redirect('Login')
+        
+
+    #Obtener SEDE
+    result_sede = verificar_token_y_api(request, 'GET', '/institucion/sedes', 'Login', False)
+    if isinstance(result_sede, HttpResponseRedirect):
+        return result_sede
+    response_sede = result_sede['response']
+    if response_sede.status_code == 200:
+        sedes = response_sede.json()
+    else:
+      mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
+      request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+      return redirect('Login')
+
+    context = {
+        "etiquetas":etiquetas,
+        "correos":correos,
+        "sedes":sedes,
+        "carreras":carreras,
+    }
+
+    return render(request, 'subir_proyecto.html', context)
   
 
   if request.method ==  'POST':
+
         datos = {
             'TITULO': request.POST.get('titulo'),
             'NOMBRE_PROYECTO': request.POST.get('nombre_proyecto'),
             'DESCRIPCION': request.POST.get('descripcion'),
-            'DURACION': 'por django',
-            'ID_SEDE': 1,
-            'REQUISITOS':'por django',
-            'CARRERA_DESTINO':'por django'
+            'DURACION': request.POST.get('duracion'),
+            'ID_SEDE': request.POST.get('sede'),
+            'REQUISITOS':request.POST.get('requisitos'),
+            'CARRERA_DESTINO':request.POST.get('carrera'),
+            'INTERESES':request.POST.getlist('intereses[]')
         }
 
         archivos = {}
@@ -527,7 +582,7 @@ def SubirProyecto(request):
             return redirect('Perfil')
         else:
             try:
-                error_data = response.json()['errores']
+                error_data = response.json()['error']
                 texto_error = format_errors(error_data)
                 request.session['sweet_alert'] = alert('error', 'Error al crear proyecto.', texto_error)
                 return redirect('Perfil')
