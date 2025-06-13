@@ -6,14 +6,14 @@ from .proyecto_consistencia import validar_carga_img, guardar_imagen
 def obtener_proyecto_usuario(id_usuario):
     try:
 
-        resultado = supabase.table("PROYECTO").select("*,SEDE(NOMBRE_SEDE), INTEGRANTES_PROYECTO(ROL, USUARIO(NOMBRE, APELLIDO)), POSTULACION(*,USUARIO(NOMBRE, APELLIDO, CORREO))").eq("ID_USUARIO", id_usuario).execute()
+        resultado = supabase.table("PROYECTO").select("*,SEDE(NOMBRE_SEDE), PROYECTO_ETIQUETA(ETIQUETA(NOMBRE)) , INTEGRANTES_PROYECTO(ROL, USUARIO(NOMBRE, APELLIDO)), POSTULACION(*,USUARIO(NOMBRE, APELLIDO, CORREO))").eq("ID_USUARIO", id_usuario).execute()
         if resultado.data:
             proyectos = resultado.data
             for proyecto in proyectos:
                 if "POSTULACION" in proyecto:
                     proyecto["POSTULACION"] = [
                         p for p in proyecto["POSTULACION"]
-                        if p.get("ESTADO") in ["Solicitado"]
+                        if p.get("ESTADO") not in ["Rechazada","Cancelada"]
                     ]
 
             return proyectos, 200
@@ -47,6 +47,23 @@ def obtener_proyetos():
             return {"error": "Proyectos no encontrados."}, 404
     except Exception as e:
         return {"error": f"Error al consultar los proyectos: {str(e)}"}, 500
+
+
+def editar_estado_proyecto(datos):
+    try:
+        id_proyecto = datos.get('ID_PROYECTO')
+        estado = datos.get('ESTADO')
+        resultado = supabase.table("PROYECTO").update({"ESTADO":estado}).eq("ID_PROYECTO",id_proyecto).execute()
+        if resultado.data:
+            return resultado.data, 200
+        else:
+            return {"error": "Proyecto no encontrada."}, 404
+    except Exception as e:
+        return {"error": f"Error al modificar el estado de proyecto del usuario: {str(e)}"}, 500
+    
+
+
+
 
 
 

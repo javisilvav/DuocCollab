@@ -39,10 +39,18 @@
             <p><strong>Estado del proyecto:</strong> {{ proyecto.ESTADO }}</p>
             <p><strong>Descripción:</strong> {{ proyecto.DESCRIPCION }}</p>
             <p><strong>Requisitos:</strong> {{ proyecto.REQUISITOS }}</p>
-            <p><strong>Integrantes:</strong> Alexis Carvajal, Juan José Menares, Claudia Zapata</p>
+            <p><strong>Integrantes:</strong>
+                {% for integrante in proyecto.INTEGRANTES_PROYECTO %}
+                  {{ integrante.USUARIO.NOMBRE }} {{ integrante.USUARIO.APELLIDO }},
+                {% endfor %}
+            </p>
             <p><strong>Sede:</strong> {{ proyecto.SEDE.NOMBRE_SEDE }}</p>
-            <p><strong>Carrera:</strong> Ingeniería en Informática</p>
-            <p><strong>Etiquetas:</strong> #salud #comunidad #bienestar</p>
+            <p><strong>Carrera:</strong> ESTO ES HTML</p>
+            <p><strong>Etiquetas:</strong>
+              {% for etiqueta in proyecto.PROYECTO_ETIQUETA %}
+                #{{ etiqueta.ETIQUETA.NOMBRE }}
+              {% endfor %}
+            </p>
 
           </div>
           {% if proyecto.POSTULACION %}
@@ -84,7 +92,16 @@
           {% endfor %}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Desactivar proyecto</button>
+          <form id="formDesactivarProyecto{{ proyecto.ID_PROYECTO }}" method="POST" action="{% url 'MisProyectos' %}" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="id_proyecto" value="{{ proyecto.ID_PROYECTO }}">
+            <input type="hidden" name="accion" value="desactivar_proyecto">
+            <button type="submit" class="btn btn-outline-danger">Desactivar proyecto</button>
+          </form>
+
+
+
+          
           <button class="btn btn-outline-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Editar proyecto</button>
 
           <button type="button" class="btn" onclick="verProyecto({{ proyecto.ID_PROYECTO }})"
@@ -106,18 +123,19 @@
           <form>
             <div class="mb-3">
               <label for="disabledTextInput" class="form-label">Nombre del proyecto</label>
-              <input type="text" id="disabledTextInput" class="form-control" placeholder="DATAVET" disabled>
+              <input type="text" id="disabledTextInput" class="form-control" placeholder="{{ proyecto.NOMBRE_PROYECTO }}" disabled>
             </div>
             <div class="mb-3">
               <label for="exampleFormControlTextarea1" class="form-label">Descripción</label>
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3">{{ proyecto.DESCRIPCION }}</textarea>
             </div>
             <div class="mb-3">
               <label for="exampleFormControlTextarea2" class="form-label">Requisitos</label>
-              <textarea class="form-control" id="exampleFormControlTextarea2" rows="3"></textarea>
+              <textarea class="form-control" id="exampleFormControlTextarea2" rows="3">{{ proyecto.REQUISITOS }}</textarea>
             </div>
             <label for="exampleFormControlTextarea2" class="form-label">Etiquetas</label>
             <div class="input-group mb-3">
+              
               <input type="text" class="form-control" placeholder="Etiquetas" id="hashtags">
               <button class="btn btn-outline-secondary" type="button" id="agregar-hashtag">+</button>
             </div>
@@ -131,7 +149,7 @@
             <div class="mb-3">
               <label for="sede" class="form-label">Sede</label>
               <select class="form-select mb-3" id="sede" disabled>
-                <option>San Bernardo</option>
+                <option>{{ proyecto.SEDE.NOMBRE_SEDE }}</option>
               </select>
             </div>
             <div class="mb-3">

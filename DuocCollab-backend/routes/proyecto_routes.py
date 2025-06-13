@@ -10,6 +10,7 @@ from services.proyecto_services import (
     obtener_proyetos,
     editar_estado_postulacion,
     obtener_etiquetas,
+    editar_estado_proyecto,
 
 )
 
@@ -55,8 +56,8 @@ def postulaciones_usuario():
 @jwt_required()
 def estado_postulacion():
     datos = request.get_json()
-    proyectos, status = editar_estado_postulacion(datos)
-    return jsonify(proyectos), status
+    postulacion, status = editar_estado_postulacion(datos)
+    return jsonify(postulacion), status
 
 
 @proyecto_bp.route('/detalle_proyecto', methods=['GET'])
@@ -90,6 +91,12 @@ def crear_proyecto():
     resultado, status = cargar_proyecto(id_usuario, datos, imagen)
     return jsonify(resultado), status
 
+@proyecto_bp.route('/editar_estado_proyecto', methods=['POST'])
+@jwt_required()
+def estado_proyecto():
+    datos = request.get_json()
+    proyectos, status = editar_estado_proyecto(datos)
+    return jsonify(proyectos), status
 
 
 

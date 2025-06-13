@@ -334,11 +334,26 @@ def MisProyectos(request):
                 # Imagen
                 filename = i.get('FOTO_PROYECTO')
                 if filename:
-                    i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)      
+                    i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)  
+
+
+
+            #Obtener Etiquetas
+            result_etiqueta = verificar_token_y_api(request, 'GET', '/proyecto/etiquetas', 'Perfil')
+            if isinstance(result_etiqueta, HttpResponseRedirect):
+                return result_etiqueta
+            response_etiqueta = result_etiqueta['response']
+            if response_etiqueta.status_code == 200:
+                etiquetas = response_etiqueta.json()
+            else:
+                request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener las etiquetas.')
+                return redirect('Perfil')   
+
 
             sweet_alert = request.session.pop('sweet_alert', None)
             context = {
-                'proyectos': proyecto
+                'proyectos': proyecto,
+                'etiquetas':etiquetas
             }
             if sweet_alert:
                 context['sweet_alert'] = sweet_alert
@@ -346,6 +361,9 @@ def MisProyectos(request):
         else:
             error_msg = response.json().get('error', 'Error desconocido al mostrar proyectos')
             return render(request, 'misproyectos.html', {'error': error_msg})
+        
+
+
     if request.method == 'POST':
         if request.POST.get('accion') == 'aceptar':
             id_postulacion = request.POST.get('id_postulacion')
@@ -390,6 +408,30 @@ def MisProyectos(request):
                     error_data = response.json().get('errores', [])
                     texto_error = format_errors(error_data)
                     request.session['sweet_alert'] = alert('error', 'Error al rechazar postulación.', texto_error)
+                    return redirect('Perfil')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Perfil')    
+        if request.POST.get('accion') == 'desactivar_proyecto':
+            id_proyecto = request.POST.get('id_proyecto')
+            datos = {
+                "ID_PROYECTO":id_proyecto,
+                "ESTADO":0
+            }
+            result = verificar_token_y_api(request,'POST', '/proyecto/editar_estado_proyecto', 'Perfil', json=datos)
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            
+            response = result['response']
+            if response.status_code == 200:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Proyecto desactivado.')
+                return redirect('Perfil')
+            else:
+                try:
+                    error_data = response.json().get('errores', [])
+                    texto_error = format_errors(error_data)
+                    request.session['sweet_alert'] = alert('error', 'Error al desactivar proyecto.', texto_error)
                     return redirect('Perfil')
                 except ValueError:
                     error = f"Error inesperado ({response.status_code}): {response.text}"

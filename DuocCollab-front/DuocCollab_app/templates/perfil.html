@@ -143,6 +143,32 @@
   </script>
 
 
+  
+  <script>
+    setTimeout(() => {
+      const intereses = document.getElementById('intereses');
+      if (intereses) {
+        $('#intereses').select2({
+          placeholder: 'Etiquetas',
+          tags: true,
+          width: '516px'
+        });
+      }
+    }, 100);
+
+    setTimeout(() => {
+      const colaboradores = document.getElementById('colaboradores');
+      if (colaboradores) {
+        $('#colaboradores').select2({
+          placeholder: 'Añadir colaboradores',
+          tags: true,
+          width: '516px'
+        });
+      }
+    }, 100);
+  </script>
+
+
 
 
 </body>
