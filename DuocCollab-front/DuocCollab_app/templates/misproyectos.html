@@ -102,7 +102,7 @@
 
 
           
-          <button class="btn btn-outline-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Editar proyecto</button>
+          <button class="btn btn-outline-primary" data-bs-target="#editarProyecto{{ proyecto.ID_PROYECTO }}" data-bs-toggle="modal">Editar proyecto</button>
 
           <button type="button" class="btn" onclick="verProyecto({{ proyecto.ID_PROYECTO }})"
                   style="font-size: 16px; font-weight: 700; background-color: #FFB800; border-radius: 5px;">
@@ -112,7 +112,7 @@
       </div>
     </div>
   </div>
-  <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+  <div class="modal fade" id="editarProyecto{{ proyecto.ID_PROYECTO }}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
@@ -155,7 +155,7 @@
             <div class="mb-3">
               <label for="carrera" class="form-label">Carrera</label>
               <select class="form-select mb-3" id="carrera" disabled>
-                <option>Ingeniería en Informática</option>
+                <option>ESTO ES HTML</option>
               </select>
             </div>  
           </form>
