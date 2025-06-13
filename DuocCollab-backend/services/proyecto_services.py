@@ -122,8 +122,82 @@ def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
                 
         return {"mensaje": "Proyecto creado correctamente."}, 201
     except Exception as e:
-        return {"error": f"Error al crear proyecto: {str(e)}"}, 500
+        return {"errores": f"Error al crear proyecto: {str(e)}"}, 500
     
+
+def editar_proyecto(datos_proyecto, archivo_imagen=None):
+    errores = []
+    campos_obligatorios = ['TITULO', 'NOMBRE_PROYECTO', 'DESCRIPCION',
+                           'DURACION', 'ID_SEDE', 'REQUISITOS', 'CARRERA_DESTINO']
+    
+    print(datos_proyecto)
+    for campo in campos_obligatorios:
+        if campo not in datos_proyecto or not datos_proyecto[campo][0].strip():
+            errores.append(f'{campo}: Campo obligatorio.')
+
+    if archivo_imagen:
+        errores += validar_carga_img(archivo_imagen, 'FOTO_PROYECTO')
+
+    id_proyecto = datos_proyecto['ID_PROYECTO'][0]
+    if not id_proyecto:
+        errores.append('Falta ID del proyecto.')
+
+    if errores:
+        return {'errores': errores}, 400
+    
+
+    try:
+        # Traer imagen anterior si no se subió una nueva
+        if archivo_imagen:
+            nombre_imagen = guardar_imagen('proyecto', archivo_imagen)
+        else:
+            
+            resultado = supabase.table("PROYECTO").select("FOTO_PROYECTO").eq("ID_PROYECTO", id_proyecto).execute()
+            if not resultado.data:
+                return {"errores": "Proyecto no encontrado."}, 404
+            nombre_imagen = resultado.data[0]["FOTO_PROYECTO"]
+
+        datos_actualizados = {
+            "TITULO": datos_proyecto['TITULO'][0],
+            "NOMBRE_PROYECTO": datos_proyecto['NOMBRE_PROYECTO'][0],
+            "DESCRIPCION": datos_proyecto['DESCRIPCION'][0],
+            "DURACION": datos_proyecto['DURACION'][0],
+            "ID_SEDE": datos_proyecto['ID_SEDE'][0],
+            "REQUISITOS": datos_proyecto['REQUISITOS'][0],
+            "CARRERA_DESTINO": datos_proyecto['CARRERA_DESTINO'][0],
+            "FOTO_PROYECTO": nombre_imagen,
+        }
+
+        supabase.table("PROYECTO").update(datos_actualizados).eq("ID_PROYECTO", id_proyecto).execute()
+
+        ## Actualizar INTERESES
+        #supabase.table("PROYECTO_ETIQUETA").delete().eq("ID_PROYECTO", id_proyecto).execute()
+        #for i in datos_proyecto.get('INTERESES', []):
+        #    supabase.table("PROYECTO_ETIQUETA").insert({
+        #        "ID_PROYECTO": id_proyecto,
+        #        "ID_ETIQUETA": int(i)
+        #    }).execute()
+#
+        ## Actualizar COLABORADORES
+        #supabase.table("INTEGRANTES_PROYECTO").delete().eq("ID_PROYECTO", id_proyecto).execute()
+        #for correo in datos_proyecto.get('COLABORADOR', []):
+        #    resultado = supabase.table("USUARIO").select("ID_USUARIO").eq("CORREO", correo).execute()
+        #    if resultado.data:
+        #        colaborador_id = resultado.data[0]["ID_USUARIO"]
+        #        supabase.table("INTEGRANTES_PROYECTO").insert({
+        #            "ID_USUARIO": colaborador_id,
+        #            "ID_PROYECTO": id_proyecto,
+        #            "ROL": "Sin rol especificado"
+        #        }).execute()
+#
+        return {"mensaje": "Proyecto actualizado correctamente."}, 201
+
+    except Exception as e:
+        return {"errores": f"Error al actualizar proyecto: {str(e)}"}, 500
+
+
+
+
 
 def cargar_postulacion(id_usuario, datos_postulacion):
     errores = []

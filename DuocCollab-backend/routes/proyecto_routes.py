@@ -11,7 +11,7 @@ from services.proyecto_services import (
     editar_estado_postulacion,
     obtener_etiquetas,
     editar_estado_proyecto,
-
+    editar_proyecto
 )
 
 
@@ -90,6 +90,19 @@ def crear_proyecto():
 
     resultado, status = cargar_proyecto(id_usuario, datos, imagen)
     return jsonify(resultado), status
+
+@proyecto_bp.route('/editar', methods=['POST'])
+@jwt_required()
+def modificar_proyecto():
+    datos = request.form.to_dict(flat=False)
+    imagen = request.files.get('FOTO_PROYECTO')
+
+    resultado, status = editar_proyecto(datos, imagen)
+    return jsonify(resultado), status
+
+
+
+
 
 @proyecto_bp.route('/editar_estado_proyecto', methods=['POST'])
 @jwt_required()

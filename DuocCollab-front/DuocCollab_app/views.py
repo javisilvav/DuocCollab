@@ -437,7 +437,53 @@ def MisProyectos(request):
                     error = f"Error inesperado ({response.status_code}): {response.text}"
                     request.session['sweet_alert'] = alert('error', 'Error', error)
                     return redirect('Perfil')    
-   
+        if request.POST.get('accion') == 'editar_proyecto':
+            datos = {
+                "ID_PROYECTO": request.POST.get('id_proyecto'),
+                'TITULO': request.POST.get('titulo'),
+                'NOMBRE_PROYECTO': request.POST.get('nombre_proyecto'),
+                'DESCRIPCION': request.POST.get('descripcion'),
+                'DURACION': request.POST.get('duracion'),
+                'ID_SEDE': request.POST.get('sede'),
+                'REQUISITOS':request.POST.get('requisitos'),
+                'CARRERA_DESTINO':request.POST.get('carrera'),
+                #'INTERESES':request.POST.getlist('intereses[]'),
+                #'COLABORADOR':request.POST.getlist('colaboradores[]')
+            }
+
+            archivos = {}
+            if 'foto_proyecto' in request.FILES:
+                f = request.FILES['foto_proyecto']
+                archivos['FOTO_PROYECTO'] = (f.name, f.file, f.content_type)
+
+            result = verificar_token_y_api(request, 'POST', '/proyecto/editar', 'Perfil', data=datos, files=archivos)
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 201:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Proyecto editado correctamente.')
+                return redirect('Perfil')
+            else:
+                try:
+                    error_data = response.json()['errores']
+                    texto_error = format_errors(error_data)
+                    request.session['sweet_alert'] = alert('error', 'Error al editar proyecto.', texto_error)
+                    return redirect('Perfil')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Perfil')
+
+
+
+
+
+
+
+
+
+
+
 
 def MisPostulaciones(request):
     if request.method == 'GET':
