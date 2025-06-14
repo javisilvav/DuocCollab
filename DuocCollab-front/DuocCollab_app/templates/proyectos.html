@@ -207,14 +207,15 @@
               {{ proyecto.NOMBRE_PROYECTO }}
             </div>
             <div class="position-relative img-standard-container">
-              <a href="{% url 'ProyectosDetail' %}">
-                <img src="{{ proyecto.FOTO_PROYECTO }}" alt="Foto" class="img-fluid" style="height: 292px; cursor: pointer;" onclick="verProyecto({{ proyecto.ID_PROYECTO }})">
+              <div onclick="verProyecto({{ proyecto.ID_PROYECTO }})" style="cursor: pointer;">
+
+                <img src="{{ proyecto.FOTO_PROYECTO }}" alt="Foto" class="img-fluid" style="height: 292px; cursor: pointer;" >
                 <div
                   class="position-absolute top-50 start-0 translate-middle-y text-white fw-bold d-flex align-items-center justify-content-center"
                   style="width: 100%; background-color: rgba(0, 0, 0, 0.6); padding: 15px 15px; text-align: center;">
                   {{ proyecto.TITULO }}
                 </div>
-              </a>
+              </div>
             </div>
             
           </div>

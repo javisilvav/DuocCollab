@@ -85,7 +85,7 @@ def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
         errores += validar_carga_img(archivo_imagen, 'FOTO_PROYECTO')
 
     if errores:
-        return {'errores': errores}, 400
+        return {'error': errores}, 400
 
     nombre_imagen = guardar_imagen('proyecto', archivo_imagen)
 
@@ -122,7 +122,7 @@ def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
                 
         return {"mensaje": "Proyecto creado correctamente."}, 201
     except Exception as e:
-        return {"errores": f"Error al crear proyecto: {str(e)}"}, 500
+        return {"error": f"Error al crear proyecto: {str(e)}"}, 500
     
 
 def editar_proyecto(datos_proyecto, archivo_imagen=None):

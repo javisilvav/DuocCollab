@@ -27,6 +27,7 @@ def api_request(method, endpoint, token=None, **kwargs):
 
 def ruta_img_perfil_portada(perfil, portada):
     img_perfil = f'{API_URL}/auth/imagen/perfil/{perfil}'
+    print(img_perfil)
     img_portada = f'{API_URL}/auth/imagen/portada/{portada}'
     return img_perfil, img_portada
 

@@ -553,9 +553,13 @@ def ProyectosDetail(request):
             return redirect('ProyectosDetail')  # Redirige sin el parámetro en la URL
 
         # Si ya tienes el id_proyecto en sesión, lo usas
-        id_proyecto = request.session.get('id_proyecto')
+        id_proyecto = request.session.pop('id_proyecto', None)
+
+        print(id_proyecto)
         if not id_proyecto:
-            return render(request, 'proyectos_detail.html', {'error': 'ID de proyecto no especificado.'})
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se logro obtener detalles del proyecto.')
+            return redirect('Proyectos')
+            
         
 
         datos = {
@@ -737,7 +741,7 @@ def SubirProyecto(request):
 
 def Proyectos(request):
     if request.method == 'GET':
-        result = verificar_token_y_api(request, 'GET', '/proyecto/proyectos', 'Login')
+        result = verificar_token_y_api(request, 'GET', '/proyecto/proyectos', 'Home')
         if isinstance(result, HttpResponseRedirect):
             return result
         print("---Proyectos GET")
@@ -751,7 +755,7 @@ def Proyectos(request):
         else:
           mensaje_error = response.json().get('error', 'No se pudieron obtener los proyectos')
           request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
-          return redirect('Login')
+          return redirect('Home')
         
 
         contexto = {
