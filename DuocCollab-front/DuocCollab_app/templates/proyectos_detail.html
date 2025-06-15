@@ -96,6 +96,7 @@
         <hr>
         <form method="POST" enctype="multipart/form-data">
           {% csrf_token %}  
+          <input type="hidden" name="id_proyecto" value="{{ detalle_proyectos.ID_PROYECTO }}">
           <div class="mb-3">
             <textarea name="comentario" class="form-control" id="textArea1" rows="6" maxlength="3000" placeholder="Indicanos porque te gustaría trabajar con nosotros" style="background-color: #D9D9D9; resize: none;"></textarea>
             <p id="contador">0 / 3000</p>

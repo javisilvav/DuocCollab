@@ -98,8 +98,34 @@ def Logout(request):
 
 
 def ResetPassword(request):
-  return render(request, 'reset_password.html')
+  if request.method == 'GET':
+    sweet_alert = request.session.pop('sweet_alert', None)
+    contexto = {
+        'sweet_alert': sweet_alert
+    }
+    return render(request, 'reset_password.html', contexto)
+  if request.method == 'POST':
+    correo = request.POST.get('correo')
+    if not correo:
+        request.session['sweet_alert'] = alert('error', 'Falta correo', 'Debes ingresar tu correo.')
+        return redirect('ResetPassword')
 
+    datos = {'correo': correo}
+    result = verificar_token_y_api(request, 'POST', '/auth/recuperar_contrasena', 'ResetPassword',False, json=datos, headers={'Content-Type': 'application/json'})
+    if isinstance(result, HttpResponseRedirect):
+        return result
+
+    response = result['response']
+    if response.status_code in (200, 201):
+        request.session['sweet_alert'] = alert(
+            'success', '¡Revisa tu correo!',
+            'Te enviamos como recuperar tu sesión.'
+        )
+        return redirect('Login')           # o a la misma página
+    else:
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudo enviar el correo.')
+        return redirect('ResetPassword')
+    
 
 
 def obtener_carreras(request):
@@ -607,9 +633,8 @@ def ProyectosDetail(request):
             error_msg = response.json().get('error', 'Error desconocido al mostrar el detalle de proyecto.')
             return render(request, 'proyectos_detail.html', {'error': error_msg})
     if request.method == 'POST':
-
-
-        datos = {"ID_PROYECTO": request.session['id_proyecto']}
+        id_proyecto = request.POST.get('id_proyecto') 
+        datos = {"ID_PROYECTO": id_proyecto}
         comentario = request.POST.get('comentario')
         if comentario:
             datos["COMENTARIO"] = comentario
