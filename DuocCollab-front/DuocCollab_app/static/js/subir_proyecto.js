@@ -1,92 +1,24 @@
-// Agregar hashtags
-const listaHashtags = document.getElementById("lista-hashtags");
-const btnAgregarHashtag = document.getElementById("agregar-hashtag");
-
-// Lista en memoria de hashtags agregados
-let hashtagsArray = [];
-
-// Al presionar "+"
-btnAgregarHashtag.addEventListener("click", () => {
-  let tag = hashtags.value.trim();
-
-  // Asegurar que comience con #
-  if (tag && !tag.startsWith("#")) {
-    tag = "#" + tag;
-  }
-
-  if (tag && !hashtagsArray.includes(tag)) {
-    hashtagsArray.push(tag);
-    hashtags.value = ""; // limpiar input
-
-    // Mostrar lista visual debajo del input
-    renderHashtags();
-
-    // Actualizar la vista previa con los hashtags separados por coma
-    prevHashtags.textContent = hashtagsArray.join(", ");
-  }
-});
-
-// Función para renderizar la lista debajo del input
-function renderHashtags() {
-  listaHashtags.innerHTML = hashtagsArray.map((tag, index) =>
-    `<span class="badge bg-secondary me-1 mb-1" style="cursor: pointer;" data-index="${index}" title="Haz clic para eliminar">${tag} ✕</span>`
-  ).join("");
-
-  // Agrega evento de clic a cada badge para eliminarlo
-  const badges = listaHashtags.querySelectorAll(".badge");
-  badges.forEach(badge => {
-    badge.addEventListener("click", () => {
-      const index = badge.getAttribute("data-index");
-      hashtagsArray.splice(index, 1); // eliminar de array
-      renderHashtags(); // volver a renderizar
-      prevHashtags.textContent = hashtagsArray.length > 0 ? hashtagsArray.join(", ") : "#tags";
+setTimeout(() => {
+  const intereses = document.getElementById('intereses');
+  if (intereses) {
+    $('#intereses').select2({
+      placeholder: 'Etiquetas',
+      tags: true,
+      width: '516px'
     });
-  });
-}
-
-
-// Agregar colaboradores
-const listaColaboradores = document.getElementById("lista-colaboradores");
-const btnAgregarColaborador = document.getElementById("agregar-colaborador");
-
-// Lista en memoria de colaboradores agregados
-let colaboradoresArray = [];
-
-// Al presionar "+"
-btnAgregarColaborador.addEventListener("click", () => {
-  const nombre = colaboradores.value.trim();
-
-  if (nombre && !colaboradoresArray.includes(nombre)) {
-    colaboradoresArray.push(nombre);
-    colaboradores.value = ""; // limpiar input
-
-    // Mostrar lista visual debajo del input
-    renderColaboradores();
-
-    // Actualizar la vista previa con los nombres separados por coma
-    prevColaboradores.textContent = colaboradoresArray.join(", ");
   }
-});
+}, 100);
 
-// Función para renderizar la lista debajo del input
-function renderColaboradores() {
-  listaColaboradores.innerHTML = colaboradoresArray.map((nombre, index) =>
-    `<span class="badge bg-secondary me-1 mb-1" style="cursor: pointer;" data-index="${index}" title="Haz clic para eliminar">${nombre} ✕</span>`
-  ).join("");
-
-  // Agrega evento de clic a cada badge para eliminarlo
-  const badges = listaColaboradores.querySelectorAll(".badge");
-  badges.forEach(badge => {
-    badge.addEventListener("click", () => {
-      const index = badge.getAttribute("data-index");
-      colaboradoresArray.splice(index, 1); // eliminar de array
-      renderColaboradores(); // volver a renderizar
-      prevColaboradores.textContent = colaboradoresArray.join(", "); // actualizar vista previa
+setTimeout(() => {
+  const colaboradores = document.getElementById('colaboradores');
+  if (colaboradores) {
+    $('#colaboradores').select2({
+      placeholder: 'Añadir colaboradores',
+      tags: true,
+      width: '516px'
     });
-  });
-}
-
-
+  }
+}, 100);
 
 // Referencias a elementos del formulario
 const titulo = document.getElementById("titulo");
@@ -114,7 +46,22 @@ descripcion.addEventListener("input", () => prevDescripcion.textContent = descri
 nombre_proyecto.addEventListener("input", () => prevNombre.textContent = nombre_proyecto.value || "Lorem Ipsum");
 requisitos.addEventListener("input", () => prevReq.textContent = requisitos.value || "requisitos");
 carrera.addEventListener("input", () => prevCarrera.textContent = carrera.value || "Ingenieria en informatica");
-colaboradores.addEventListener("input", () => prevColaboradores.textContent = colaboradores.value || "autores, colaboradores");
+$('#colaboradores').on('change', function () {
+  const selectedIds = $(this).val(); // IDs seleccionados
+
+  if (selectedIds && selectedIds.length > 0) {
+    const nombresCompletos = selectedIds.map(id => {
+      const option = $(`#colaboradores option[value="${id}"]`);
+      const nombre = option.data('nombre') || '';
+      const apellido = option.data('apellido') || '';
+      return `${nombre} ${apellido}`.trim();
+    });
+
+    prevColaboradores.textContent = nombresCompletos.join(', ');
+  } else {
+    prevColaboradores.textContent = "autores, colaboradores";
+  }
+});
 sede.addEventListener("input", () => prevSede.textContent = sede.value || "San Bernardo");
 
 

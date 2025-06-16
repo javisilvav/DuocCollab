@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import path, include
 from . import views
 
@@ -28,4 +27,6 @@ urlpatterns = [
     #path('admin/proyecto/', views.ProyectosAdmin , name='ProyectosAdmin'),  # Admin projects page view
     #path('admin/usuario/', views.Usuarios , name='Usuarios'),  # Admin Users page view
     #path('admin/login/', views.AdminLogin , name='AdminLogin'),  # Admin login page view
+    path('escuelas/', views.Escuelas , name='Escuelas'),  # Schools page view
+
 ]

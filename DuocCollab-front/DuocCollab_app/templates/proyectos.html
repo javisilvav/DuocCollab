@@ -49,6 +49,35 @@
       width: 41px; 
       font-size: 14px;
     }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -350px;
+      width: 350px;
+      height: 100%;
+      background-color: #fff;
+      overflow-y: auto;
+      transition: right 0.3s ease-in-out;
+      z-index: 1040;
+      border-left: 1px solid #ccc;
+    }
+
+    .sidebar.open {
+      right: 0;
+    }
+
+    .img-standard-container {
+      width: 100%;
+      height: 292px;
+      overflow: hidden;
+    }
+
+    .img-standard-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   </style>
 
 </head>
@@ -105,30 +134,90 @@
         </div>    
       </div> 
       <div class="row align-items-center pt-5">
-        <div class="col tag-container">
-          {% for etiqueta in etiquetas %}
-            <a href="#" class="tag">{{ etiqueta.nombre }}</a>
+        <div class="col-10 tag-container">
+          {% for etiqueta in etiquetas|slice:":10" %}
+          <a href="#" class="tag">{{ etiqueta.NOMBRE }}</a>
           {% endfor %}
-          <a href="#" class="tag">AWS</a>
-          <a href="#" class="tag">Python</a>
-          <a href="#" class="tag">Negocios</a>
-          <a href="#" class="tag">Rural</a>
-          <a href="#" class="tag">Arte</a>
-          <a href="#" class="tag">SQL</a>
-          <a href="#" class="tag">Investigación</a>
         </div>
-        <div class="col text-end">
-          <button class="btn" style="font-size: 24px; font-weight: 700;">Filtros <i class="bi bi-filter"></i></button>
+        <div class="col-2 text-end">
+          <button class="btn" style="font-size: 24px; font-weight: 700; z-index: 1050;" onclick="toggleSidebar()">Filtros <i class="bi bi-filter"></i></button>
+        </div>
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar bg-light shadow">
+          <div class="sidebar-header d-flex justify-content-between align-items-center p-3 border-bottom">
+            <h5 class="mb-0">Filtros</h5>
+            <button type="button" class="btn-close" onclick="toggleSidebar()"></button>
+          </div>
+          <div class="p-3">
+            <div class="mb-3">
+              <label for="nivel" class="form-label">Nivel</label>
+              <select class="form-select" id="nivel">
+                <option value="">Todos</option>
+                <option value="tecnico">Técnico</option>
+                <option value="profesional">Profesional</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="estado" class="form-label">Estado del proyecto</label>
+              <select class="form-select" id="estado">
+                <option value="">Todos</option>
+                <option value="en-desarrollo">En desarrollo</option>
+                <option value="finalizado">Finalizado</option>
+                <option value="buscando-colaboradores">Buscando colaboradores</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="modalidad" class="form-label">Modalidad</label>
+              <select class="form-select" id="modalidad">
+                <option value="">Todas</option>
+                <option value="individual">Online</option>
+                <option value="colaborativo">Presencial</option>
+                <option value="hibrido">Híbrido</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="sede" class="form-label">Sede</label>
+              <select class="form-select" id="sede">
+                <option value="">Todas</option>
+                <option value="maipu">Maipú</option>
+                <option value="plaza-vespucio">Plaza Vespucio</option>
+                <option value="san-carlos">San Carlos de Apoquindo</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="etiquetas" class="form-label">Etiquetas (Tags)</label>
+              <select class="form-select" id="tags">
+                <option value="">Todas</option>
+                {% for etiqueta in etiquetas %}
+                <option value="{{ etiqueta.NOMBRE }}">{{ etiqueta.NOMBRE }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button class="btn w-100 mb-2" style="background-color: #FFB800; text-decoration: none; font-size: 18px;"
+              onclick="toggleSidebar()">Aplicar</button>
+            <button class="btn w-100 mb-3">Limpiar filtros</button>
+          </div>
         </div>
       </div>
       <div class="row align-items-center pt-5" id="proyectos-container">
         {% for proyecto in proyectos %}
-        <div class="col-3 pb-3 proyecto-item" style="display: none;"">
+        <div class="col-3 pb-3 proyecto-item" style="display: none;">
           <div class="d-flex align-items-center">
             <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #5BC2E7;">
               {{ proyecto.NOMBRE_PROYECTO }}
             </div>
-            <img src="{{ proyecto.FOTO_PROYECTO }}" alt="Foto" class="img-fluid" style="height: 292px; cursor: pointer;" onclick="verProyecto({{ proyecto.ID_PROYECTO }})">
+            <div class="position-relative img-standard-container">
+              <div onclick="verProyecto({{ proyecto.ID_PROYECTO }})" style="cursor: pointer;">
+
+                <img src="{{ proyecto.FOTO_PROYECTO }}" alt="Foto" class="img-fluid" style="height: 292px; cursor: pointer;" >
+                <div
+                  class="position-absolute top-50 start-0 translate-middle-y text-white fw-bold d-flex align-items-center justify-content-center"
+                  style="width: 100%; background-color: rgba(0, 0, 0, 0.6); padding: 15px 15px; text-align: center;">
+                  {{ proyecto.TITULO }}
+                </div>
+              </div>
+            </div>
+            
           </div>
         </div>
         {% endfor %}

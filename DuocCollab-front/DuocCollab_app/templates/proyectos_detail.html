@@ -33,7 +33,7 @@
               <a class="nav-link text-white" aria-current="page" href="{% url 'Proyectos' %}" style="font-size: 24px;">PROYECTOS</a>
             </li>
             <li class="nav-item" style="padding-left: 25px;">
-              <a class="nav-link text-white" href="#" style="font-size: 24px;">ESCUELAS</a>
+              <a class="nav-link text-white" href="{% url 'Escuelas' %}" style="font-size: 24px;">ESCUELAS</a>
             </li>
           </ul>
           <div class="d-flex flex-column align-items-end">
@@ -88,17 +88,17 @@
       <div class="col-12 text-start">
         <h2 style="font-size: 40px; font-weight: 700;">REQUISITOS</h2>
         <hr>
-        <p style="font-size: 24px;">Técnico Veterinario y Pecuario (desde 3er semestre en adelante)</p>
-        <p style="font-size: 24px;">Experiencia en sistemas veterinarios</p>
-        <p style="font-size: 24px;">Disponibilidad inmediata</p>
+        <p style="font-size: 24px;">{{ detalle_proyectos.REQUISITOS }}</p>
     </div>
     <div class="row justify-content-start align-items-center pt-4">
       <div class="col-12 text-start">
         <h2 style="font-size: 40px; font-weight: 700;">CONTÁCTANOS</h2>
         <hr>
-        <form>
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}  
+          <input type="hidden" name="id_proyecto" value="{{ detalle_proyectos.ID_PROYECTO }}">
           <div class="mb-3">
-            <textarea class="form-control" id="textArea1" rows="6" maxlength="3000" placeholder="Indicanos porque te gustaría trabajar con nosotros" style="background-color: #D9D9D9; resize: none;"></textarea>
+            <textarea name="comentario" class="form-control" id="textArea1" rows="6" maxlength="3000" placeholder="Indicanos porque te gustaría trabajar con nosotros" style="background-color: #D9D9D9; resize: none;"></textarea>
             <p id="contador">0 / 3000</p>
           </div>
           <button type="submit" class="btn px-4" style="background-color: #FFB800; font-size: 20px; font-weight: 700;">Postular</button>

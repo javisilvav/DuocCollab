@@ -2,18 +2,63 @@
 <div class="ps-5 pb-3">
   <h2 style="font-size: 36px; font-weight: 700;">MIS POSTULACIONES</h2>
 </div>
+
 <div class="row ps-5">
   {% for p in postulaciones %}
   <div class="col-6 pb-3">
-    <div class="d-flex align-items-center">
-      <div class="vertical-text d-flex justify-content-start align-items-center pb-3"
-        style="background-color: #5BC2E7;">
-        {{ p.PROYECTO.NOMBRE_PROYECTO }}
+    <button style="all: unset; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modal{{ p.ID_POSTULACION }}">
+      <div class="d-flex align-items-center">
+        <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #5BC2E7;">
+          {{ p.PROYECTO.NOMBRE_PROYECTO }}
+        </div>
+        <div class="position-relative img-standard-container">
+          <img src="{{ p.PROYECTO.FOTO_PROYECTO }}"  alt="Foto" class="img-fluid">
+
+          <div
+            class="position-absolute top-50 start-0 translate-middle-y text-white fw-bold d-flex align-items-center justify-content-center"
+            style="width: 100%; background-color: rgba(0, 0, 0, 0.6); padding: 15px 15px; text-align: center;">
+            {{ p.PROYECTO.TITULO }}
+          </div>
+        </div>
       </div>
-      <img src="{{ p.PROYECTO.FOTO_PROYECTO }}" alt="Foto" class="img-fluid" style="height: 292px; cursor: pointer;"
-           onclick="verProyecto({{ p.ID_PROYECTO }})">
+    </button>
+  </div>
+  
+  
+  
+  <div class="modal fade" id="modal{{ p.ID_POSTULACION }}" tabindex="-1" aria-labelledby="modalLabel{{ p.ID_POSTULACION }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel{{ p.ID_POSTULACION }}">{{ p.PROYECTO.NOMBRE_PROYECTO }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Fecha de postulación:</strong> {{ p.FECHA_POSTULACION }}</p>
+          <p><strong>Estado de la postulación:</strong> {{ p.ESTADO }}</p>
+          <p><strong>Nombre del responsable:</strong> {{ p.PROYECTO.USUARIO.NOMBRE }} {{ p.PROYECTO.USUARIO.APELLIDO }}</p>
+          <h6>Tu mensaje enviado al postular:</h6>
+          <blockquote class="blockquote">
+            {{ p.Comentario }}
+          </blockquote>
+        </div>
+        <div class="modal-footer">
+          
+          <form id="formCancelar{{ p.ID_POSTULACION }}" method="POST" action="{% url 'Postulaciones' %}" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="id_postulacion" value="{{ p.ID_POSTULACION }}">
+            <input type="hidden" name="accion" value="cancelar">
+            <button type="submit" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar postulación</button>
+          </form>
+          <button type="button" class="btn" onclick="verProyecto({{ p.ID_PROYECTO }})"
+                  style="font-size: 16px; font-weight: 700; background-color: #FFB800; border-radius: 5px;">
+            Ver detalles del proyecto
+          </button>
+        </div>
+      </div>
     </div>
   </div>
+  
   {% endfor %}
 </div>
 

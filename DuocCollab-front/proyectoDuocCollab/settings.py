@@ -60,7 +60,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
+                #'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -122,7 +122,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = False  
 SESSION_COOKIE_SAMESITE = 'Lax'  
+#SECRET_KEY = 'Newww2Tok3nMagistral20392.new'

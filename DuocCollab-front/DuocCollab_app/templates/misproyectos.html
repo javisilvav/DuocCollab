@@ -5,18 +5,187 @@
     PUBLICAR PROYECTO
   </a>
 </div>
+
+
 <div class="row ps-5">
   {% for proyecto in proyectos %}
-    <div class="col-3 pb-3">
+  <div class="col-6 pb-3">
+    <button style="all: unset; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modal{{ proyecto.ID_PROYECTO }}">
       <div class="d-flex align-items-center">
         <div class="vertical-text d-flex justify-content-start align-items-center pb-3" style="background-color: #5BC2E7;">
           {{ proyecto.NOMBRE_PROYECTO }}
         </div>
+        <div class="position-relative img-standard-container">
+          <img src="{{ proyecto.FOTO_PROYECTO }}" alt="Foto" class="img-fluid">
+          <div
+            class="position-absolute top-50 start-0 translate-middle-y text-white fw-bold d-flex align-items-center justify-content-center"
+            style="width: 100%; background-color: rgba(0, 0, 0, 0.6); padding: 15px 15px; text-align: center;">
+            {{ proyecto.TITULO }}
+          </div>
+        </div>
+      </div>
+    </button>
+  </div>
+  <div class="modal fade" id="modal{{ proyecto.ID_PROYECTO }}" tabindex="-1" aria-labelledby="modalLabel{{ proyecto.ID_PROYECTO }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel{{ proyecto.ID_PROYECTO }}">{{ proyecto.TITULO }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div>
+            <p><strong>Fecha de publicación:</strong> {{ proyecto.FECHA_INICIO }}</p>
+            <p><strong>Estado del proyecto:</strong> {{ proyecto.ESTADO }}</p>
+            <p><strong>Descripción:</strong> {{ proyecto.DESCRIPCION }}</p>
+            <p><strong>Requisitos:</strong> {{ proyecto.REQUISITOS }}</p>
+            <p><strong>Integrantes:</strong>
+                {% for integrante in proyecto.INTEGRANTES_PROYECTO %}
+                  {{ integrante.USUARIO.NOMBRE }} {{ integrante.USUARIO.APELLIDO }},
+                {% endfor %}
+            </p>
+            <p><strong>Sede:</strong> {{ proyecto.SEDE.NOMBRE_SEDE }}</p>
+            <p><strong>Carrera:</strong> ESTO ES HTML</p>
+            <p><strong>Etiquetas:</strong>
+              {% for etiqueta in proyecto.PROYECTO_ETIQUETA %}
+                #{{ etiqueta.ETIQUETA.NOMBRE }}
+              {% endfor %}
+            </p>
 
-        <img src="{{ proyecto.FOTO_PROYECTO }}" alt="Foto" class="img-fluid" style="height: 292px; cursor: pointer;"
-           onclick="verProyecto({{ proyecto.ID_PROYECTO }})">
+          </div>
+          {% if proyecto.POSTULACION %}
+          <div style="border-bottom: 3px solid #FFB800; font-size: 18px; font-weight: 700;">Postulaciones recibidas</div>
+          <br>
+          {% endif %}
+
+          {% for pos in proyecto.POSTULACION %}
+
+          <div class="postulante-card" style="border: 1px solid #ddd; border-radius: 5px; margin-bottom: 1rem; padding: 1rem; background-color: #f9f9f9;">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5>{{ pos.USUARIO.NOMBRE }} {{ pos.USUARIO.APELLIDO }}</h5>
+                <p>Email: {{ pos.USUARIO.CORREO }}</p>
+                <p>Fecha postulación: {{ pos.FECHA_POSTULACION }}</p>
+                <p>Carrera: HTML</p>
+                <p><strong>Comentario de postulación:</strong> {{ pos.comentario }}</p>
+              </div>
+              <div class="text-end">
+                <form id="formAceptar{{ pos.ID_POSTULACION }}" method="POST" action="{% url 'MisProyectos' %}" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="id_postulacion" value="{{ pos.ID_POSTULACION }}">
+                  <input type="hidden" name="accion" value="aceptar">
+                  <button class="btn btn-success mb-2 w-100">Aceptar</button>
+                </form>
+
+
+                <form id="formRechazar{{ pos.ID_POSTULACION }}" method="POST" action="{% url 'MisProyectos' %}" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="id_postulacion" value="{{ pos.ID_POSTULACION }}">
+                  <input type="hidden" name="accion" value="rechazar">
+                  <button class="btn btn-danger w-100">Rechazar</button>
+                </form>
+                
+              </div>
+            </div>
+          </div>
+
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <form id="formDesactivarProyecto{{ proyecto.ID_PROYECTO }}" method="POST" action="{% url 'MisProyectos' %}" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="id_proyecto" value="{{ proyecto.ID_PROYECTO }}">
+            <input type="hidden" name="accion" value="desactivar_proyecto">
+            <button type="submit" class="btn btn-outline-danger">Desactivar proyecto</button>
+          </form>
+
+
+
+          
+          <button class="btn btn-outline-primary" data-bs-target="#editarProyecto{{ proyecto.ID_PROYECTO }}" data-bs-toggle="modal">Editar proyecto</button>
+
+          <button type="button" class="btn" onclick="verProyecto({{ proyecto.ID_PROYECTO }})"
+                  style="font-size: 16px; font-weight: 700; background-color: #FFB800; border-radius: 5px;">
+            Ver proyecto
+          </button>
+        </div>
       </div>
     </div>
+  </div>
+  <div class="modal fade" id="editarProyecto{{ proyecto.ID_PROYECTO }}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Editar proyecto</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formEditarProyecto{{ proyecto.ID_PROYECTO }}" method="POST" action="{% url 'MisProyectos' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <input type="hidden" name="id_proyecto" value="{{ proyecto.ID_PROYECTO }}">
+            <input type="hidden" name="titulo" value="{{ proyecto.TITULO }}">
+            <input type="hidden" name="nombre_proyecto" value="{{ proyecto.NOMBRE_PROYECTO }}">
+            <input type="hidden" name="carrera" value="{{ proyecto.CARRERA_DESTINO }}">
+            <input type="hidden" name="duracion" value="{{ proyecto.DURACION }}">
+            <input type="hidden" name="sede" value="{{ proyecto.ID_SEDE }}">
+            <input type="hidden" name="accion" value="editar_proyecto">
+
+            <div class="mb-3">
+              <label for="disabledTextInput" class="form-label">Nombre del proyecto</label>
+              <input type="text" id="disabledTextInput" class="form-control" placeholder="{{ proyecto.NOMBRE_PROYECTO }}" name="nombre_proyecto" disabled>
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Descripción</label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="descripcion">{{ proyecto.DESCRIPCION }}</textarea>
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea2" class="form-label">Requisitos</label>
+              <textarea class="form-control" id="exampleFormControlTextarea2" rows="3" name="requisitos">{{ proyecto.REQUISITOS }}</textarea>
+            </div>
+            <label for="exampleFormControlTextarea2" class="form-label">Etiquetas</label>
+            <div class="input-group mb-3">
+              
+              <input type="text" class="form-control" placeholder="Etiquetas" id="hashtags" name="intereses[]" >
+              <button class="btn btn-outline-secondary" type="button" id="agregar-hashtag">+</button>
+            </div>
+            <div class="mb-3" id="lista-hashtags"></div>
+            <label for="exampleFormControlTextarea2" class="form-label">Colaboradores</label>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Añadir colaboradores" id="colaboradores" name="colaboradores[]">
+              <button class="btn btn-outline-secondary" type="button" id="agregar-colaborador">+</button>
+            </div>
+            <div class="mb-3" id="lista-colaboradores"></div>
+            <div class="mb-3">
+              <label for="sede" class="form-label">Sede</label>
+              <select class="form-select mb-3" id="sede" name="sede" disabled>
+                <option>{{ proyecto.SEDE.NOMBRE_SEDE }}</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="carrera" class="form-label">Carrera</label>
+              <select class="form-select mb-3" id="carrera" name="carrera" disabled>
+                <option>ESTO ES HTML</option>
+              </select>
+            </div>  
+            <button class="btn" data-bs-target="#exampleModal" data-bs-toggle="modal" style="font-size: 16px; font-weight: 700; background-color: #FFB800; border-radius: 5px;">Guardar cambios</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+
+          <form id="formDesactivarProyecto{{ proyecto.ID_PROYECTO }}" method="POST" action="{% url 'MisProyectos' %}" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="id_proyecto" value="{{ proyecto.ID_PROYECTO }}">
+            <input type="hidden" name="accion" value="desactivar_proyecto">
+            <button type="submit" class="btn btn-outline-danger">Desactivar proyecto</button>
+          </form>
+          
+          
+
+
+        </div>
+      </div>
+    </div>
+  </div>
   {% endfor %}
-  
 </div>

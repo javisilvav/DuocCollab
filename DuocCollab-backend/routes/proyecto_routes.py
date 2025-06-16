@@ -8,7 +8,10 @@ from services.proyecto_services import (
     cargar_postulacion,
     obtener_detalle_proyecto,
     obtener_proyetos,
-
+    editar_estado_postulacion,
+    obtener_etiquetas,
+    editar_estado_proyecto,
+    editar_proyecto
 )
 
 
@@ -49,6 +52,12 @@ def postulaciones_usuario():
     return jsonify(proyectos), status
 
 
+@proyecto_bp.route('/editar_postulacion', methods=['POST'])
+@jwt_required()
+def estado_postulacion():
+    datos = request.get_json()
+    postulacion, status = editar_estado_postulacion(datos)
+    return jsonify(postulacion), status
 
 
 @proyecto_bp.route('/detalle_proyecto', methods=['GET'])
@@ -76,10 +85,37 @@ def proyectos_usuario():
 @jwt_required()
 def crear_proyecto():
     id_usuario = get_jwt_identity()
-    datos = request.form.to_dict()
+    datos = request.form.to_dict(flat=False)
     imagen = request.files.get('FOTO_PROYECTO')
 
     resultado, status = cargar_proyecto(id_usuario, datos, imagen)
     return jsonify(resultado), status
 
+@proyecto_bp.route('/editar', methods=['POST'])
+@jwt_required()
+def modificar_proyecto():
+    datos = request.form.to_dict(flat=False)
+    imagen = request.files.get('FOTO_PROYECTO')
 
+    resultado, status = editar_proyecto(datos, imagen)
+    return jsonify(resultado), status
+
+
+
+
+
+@proyecto_bp.route('/editar_estado_proyecto', methods=['POST'])
+@jwt_required()
+def estado_proyecto():
+    datos = request.get_json()
+    proyectos, status = editar_estado_proyecto(datos)
+    return jsonify(proyectos), status
+
+
+
+
+@proyecto_bp.route('/etiquetas', methods=['GET'])
+@jwt_required()
+def etiquetas():
+    etiqueta, status = obtener_etiquetas()
+    return jsonify(etiqueta), status

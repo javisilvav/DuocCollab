@@ -26,6 +26,13 @@ def enviar_correo_recuperacion(destinatario, nueva_contrasena):
         Se ha solicitado una recuperación de contraseña para tu cuenta.\n
         Tu nueva contraseña es: {nueva_contrasena}\n
         Te recomendamos cambiarla después de iniciar sesión.
+        
+        Para cambiar contraseña debes:
+        1) Iniciar sesión con la contraseña entregada en este correo.
+        2) Ir a mi perfil.
+        3) Ir a Editar perfil.
+        4) Crear una nueva contraseña que cumpla con los parámetros.
+        5) Guardar los cambios.
         """
         msg.attach(MIMEText(cuerpo, 'plain'))
 

@@ -40,7 +40,7 @@
               <a class="nav-link text-white" aria-current="page" href="{% url 'Proyectos' %}" style="font-size: 24px;">PROYECTOS</a>
             </li>
             <li class="nav-item" style="padding-left: 25px;">
-              <a class="nav-link text-white" href="#" style="font-size: 24px;">ESCUELAS</a>
+              <a class="nav-link text-white" href="{% url 'Escuelas' %}" style="font-size: 24px;">ESCUELAS</a>
             </li>
           </ul>
           <div class="d-flex flex-column align-items-end">
@@ -141,6 +141,33 @@
       window.location.href = "{% url 'ProyectosDetail' %}" + "?id_proyecto=" + idProyecto;
   }
   </script>
+
+
+  
+  <script>
+    setTimeout(() => {
+      const intereses = document.getElementById('intereses');
+      if (intereses) {
+        $('#intereses').select2({
+          placeholder: 'Etiquetas',
+          tags: true,
+          width: '516px'
+        });
+      }
+    }, 100);
+
+    setTimeout(() => {
+      const colaboradores = document.getElementById('colaboradores');
+      if (colaboradores) {
+        $('#colaboradores').select2({
+          placeholder: 'Añadir colaboradores',
+          tags: true,
+          width: '516px'
+        });
+      }
+    }, 100);
+  </script>
+
 
 
 
