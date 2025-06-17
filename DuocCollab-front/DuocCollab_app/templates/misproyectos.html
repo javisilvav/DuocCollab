@@ -45,7 +45,7 @@
                 {% endfor %}
             </p>
             <p><strong>Sede:</strong> {{ proyecto.SEDE.NOMBRE_SEDE }}</p>
-            <p><strong>Carrera:</strong> ESTO ES HTML</p>
+            <p><strong>Carrera:</strong> Analista Programador</p>
             <p><strong>Etiquetas:</strong>
               {% for etiqueta in proyecto.PROYECTO_ETIQUETA %}
                 #{{ etiqueta.ETIQUETA.NOMBRE }}
@@ -66,7 +66,7 @@
                 <h5>{{ pos.USUARIO.NOMBRE }} {{ pos.USUARIO.APELLIDO }}</h5>
                 <p>Email: {{ pos.USUARIO.CORREO }}</p>
                 <p>Fecha postulación: {{ pos.FECHA_POSTULACION }}</p>
-                <p>Carrera: HTML</p>
+                <p>Carrera: Analista Programador</p>
                 <p><strong>Comentario de postulación:</strong> {{ pos.comentario }}</p>
               </div>
               <div class="text-end">
