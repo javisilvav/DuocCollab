@@ -14,6 +14,8 @@ urlpatterns = [
     path('subir_proyecto/', views.SubirProyecto , name='SubirProyecto'),  # Upload project page view
     path('proyectos_detail/', views.ProyectosDetail , name='ProyectosDetail'), # Project details page view
     path('perfil/postulaciones/', views.MisPostulaciones, name='Postulaciones'),
+
+    
     path('admin/', views.Admin , name='Admin'),  # Admin page view
     path('admin/inicio/', views.Inicio , name='Inicio'),  # Admin Home page view
     path('admin/escuela/', views.Escuelas , name='Escuelas'),  # Admin Schools page view

@@ -769,7 +769,6 @@ def Proyectos(request):
         result = verificar_token_y_api(request, 'GET', '/proyecto/proyectos', 'Home')
         if isinstance(result, HttpResponseRedirect):
             return result
-        print("---Proyectos GET")
         response = result['response']
         if response.status_code == 200:
             proyecto = response.json()
@@ -778,27 +777,58 @@ def Proyectos(request):
                 if filename:
                     filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)     
         else:
-          mensaje_error = response.json().get('error', 'No se pudieron obtener los proyectos')
-          request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
-          return redirect('Home')
-        
-
+          request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los proyectos')
+          return redirect('Home')       
         contexto = {
             'proyectos': proyecto
         }
-
-
-
         return render(request, 'proyectos.html', contexto)
 
 
 
 def Admin(request):
-  return render(request, 'admin/admin.html')
+
+        return render(request, 'admin/admin.html')
 
 
 def Inicio(request):
-  return render(request, 'admin/home.html')
+    if request.method == 'GET':
+        result = verificar_token_y_api(request, 'GET', '/auth/count_user', 'Admin')
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        response = result['response']
+        if response.status_code == 200:
+            contador = response.json()
+        else:
+          contador = 0
+
+        result_project = verificar_token_y_api(request, 'GET', '/proyecto/count_project', 'Admin')
+        if isinstance(result_project, HttpResponseRedirect):
+            return result_project
+        response_project = result_project['response']
+        if response_project.status_code == 200:
+            cont_proyecto = response_project.json()
+        else:
+          cont_proyecto = 0
+
+
+        result_post_pendiente = verificar_token_y_api(request, 'GET', '/proyecto/count_postulacion_pendiente', 'Admin')
+        if isinstance(result_post_pendiente, HttpResponseRedirect):
+            return result_post_pendiente
+        response_post_pendiente = result_post_pendiente['response']
+        if response_post_pendiente.status_code == 200:
+            cont_post_pendiente = response_post_pendiente.json()
+        else:
+          cont_post_pendiente = 0
+
+   
+    
+        contexto = {
+            'contador': contador,
+            'cont_proyecto': cont_proyecto,
+            'cont_post_pendiente':cont_post_pendiente
+        }
+        return render(request, 'admin/home.html',contexto)
 
 
 def Escuelas(request):

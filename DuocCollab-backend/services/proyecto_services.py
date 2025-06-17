@@ -280,3 +280,34 @@ def obtener_etiquetas():
             return {"error": "Etiquetas no encontradas."}, 404
     except Exception as e:
         return {"error": f"Error al consultar los etiquetas: {str(e)}"}, 500
+    
+
+
+
+
+
+
+
+
+
+def contar_proyectos():
+    try:       
+        resultado = supabase.table('PROYECTO').select('ID_PROYECTO', count='exact').eq("ESTADO",'TRUE').execute()
+        if resultado.count:
+            return {"total":resultado.count}, 200
+        else:
+            return {'error':f'No se encontró cantidad de proyectos activos.'},404
+    except Exception as e:
+        return {'error':f'Error al consultar cantidad de proyectos activos'},500
+    
+
+
+def contar_postulacion_pendiente():
+    try:       
+        resultado = supabase.table('POSTULACION').select('ID_POSTULACION', count='exact').eq("ESTADO",'Solicitado').execute()
+        if resultado.count:
+            return {"total":resultado.count}, 200
+        else:
+            return {'error':f'No se encontró cantidad de postulaciones pendientes.'},404
+    except Exception as e:
+        return {'error':f'Error al consultar cantidad de postulaciones pendientes.'},500

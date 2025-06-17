@@ -175,3 +175,17 @@ def obtener_correos():
             return {"error": "Correos no encontrados."}, 404
     except Exception as e:
         return {"error": f"Error al consultar los correos: {str(e)}"}, 500
+    
+
+
+
+def contar_usuarios():
+    try:       
+        resultado = supabase.table('USUARIO').select('ID_USUARIO', count='exact').execute()
+        if resultado.count:
+            return {"total":resultado.count}, 200
+        else:
+            return {'error':f'No se encontró cantidad de usuarios.'},404
+    except Exception as e:
+        return {'error':f'Error al consultar cantidad de usuarios'},500
+

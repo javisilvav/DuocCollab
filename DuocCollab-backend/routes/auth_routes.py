@@ -5,7 +5,8 @@ from services.auth_services import (
     editar_usuario_servicio, 
     obtener_usuario_por_id, 
     restablecer_contrasena,
-    obtener_correos
+    obtener_correos,
+    contar_usuarios
 )
 from services.auth_consistencia import trae_ruta_imagen
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -83,3 +84,10 @@ def recuperar_contrasena():
 def obtener_correo():
     correo, status = obtener_correos()
     return jsonify(correo), status
+
+
+@auth_bp.route('/count_user', methods=['GET'])
+@jwt_required()
+def count_usuarios():
+    cant_usuario, status = contar_usuarios()
+    return jsonify(cant_usuario), status

@@ -11,7 +11,9 @@ from services.proyecto_services import (
     editar_estado_postulacion,
     obtener_etiquetas,
     editar_estado_proyecto,
-    editar_proyecto
+    editar_proyecto,
+    contar_proyectos,
+    contar_postulacion_pendiente
 )
 
 
@@ -119,3 +121,15 @@ def estado_proyecto():
 def etiquetas():
     etiqueta, status = obtener_etiquetas()
     return jsonify(etiqueta), status
+
+@proyecto_bp.route('/count_project', methods=['GET'])
+@jwt_required()
+def count_proyectos():
+    cant_proyecto, status = contar_proyectos()
+    return jsonify(cant_proyecto), status
+
+@proyecto_bp.route('/count_postulacion_pendiente', methods=['GET'])
+@jwt_required()
+def count_postulacion():
+    cant_postulacion, status = contar_postulacion_pendiente()
+    return jsonify(cant_postulacion), status
