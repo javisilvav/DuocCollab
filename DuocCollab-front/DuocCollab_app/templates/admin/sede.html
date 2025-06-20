@@ -4,7 +4,8 @@
   <!-- Formulario -->
   <div class="card mb-4 shadow">
     <div class="card-body">
-      <form id="formSede">
+      <form id="formSede" method="POST" action="{% url 'Sede' %}">
+        {% csrf_token %}
         <div class="row g-3">
           <div class="col-md-6">
             <label for="nombre" class="form-label">Nombre de la sede</label>

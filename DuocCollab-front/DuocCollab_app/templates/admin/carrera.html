@@ -4,7 +4,8 @@
   <!-- Formulario -->
   <div class="card mb-4 shadow">
     <div class="card-body">
-      <form id="formCarrera">
+      <form id="formCarrera" method="POST" action="{% url 'Carreras' %}">
+        {% csrf_token %}
         <div class="row g-3">
           <div class="col-md-6">
             <label for="nombre" class="form-label">Nombre de la carrera</label>
@@ -12,7 +13,7 @@
           </div>
           <div class="col-md-6">
             <label for="escuela" class="form-label">Escuela</label>
-            <select id="escuela" class="form-select" required>
+            <select id="escuela" name="id_escuela" class="form-select" required>
               <option selected>Seleccione una escuela</option>
               {% for escuela in escuelas %}
                 <option value="{{ escuela.ID_ESCUELA }}">{{ escuela.NOMBRE_ESC }}</option>

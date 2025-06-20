@@ -675,8 +675,6 @@ def SubirProyecto(request):
         request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener las etiquetas.')
         return redirect('Perfil')
     
-
-
     result_correo = verificar_token_y_api(request, 'GET', '/auth/correos', 'Perfil')
     if isinstance(result_correo, HttpResponseRedirect):
         return result_correo
@@ -875,110 +873,234 @@ def Escuelas(request):
 
 
 def Carreras(request):
+    if request.method == 'GET':
+        #Obtener carreras
+        result_carrera = verificar_token_y_api(request, 'GET', '/institucion/carreras', 'Login', False)
+        if isinstance(result_carrera, HttpResponseRedirect):
+            return result_carrera
+        response_carrera = result_carrera['response']
+        if response_carrera.status_code == 200:
+            carreras = response_carrera.json()
+        else:
+            mensaje_error = response_carrera.json().get('error', 'No se pudieron obtener las carreras')
+            request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+            return redirect('Login')
+        
+        #Obtener ESCUELA
+        result_escuela = verificar_token_y_api(request, 'GET', '/institucion/escuelas', 'Login', False)
+        if isinstance(result_escuela, HttpResponseRedirect):
+            return result_escuela
+        response_escuela = result_escuela['response']
+        if response_escuela.status_code == 200:
+            escuelas = response_escuela.json()
+        else:
+            mensaje_error = response_escuela.json().get('error', 'No se pudieron obtener las escuelas.')
+            request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+            return redirect('Login')
+        
+
+        contexto = {
+            'sweet_alert': request.session.pop('sweet_alert', None),
+            'carreras':carreras,
+            'escuelas':escuelas
+        }
+        return render(request, 'admin/carrera.html', contexto)
+    
+    if request.method == 'POST':
+        datos = {
+            'nombre_carrera':request.POST.get('nombre'),
+            'id_escuela': request.POST.get('id_escuela')
+        }
+
+        result = verificar_token_y_api(request, 'POST', '/institucion/crear_carrera', 'Admin', json=datos, headers={'Content-Type':'application/json'})
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        response = result['response']
+        if response.status_code == 201:
+            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Sede creada correctamente.')
+            return redirect('Admin')
+        else:
+            try:
+                error_data = response.json()['error']
+                texto_error = format_errors(error_data)
+                request.session['sweet_alert'] = alert('error', 'Error al crear sede.', texto_error)
+                return redirect('Admin')
+            except ValueError:
+                error = f"Error inesperado ({response.status_code}): {response.text}"
+                request.session['sweet_alert'] = alert('error', 'Error', error)
+                return redirect('Admin')
+
+
+
+
+def Sede(request):
+    if request.method == 'GET':
+
+        #Obtener SEDE
+        result_sede = verificar_token_y_api(request, 'GET', '/institucion/sedes', 'Login', False)
+        if isinstance(result_sede, HttpResponseRedirect):
+            return result_sede
+        response_sede = result_sede['response']
+        if response_sede.status_code == 200:
+            sedes = response_sede.json()
+        else:
+          mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
+          request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+          return redirect('Login')
+        
+
+        contexto = {
+        'sweet_alert': request.session.pop('sweet_alert', None),
+        'sedes':sedes
+        }
+
+        return render(request, 'admin/sede.html', contexto)
+    if request.method == 'POST':
+        datos = {'nombre_sede': request.POST.get('nombre')}
+
+        result = verificar_token_y_api(request, 'POST', '/institucion/crear_sede', 'Admin', json=datos, headers={'Content-Type':'application/json'})
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        response = result['response']
+        if response.status_code == 201:
+            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Sede creada correctamente.')
+            return redirect('Admin')
+        else:
+            try:
+                error_data = response.json()['error']
+                texto_error = format_errors(error_data)
+                request.session['sweet_alert'] = alert('error', 'Error al crear sede.', texto_error)
+                return redirect('Admin')
+            except ValueError:
+                error = f"Error inesperado ({response.status_code}): {response.text}"
+                request.session['sweet_alert'] = alert('error', 'Error', error)
+                return redirect('Admin')
+
+
+
+def SedeEscuela(request):
+    if request.method == 'GET':
+        #Obtener SEDE
+        result_sede = verificar_token_y_api(request, 'GET', '/institucion/sedes', 'Login', False)
+        if isinstance(result_sede, HttpResponseRedirect):
+            return result_sede
+        response_sede = result_sede['response']
+        if response_sede.status_code == 200:
+            sedes = response_sede.json()
+        else:
+            mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
+            request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+            return redirect('Login')
+    
+        #Obtener ESCUELA
+        result_escuela = verificar_token_y_api(request, 'GET', '/institucion/escuelas', 'Login', False)
+        if isinstance(result_escuela, HttpResponseRedirect):
+            return result_escuela
+        response_escuela = result_escuela['response']
+        if response_escuela.status_code == 200:
+            escuelas = response_escuela.json()
+        else:
+            mensaje_error = response_escuela.json().get('error', 'No se pudieron obtener las escuelas.')
+            request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+            return redirect('Login')
+    
+
+        #Obtener SEDE y ESCUELA
+        result_sede_escuela = verificar_token_y_api(request, 'GET', '/institucion/sede_escuela', 'Login', False)
+        if isinstance(result_sede_escuela, HttpResponseRedirect):
+            return result_sede_escuela
+        response_sede_escuela = result_sede_escuela['response']
+        if response_sede_escuela.status_code == 200:
+            sede_escuela = response_sede_escuela.json()
+        else:
+          mensaje_error = response_sede_escuela.json().get('error', 'No se pudieron obtener las sedes y escuelas.')
+          request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+          return redirect('Login')
+
+        contexto = {
+            'sweet_alert': request.session.pop('sweet_alert', None),
+            'sedes': sedes,
+            'sede_escuela':sede_escuela,
+            'escuelas':escuelas
+        }
+        return render(request, 'admin/sede_escuela.html', contexto)
+    if request.method == 'POST':
+        datos = {
+            "id_sede":request.POST.get('sede'),
+            "id_escuela":request.POST.get('escuela')
+        }
+
+        result = verificar_token_y_api(request, 'POST', '/institucion/crear_sd_esc', 'Admin', json=datos, headers={'Content-Type':'application/json'})
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        response = result['response']
+        if response.status_code == 201:
+            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Sede y escuela relacionada correctamente.')
+            return redirect('Admin')
+        else:
+            try:
+                error_data = response.json()['error']
+                texto_error = format_errors(error_data)
+                request.session['sweet_alert'] = alert('error', 'Error al relacionar sede y escuela.', texto_error)
+                return redirect('Admin')
+            except ValueError:
+                error = f"Error inesperado ({response.status_code}): {response.text}"
+                request.session['sweet_alert'] = alert('error', 'Error', error)
+                return redirect('Admin')
+
+
+
+
+def Usuarios(request):
   if request.method == 'GET':
     #Obtener carreras
-    result_carrera = verificar_token_y_api(request, 'GET', '/institucion/carreras', 'Login', False)
+    result_carrera = verificar_token_y_api(request, 'GET', '/institucion/carreras', 'Admin', False)
     if isinstance(result_carrera, HttpResponseRedirect):
         return result_carrera
     response_carrera = result_carrera['response']
     if response_carrera.status_code == 200:
         carreras = response_carrera.json()
     else:
-      mensaje_error = response_carrera.json().get('error', 'No se pudieron obtener las carreras')
-      request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
-      return redirect('Login')
+        mensaje_error = response_carrera.json().get('error', 'No se pudieron obtener las carreras')
+        request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+        return redirect('Admin')
     
-    #Obtener ESCUELA
-    result_escuela = verificar_token_y_api(request, 'GET', '/institucion/escuelas', 'Login', False)
-    if isinstance(result_escuela, HttpResponseRedirect):
-        return result_escuela
-    response_escuela = result_escuela['response']
-    if response_escuela.status_code == 200:
-        escuelas = response_escuela.json()
+    #Obtener Etiquetas
+    result_etiqueta = verificar_token_y_api(request, 'GET', '/proyecto/etiquetas', 'Admin')
+    if isinstance(result_etiqueta, HttpResponseRedirect):
+        return result_etiqueta
+    response_etiqueta = result_etiqueta['response']
+    if response_etiqueta.status_code == 200:
+        etiquetas = response_etiqueta.json()
     else:
-      mensaje_error = response_escuela.json().get('error', 'No se pudieron obtener las escuelas.')
-      request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
-      return redirect('Login')
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener las etiquetas.')
+        return redirect('Admin')
     
+
+    #Obtener Usuarios
+    result_usuarios = verificar_token_y_api(request, 'GET', '/auth/usuarios_registrados', 'Admin')
+    if isinstance(result_usuarios, HttpResponseRedirect):
+        return result_usuarios
+    response_usuario = result_usuarios['response']
+    if response_usuario.status_code == 200:
+        usuarios = response_usuario.json()
+    else:
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los registros de usuarios.')
+        return redirect('Admin')
+    
+    
+
+
+
+
+
 
     contexto = {
-      'carreras':carreras,
-      'escuelas':escuelas
+      'usuarios': usuarios,
+      'carreras': carreras,
+      'etiquetas': etiquetas,
     }
-    return render(request, 'admin/carrera.html', contexto)
-
-
-
-
-def Sede(request):
-  if request.method == 'GET':
-
-    #Obtener SEDE
-    result_sede = verificar_token_y_api(request, 'GET', '/institucion/sedes', 'Login', False)
-    if isinstance(result_sede, HttpResponseRedirect):
-        return result_sede
-    response_sede = result_sede['response']
-    if response_sede.status_code == 200:
-        sedes = response_sede.json()
-    else:
-      mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
-      request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
-      return redirect('Login')
-    
-    contexto = {
-      'sedes':sedes
-    }
-  return render(request, 'admin/sede.html', contexto)
-
-
-
-def SedeEscuela(request):
-  if request.method == 'GET':
-    #Obtener SEDE
-    result_sede = verificar_token_y_api(request, 'GET', '/institucion/sedes', 'Login', False)
-    if isinstance(result_sede, HttpResponseRedirect):
-        return result_sede
-    response_sede = result_sede['response']
-    if response_sede.status_code == 200:
-        sedes = response_sede.json()
-    else:
-      mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
-      request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
-      return redirect('Login')
-    
-
-    #Obtener ESCUELA
-    result_escuela = verificar_token_y_api(request, 'GET', '/institucion/escuelas', 'Login', False)
-    if isinstance(result_escuela, HttpResponseRedirect):
-        return result_escuela
-    response_escuela = result_escuela['response']
-    if response_escuela.status_code == 200:
-        escuelas = response_escuela.json()
-    else:
-      mensaje_error = response_escuela.json().get('error', 'No se pudieron obtener las escuelas.')
-      request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
-      return redirect('Login')
-    
-
-    #Obtener SEDE y ESCUELA
-    result_sede_escuela = verificar_token_y_api(request, 'GET', '/institucion/sedes', 'Login', False)
-    if isinstance(result_sede_escuela, HttpResponseRedirect):
-        return result_sede_escuela
-    response_sede_escuela = result_sede_escuela['response']
-    if response_sede_escuela.status_code == 200:
-        sede_escuela = response_sede_escuela.json()
-    else:
-      mensaje_error = response_sede_escuela.json().get('error', 'No se pudieron obtener las sedes y escuelas.')
-      request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
-      return redirect('Login')
-    
-    contexto = {
-      'sedes': sedes,
-      'sede_escuela':sede_escuela,
-      'escuelas':escuelas
-    }
-  return render(request, 'admin/sede_escuela.html', contexto)
-
+  return render(request, 'admin/usuario.html', contexto)
 
 
 
@@ -1054,14 +1176,7 @@ def SedeEscuela(request):
 #
 
 #
-#def Usuarios(request):
-#  if request.method == 'GET':
-#    contexto = {
-#      'usuarios':consulta_usuario(),
-#      'carreras':consulta_carrera(),
-#      'etiquetas':consulta_etiqueta(),
-#    }
-#  return render(request, 'admin/usuario.html', contexto)
+
 #
 
 #

@@ -3,12 +3,13 @@
 
   <!-- Formulario -->
   <div class="card mb-4 shadow">
-    <div class="card-body">
-      <form id="formRelacion">
+    <div class="card-body">   
+      <form id="formRelacion"  method="POST" action="{% url 'SedeEscuela' %}">
+        {% csrf_token %}
         <div class="row g-3">
           <div class="col-md-6">
             <label for="sede" class="form-label">Sede</label>
-            <select id="sede" class="form-select" required>
+            <select id="sede" name="sede" class="form-select" required>
               <option selected>Seleccione una sede</option>
               {% for sede in sedes %}
                 <option value="{{ sede.ID_SEDE }}">{{ sede.NOMBRE_SEDE }}</option>
@@ -17,7 +18,7 @@
           </div>
           <div class="col-md-6">
             <label for="escuela" class="form-label">Escuela</label>
-            <select id="escuela" class="form-select" required>
+            <select id="escuela" name="escuela" class="form-select" required>
               <option selected>Seleccione una escuela</option>
               {% for escuela in escuelas %}
                 <option value="{{ escuela.ID_ESCUELA }}">{{ escuela.NOMBRE_ESC }}</option>

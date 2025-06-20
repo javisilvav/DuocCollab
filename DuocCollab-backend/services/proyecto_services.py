@@ -130,7 +130,7 @@ def editar_proyecto(datos_proyecto, archivo_imagen=None):
     campos_obligatorios = ['TITULO', 'NOMBRE_PROYECTO', 'DESCRIPCION',
                            'DURACION', 'ID_SEDE', 'REQUISITOS', 'CARRERA_DESTINO']
     
-    print(datos_proyecto)
+
     for campo in campos_obligatorios:
         if campo not in datos_proyecto or not datos_proyecto[campo][0].strip():
             errores.append(f'{campo}: Campo obligatorio.')
@@ -221,7 +221,7 @@ def cargar_postulacion(id_usuario, datos_postulacion):
         "ID_USUARIO": id_usuario,
         "ID_PROYECTO": id_proyecto
     }).execute()
-    print(existente)
+
     if existente.data:
         return {"errores": ["Ya existe una postulación a este proyecto."]}, 409
 

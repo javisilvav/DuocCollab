@@ -177,6 +177,15 @@ def obtener_correos():
         return {"error": f"Error al consultar los correos: {str(e)}"}, 500
     
 
+def obtener_usuarios_registrados():
+    try:
+        resultado = supabase.table("USUARIO").select("ID_USUARIO,NOMBRE,APELLIDO,CORREO,ID_CARRERA, CARRERA(*)").execute()
+        if resultado.data:
+            return resultado.data, 200
+        else:
+            return {"error": "Registro de usuarios no encontrados."}, 404
+    except Exception as e:
+        return {"error": f"Error al consultar los registros de usuarios: {str(e)}"}, 500
 
 
 def contar_usuarios():
