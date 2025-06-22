@@ -4,11 +4,12 @@
   <!-- Formulario -->
   <div class="card mb-4 shadow">
     <div class="card-body">
-      <form id="formRelacion">
+      <form id="formRelacion" method="POST" action="{% url 'ProyectoEtiqueta' %}">
+        {% csrf_token %}
         <div class="row g-3">
           <div class="col-md-6">
             <label for="proyecto" class="form-label">Proyecto</label>
-            <select id="proyecto" class="form-select" required>
+            <select id="proyecto" name="proyecto" class="form-select" required>
               <option selected>Seleccione un proyecto</option>
               {% for proyecto in proyectos %}
                 <option value="{{ proyecto.ID_PROYECTO }}">{{ proyecto.NOMBRE_PROYECTO }}</option>
@@ -17,7 +18,7 @@
           </div>
           <div class="col-md-6">
             <label for="etiqueta" class="form-label">Etiqueta</label>
-            <select id="etiqueta" class="form-select" required>
+            <select id="etiqueta" name="etiqueta" class="form-select" required>
               <option selected>Seleccione una etiqueta</option>
               {% for etiqueta in etiquetas %}
                 <option value="{{ etiqueta.ID_ETIQUETA }}">{{ etiqueta.NOMBRE }}</option>
@@ -46,7 +47,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for proyecto_etiqueta in proyecto_etiqueta %}
+            {% for proyecto_etiqueta in proyecto_etiquetas %}
               <tr>
                 <td>{{ proyecto_etiqueta.ID_PROYECTO }}</td>
                 <td>{{ proyecto_etiqueta.ID_ETIQUETA }}</td>

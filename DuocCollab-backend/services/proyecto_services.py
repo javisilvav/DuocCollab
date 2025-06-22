@@ -40,7 +40,7 @@ def obtener_detalle_proyecto(data_proyecto):
 
 def obtener_proyetos():
     try:
-        resultado = supabase.table("PROYECTO").select("*").execute()
+        resultado = supabase.table("PROYECTO").select("*,SEDE(NOMBRE_SEDE)").execute()
         if resultado.data:
             return resultado.data, 200
         else:
@@ -61,6 +61,9 @@ def editar_estado_proyecto(datos):
     except Exception as e:
         return {"error": f"Error al modificar el estado de proyecto del usuario: {str(e)}"}, 500
     
+
+
+
 
 
 
@@ -283,8 +286,64 @@ def obtener_etiquetas():
     
 
 
+def cargar_etiqueta(datos):
+    errores = []
+    nombre_etiqueta = datos.get('nombre_etiqueta')
+    if not nombre_etiqueta or not str(nombre_etiqueta).strip():
+        errores.append('Nombre etiqueta: Campo obligatorio.')
+
+    if errores:
+        return {"error": errores}, 400 
+
+    nueva_etiqueta = {
+        "NOMBRE": nombre_etiqueta
+    }
+
+    try:
+        supabase.table("ETIQUETA").insert(nueva_etiqueta).execute()
+        return {"mensaje": "Etiqueta registrada correctamente."}, 201
+    except Exception as e:
+        return {"error": f"Error al registrar la etiqueta: {str(e)}"}, 500
 
 
+
+
+
+
+
+def obtener_proyecto_etiqueta():
+    try:
+        resultado = supabase.table("PROYECTO_ETIQUETA").select("*, PROYECTO(ID_PROYECTO, NOMBRE_PROYECTO), ETIQUETA(ID_ETIQUETA, NOMBRE)").execute()
+        if resultado.data:
+            return resultado.data, 200
+        else:
+            return {"error": "Etiquetas no encontradas."}, 404
+    except Exception as e:
+        return {"error": f"Error al consultar los etiquetas: {str(e)}"}, 500
+
+def cargar_proyecto_etiqueta(datos):
+    errores = []
+    etiqueta = datos.get('etiqueta')
+    proyecto = datos.get('proyecto')
+    if not etiqueta or not str(etiqueta).strip():
+        errores.append('Etiqueta: Campo obligatorio.')
+    if not proyecto or not str(proyecto).strip():
+        errores.append('Proyecto: Campo obligatorio.')
+
+    if errores:
+        return {"error": errores}, 400 
+
+    nuevo_proyecto_etiqueta = {
+        "ID_ETIQUETA": etiqueta,
+        "ID_PROYECTO": proyecto
+    }
+    print(nuevo_proyecto_etiqueta)
+
+    try:
+        supabase.table("PROYECTO_ETIQUETA").insert(nuevo_proyecto_etiqueta).execute()
+        return {"mensaje": "Proyecto y etiqueta relacionada correctamente."}, 201
+    except Exception as e:
+        return {"error": f"Error al relacionar proyecto y etiqueta: {str(e)}"}, 500    
 
 
 

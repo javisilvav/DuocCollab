@@ -4,7 +4,8 @@
   <!-- Formulario -->
   <div class="card mb-4 shadow">
     <div class="card-body">
-      <form id="formRelacion">
+      <form id="formRelacion" method="POST" action="{% url 'Etiquetas' %}">
+        {% csrf_token %}
         <div class="row g-3">
           <div class="col-md-6">
             <label for="etiqueta" class="form-label">Etiqueta</label>

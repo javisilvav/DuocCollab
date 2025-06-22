@@ -13,7 +13,11 @@ from services.proyecto_services import (
     editar_estado_proyecto,
     editar_proyecto,
     contar_proyectos,
-    contar_postulacion_pendiente
+    contar_postulacion_pendiente,
+    cargar_etiqueta,
+    obtener_proyecto_etiqueta,
+    cargar_proyecto_etiqueta,
+
 )
 
 
@@ -116,11 +120,49 @@ def estado_proyecto():
 
 
 
+
+
+
+
 @proyecto_bp.route('/etiquetas', methods=['GET'])
 @jwt_required()
 def etiquetas():
     etiqueta, status = obtener_etiquetas()
     return jsonify(etiqueta), status
+
+@proyecto_bp.route('/crear_etiqueta', methods=['POST'])
+@jwt_required()
+def crear_etiquetas():
+    data = request.get_json()
+    etiqueta, status = cargar_etiqueta(data)
+    return jsonify(etiqueta), status
+
+
+
+
+@proyecto_bp.route('/proyecto_etiqueta', methods=['GET'])
+@jwt_required()
+def proyecto_etiquetas():
+    etiqueta, status = obtener_proyecto_etiqueta()
+    return jsonify(etiqueta), status
+
+@proyecto_bp.route('/crear_proyecto_etiqueta', methods=['POST'])
+@jwt_required()
+def crear_proyecto_etiquetas():
+    data = request.get_json()
+    etiqueta, status = cargar_proyecto_etiqueta(data)
+    return jsonify(etiqueta), status
+
+
+
+
+
+
+
+
+
+
+
 
 @proyecto_bp.route('/count_project', methods=['GET'])
 @jwt_required()

@@ -1087,13 +1087,6 @@ def Usuarios(request):
     else:
         request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los registros de usuarios.')
         return redirect('Admin')
-    
-    
-
-
-
-
-
 
     contexto = {
       'usuarios': usuarios,
@@ -1101,6 +1094,191 @@ def Usuarios(request):
       'etiquetas': etiquetas,
     }
   return render(request, 'admin/usuario.html', contexto)
+
+
+
+
+def Etiquetas(request):
+    if request.method == 'GET':
+        #Obtener Etiquetas
+        result_etiqueta = verificar_token_y_api(request, 'GET', '/proyecto/etiquetas', 'Perfil')
+        if isinstance(result_etiqueta, HttpResponseRedirect):
+            return result_etiqueta
+        response_etiqueta = result_etiqueta['response']
+        if response_etiqueta.status_code == 200:
+            etiquetas = response_etiqueta.json()
+        else:
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener las etiquetas.')
+            return redirect('Perfil')   
+        
+        contexto = {
+        'etiquetas': etiquetas
+        }
+        return render(request, 'admin/etiqueta.html', contexto)
+    if request.method == 'POST':
+        datos = {'nombre_etiqeuta': request.POST.get('etiqueta')}
+
+        result = verificar_token_y_api(request, 'POST', '/proyecto/crear_etiqueta', 'Admin', json=datos, headers={'Content-Type':'application/json'})
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        response = result['response']
+        if response.status_code == 201:
+            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Etiqueta creada correctamente.')
+            return redirect('Admin')
+        else:
+            try:
+                error_data = response.json()['error']
+                texto_error = format_errors(error_data)
+                request.session['sweet_alert'] = alert('error', 'Error al crear etiqueta.', texto_error)
+                return redirect('Admin')
+            except ValueError:
+                error = f"Error inesperado ({response.status_code}): {response.text}"
+                request.session['sweet_alert'] = alert('error', 'Error', error)
+                return redirect('Admin')
+            
+
+def ProyectosAdmin(request):
+  if request.method == 'GET':
+
+    #Obtener SEDE
+    result_sede = verificar_token_y_api(request, 'GET', '/institucion/sedes', 'Login', False)
+    if isinstance(result_sede, HttpResponseRedirect):
+        return result_sede
+    response_sede = result_sede['response']
+    if response_sede.status_code == 200:
+        sedes = response_sede.json()
+    else:
+        mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
+        request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+        return redirect('Login')
+    
+    #Obtener Usuarios
+    result_usuarios = verificar_token_y_api(request, 'GET', '/auth/usuarios_registrados', 'Admin')
+    if isinstance(result_usuarios, HttpResponseRedirect):
+        return result_usuarios
+    response_usuario = result_usuarios['response']
+    if response_usuario.status_code == 200:
+        usuarios = response_usuario.json()
+    else:
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los registros de usuarios.')
+        return redirect('Admin')
+    
+    #Obtener carreras
+    result_carrera = verificar_token_y_api(request, 'GET', '/institucion/carreras', 'Login', False)
+    if isinstance(result_carrera, HttpResponseRedirect):
+        return result_carrera
+    response_carrera = result_carrera['response']
+    if response_carrera.status_code == 200:
+        carreras = response_carrera.json()
+    else:
+        mensaje_error = response_carrera.json().get('error', 'No se pudieron obtener las carreras')
+        request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+        return redirect('Admin')
+    
+
+    #Obtener proyectos
+    result_proyectos = verificar_token_y_api(request, 'GET', '/proyecto/proyectos', 'Admin')
+    if isinstance(result_proyectos, HttpResponseRedirect):
+        return result_proyectos
+    response_proyecto = result_proyectos['response']
+    if response_proyecto.status_code == 200:
+        proyectos = response_proyecto.json()
+        for i in proyectos:
+            filename = i.get('FOTO_PROYECTO')
+            if filename:
+                filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)     
+    else:
+      request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los proyectos')
+      return redirect('Admin')       
+        
+
+
+    contexto = {
+
+      'proyectos':proyectos,
+      'carreras':carreras,
+      'sedes':sedes,
+      'usuarios':usuarios,
+    }
+  return render(request, 'admin/proyecto.html', contexto)
+
+
+
+
+def ProyectoEtiqueta(request):
+    if request.method == 'GET':
+        #Obtener proyectos
+        result_proyectos = verificar_token_y_api(request, 'GET', '/proyecto/proyectos', 'Admin')
+        if isinstance(result_proyectos, HttpResponseRedirect):
+            return result_proyectos
+        response_proyecto = result_proyectos['response']
+        if response_proyecto.status_code == 200:
+            proyectos = response_proyecto.json()
+            for i in proyectos:
+                filename = i.get('FOTO_PROYECTO')
+                if filename:
+                    filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)     
+        else:
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los proyectos')
+            return redirect('Admin')     
+
+        #Obtener Etiquetas
+        result_etiqueta = verificar_token_y_api(request, 'GET', '/proyecto/etiquetas', 'Admin')
+        if isinstance(result_etiqueta, HttpResponseRedirect):
+            return result_etiqueta
+        response_etiqueta = result_etiqueta['response']
+        if response_etiqueta.status_code == 200:
+            etiquetas = response_etiqueta.json()
+        else:
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener las etiquetas.')
+            return redirect('Admin')     
+        
+
+        #Obtener proyecto_etiqueta
+        result_etiqueta_proyecto = verificar_token_y_api(request, 'GET', '/proyecto/proyecto_etiqueta', 'Admin')
+        if isinstance(result_etiqueta_proyecto, HttpResponseRedirect):
+            return result_etiqueta_proyecto
+        response_etiqueta_proyecto = result_etiqueta_proyecto['response']
+        if response_etiqueta_proyecto.status_code == 200:
+            proyecto_etiqueta = response_etiqueta_proyecto.json()
+        else:
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener las etiquetas.')
+            return redirect('Admin')     
+
+
+        contexto = {
+        'proyecto_etiquetas':proyecto_etiqueta,
+        'etiquetas':etiquetas,
+        'proyectos':proyectos
+        }
+        return render(request, 'admin/proyecto_etiqueta.html', contexto)
+    if request.method == 'POST':
+        datos = {
+            'proyecto': request.POST.get('proyecto'),
+            'etiqueta': request.POST.get('etiqueta'),
+        }
+
+        result = verificar_token_y_api(request, 'POST', '/proyecto/crear_proyecto_etiqueta', 'Admin', json=datos, headers={'Content-Type':'application/json'})
+
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        response = result['response']
+        if response.status_code == 201:
+            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Proyecto y etiqueta relacionada correctamente.')
+            return redirect('Admin')
+        else:
+            try:
+                error_data = response.json()['error']
+                texto_error = format_errors(error_data)
+                request.session['sweet_alert'] = alert('error', 'Error al relacionar etiqueta y proyecto.', texto_error)
+                return redirect('Admin')
+            except ValueError:
+                error = f"Error inesperado ({response.status_code}): {response.text}"
+                request.session['sweet_alert'] = alert('error', 'Error', error)
+                return redirect('Admin')
+
+
+
 
 
 
@@ -1128,12 +1306,6 @@ def Usuarios(request):
 #
 
 #
-#def Etiquetas(request):
-#  if request.method == 'GET':
-#    contexto = {
-#      'etiquetas':consulta_etiqueta()
-#    }
-#  return render(request, 'admin/etiqueta.html', contexto)
 #
 #def IntegrantesProyecto(request):
 #  if request.method == 'GET':
@@ -1153,14 +1325,7 @@ def Usuarios(request):
 #    }
 #  return render(request, 'admin/postulacion.html', contexto)
 #
-#def ProyectoEtiqueta(request):
-#  if request.method == 'GET':
-#    contexto = {
-#      'proyecto_etiqueta':consuta_proyecto_etiqueta(),
-#      'etiquetas':consulta_etiqueta(),
-#      'proyectos':consulta_proyecto()
-#    }
-#  return render(request, 'admin/proyecto_etiqueta.html', contexto)
+
 #
 #def ProyectosAdmin(request):
 #  if request.method == 'GET':

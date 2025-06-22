@@ -23,11 +23,11 @@ urlpatterns = [
     path('admin/sede/', views.Sede , name='Sede'),  # Admin Campus page view
     path('admin/sede_escuela/', views.SedeEscuela , name='SedeEscuela'),  # Admin School campus page view
     path('admin/usuario/', views.Usuarios , name='Usuarios'),  # Admin Users page view
-    #path('admin/etiqueta/', views.Etiquetas , name='Etiquetas'),  # Admin Tags page view
+    path('admin/etiqueta/', views.Etiquetas , name='Etiquetas'),  # Admin Tags page view
+    path('admin/proyecto/', views.ProyectosAdmin , name='ProyectosAdmin'),  # Admin projects page view
+    path('admin/proyecto_etiqueta/', views.ProyectoEtiqueta , name='ProyectoEtiqueta'),  # Admin Project tag page view
     #path('admin/integrantes_proyecto/', views.IntegrantesProyecto , name='IntegrantesProyecto'),  # Admin Project members page view
     #path('admin/postulacion/', views.Postulaciones , name='PostulacionesAdmin'),  # Admin Applications page view
-    #path('admin/proyecto_etiqueta/', views.ProyectoEtiqueta , name='ProyectoEtiqueta'),  # Admin Project tag page view
-    #path('admin/proyecto/', views.ProyectosAdmin , name='ProyectosAdmin'),  # Admin projects page view
     #path('admin/login/', views.AdminLogin , name='AdminLogin'),  # Admin login page view
     path('escuelas/', views.Escuelas , name='Escuelas'),  # Schools page view
 
