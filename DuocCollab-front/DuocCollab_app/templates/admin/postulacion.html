@@ -11,7 +11,7 @@
             <select id="usuario" class="form-select" required>
               <option selected>Seleccione un usuario</option>
               {% for usuario in usuarios %}
-                <option value="{{ usuario.ID_USUARIO }}">{{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
+                <option value="{{ usuario.ID_USUARIO }}">({{ usuario.CORREO }}) {{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
               {% endfor %}
             </select>
           </div>

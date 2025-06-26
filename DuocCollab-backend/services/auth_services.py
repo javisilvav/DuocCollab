@@ -41,6 +41,24 @@ def login_usuario(correo, clave):
 
 
 
+
+
+def obtener_tres_ultimos_usuarios():
+    try:
+
+        resultado = supabase.table("USUARIO").select("ID_USUARIO, NOMBRE, APELLIDO, CORREO").order("ID_USUARIO", desc=True).limit(3).execute()
+        if resultado.data:
+            usuarios = resultado.data
+
+            return usuarios, 200
+        else:
+            return {"error": "Ultimo registro de usuarios no encontrado."}, 404
+    except Exception as e:
+        return {"error": f"Error al consultar los ultimos registros de usuarios: {str(e)}"}, 500
+
+
+
+
 def registrar_usuario(datos_usuario, archivo_perfil=None, archivo_portada=None):
     errores=[]
     

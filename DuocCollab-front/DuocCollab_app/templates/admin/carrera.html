@@ -1,11 +1,14 @@
+{% load static %}
+
 <div class="container py-5">
   <h2 class="mb-4 text-center">Panel de Administración: Carrera</h2>
 
-  <!-- Formulario -->
+  <!-- Formulario para agregar carrera -->
   <div class="card mb-4 shadow">
     <div class="card-body">
-      <form id="formCarrera" method="POST" action="{% url 'Carreras' %}">
+      <form method="POST" action="{% url 'Carreras' %}">
         {% csrf_token %}
+        <input type="hidden" name="accion" value="crear">
         <div class="row g-3">
           <div class="col-md-6">
             <label for="nombre" class="form-label">Nombre de la carrera</label>
@@ -14,7 +17,7 @@
           <div class="col-md-6">
             <label for="escuela" class="form-label">Escuela</label>
             <select id="escuela" name="id_escuela" class="form-select" required>
-              <option selected>Seleccione una escuela</option>
+              <option value="" disabled selected>Seleccione una escuela</option>
               {% for escuela in escuelas %}
                 <option value="{{ escuela.ID_ESCUELA }}">{{ escuela.NOMBRE_ESC }}</option>
               {% endfor %}
@@ -28,6 +31,7 @@
     </div>
   </div>
 
+  <!-- Tabla de carreras -->
   <div class="card shadow">
     <div class="card-body">
       <h5 class="card-title">Carreras existentes</h5>
@@ -38,18 +42,19 @@
               <th>ID</th>
               <th>Nombre Carrera</th>
               <th>Escuela</th>
-              <th></th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {% for carrera in carreras %}
               <tr>
-                <td> {{ carrera.ID_CARRERA }} </td>
-                <td> {{ carrera.NOMBRE }} </td>
-                <td> {{ carrera.ID_ESCUELA }} </td>
+                <td>{{ carrera.ID_CARRERA }}</td>
+                <td>{{ carrera.NOMBRE }}</td>
+                <td>{{ carrera.ID_ESCUELA }}</td>
                 <td>
-                  <button class="btn btn-sm btn-warning me-2">Editar</button>
-                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                  <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalEditar{{ carrera.ID_CARRERA }}">
+                    Editar
+                  </button>
                 </td>
               </tr>
             {% endfor %}
@@ -59,3 +64,38 @@
     </div>
   </div>
 </div>
+
+{% for carrera in carreras %}
+<div class="modal fade" id="modalEditar{{ carrera.ID_CARRERA }}" tabindex="-1" aria-labelledby="modalLabel{{ carrera.ID_CARRERA }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'Carreras' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="editar">
+        <input type="hidden" name="id_carrera_editar" value="{{ carrera.ID_CARRERA }}">
+        <input type="hidden" name="id_escuela_editar" value="{{ carrera.ID_ESCUELA }}">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel{{ carrera.ID_CARRERA }}">Editar Carrera</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Nombre actual</label>
+            <input type="text" class="form-control" value="{{ carrera.NOMBRE }}" disabled>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nuevo nombre</label>
+            <input type="text" name="nuevo_nombre" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}

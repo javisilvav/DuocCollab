@@ -4,7 +4,7 @@
   <!-- Formulario -->
   <div class="card mb-4 shadow">
     <div class="card-body">
-      <form id="formEscuela" method="POST" action="{% url 'Escuelas' %}">
+      <form id="formEscuela" method="POST" action="{% url 'EscuelasAdmin' %}">
         {% csrf_token %}
 
         <div class="row g-3">
@@ -14,6 +14,7 @@
           </div>
         </div>
         <div class="mt-4 text-end">
+          <input type="hidden" name="accion" value="crear">
           <button type="submit" class="btn btn-primary">Agregar Escuela</button>
         </div>
       </form>
@@ -39,8 +40,7 @@
                 <td> {{ escuela.ID_ESCUELA }} </td>
                 <td> {{ escuela.NOMBRE_ESC }} </td>
                 <td>
-                  <button class="btn btn-sm btn-warning me-2">Editar</button>
-                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                  <button class="btn btn-sm btn-warning"  data-bs-toggle="modal" data-bs-target="#modalEditar{{ escuela.ID_ESCUELA }}">Editar</button>
                 </td>
               </tr>
             {% endfor %}
@@ -50,3 +50,40 @@
     </div>
   </div>
 </div>
+
+
+
+
+{% for escuela in escuelas %}
+<div class="modal fade" id="modalEditar{{ escuela.ID_ESCUELA }}" tabindex="-1" aria-labelledby="modalLabel{{ escuela.ID_ESCUELA }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'EscuelasAdmin' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="editar">
+        <input type="hidden" name="id_escuela_editar" value="{{ escuela.ID_ESCUELA }}">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel{{ escuela.ID_CARRERA }}">Editar Carrera</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Nombre actual</label>
+            <input type="text" class="form-control" value="{{ escuela.NOMBRE_ESC }}" disabled>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nuevo nombre</label>
+            <input type="text" name="nuevo_nombre" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}

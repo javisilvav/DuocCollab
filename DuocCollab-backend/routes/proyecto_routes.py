@@ -6,6 +6,7 @@ from services.proyecto_services import (
     cargar_proyecto,
     obtener_postulacion_usuario,
     cargar_postulacion,
+    obtener_postulaciones,
     obtener_detalle_proyecto,
     obtener_proyetos,
     editar_estado_postulacion,
@@ -17,6 +18,7 @@ from services.proyecto_services import (
     cargar_etiqueta,
     obtener_proyecto_etiqueta,
     cargar_proyecto_etiqueta,
+    obtener_integrante_proyecto,
 
 )
 
@@ -39,7 +41,10 @@ def obtener_imagen(tipo, nombre):
         return send_from_directory(carpeta, nombre)
     except FileNotFoundError:
         return jsonify({"error": "Archivo no encontrado"}), 404
-    
+  
+
+
+
 
 
 @proyecto_bp.route('/crear_postulacion', methods=['POST'])
@@ -54,8 +59,14 @@ def crear_postulacion():
 @jwt_required()
 def postulaciones_usuario():
     id_usuario = get_jwt_identity()
-    proyectos, status = obtener_postulacion_usuario(id_usuario)
-    return jsonify(proyectos), status
+    postulaciones, status = obtener_postulacion_usuario(id_usuario)
+    return jsonify(postulaciones), status
+
+@proyecto_bp.route('/postulaciones', methods=['GET'])
+@jwt_required()
+def postulaciones():
+    postulacion, status = obtener_postulaciones()
+    return jsonify(postulacion), status
 
 
 @proyecto_bp.route('/editar_postulacion', methods=['POST'])
@@ -66,13 +77,15 @@ def estado_postulacion():
     return jsonify(postulacion), status
 
 
+
+
+
 @proyecto_bp.route('/detalle_proyecto', methods=['GET'])
 @jwt_required()
 def detalle_proyecto():
     data_proyecto = request.get_json()
     proyectos, status = obtener_detalle_proyecto(data_proyecto)
     return jsonify(proyectos), status
-
 
 @proyecto_bp.route('/proyectos', methods=['GET'])
 @jwt_required()
@@ -110,14 +123,24 @@ def modificar_proyecto():
 
 
 
+
+@proyecto_bp.route('/proyectos_integrantes', methods=['GET'])
+@jwt_required()
+def proyecto_integrante():
+    proyecto_integrante, status = obtener_integrante_proyecto()
+    return jsonify(proyecto_integrante), status
+
+
+
+
+
+
 @proyecto_bp.route('/editar_estado_proyecto', methods=['POST'])
 @jwt_required()
 def estado_proyecto():
     datos = request.get_json()
     proyectos, status = editar_estado_proyecto(datos)
     return jsonify(proyectos), status
-
-
 
 
 
@@ -136,6 +159,8 @@ def crear_etiquetas():
     data = request.get_json()
     etiqueta, status = cargar_etiqueta(data)
     return jsonify(etiqueta), status
+
+
 
 
 

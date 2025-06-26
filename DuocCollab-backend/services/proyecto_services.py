@@ -67,6 +67,25 @@ def editar_estado_proyecto(datos):
 
 
 
+def obtener_integrante_proyecto():
+    try:
+
+        resultado = supabase.table("PROYECTO").select("*, INTEGRANTES_PROYECTO(ROL, USUARIO(NOMBRE, APELLIDO))").execute()
+        if resultado.data:
+            proyectos = resultado.data
+
+            return proyectos, 200
+        else:
+            return {"error": "Proyectos e integrantes no encontrado."}, 404
+    except Exception as e:
+        return {"error": f"Error al consultar proyectos e integrantes: {str(e)}"}, 500
+
+
+
+
+
+
+
 
 
 
@@ -247,6 +266,7 @@ def cargar_postulacion(id_usuario, datos_postulacion):
 def obtener_postulacion_usuario(id_usuario):
     try:
         resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO))').eq("ID_USUARIO", id_usuario).neq("ESTADO",'Cancelada').execute()
+        print(resultado)
         if resultado.data:
             return resultado.data, 200
         else:
@@ -269,7 +289,15 @@ def editar_estado_postulacion(datos):
 
 
 
-
+def obtener_postulaciones():
+    try:
+        resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO))').execute()
+        if resultado.data:
+            return resultado.data, 200
+        else:
+            return {"error": "Postulaciones no encontrado."}, 404
+    except Exception as e:
+        return {"error": f"Error al consultar las postulaciones: {str(e)}"}, 500
 
 
 

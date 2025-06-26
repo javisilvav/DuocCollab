@@ -39,28 +39,16 @@
             <th>#</th>
             <th>Nombre</th>
             <th>Email</th>
-            <th>Fecha registro</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Ana Torres</td>
-            <td>ana@example.com</td>
-            <td>20/05/2025</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Carlos Díaz</td>
-            <td>carlos@example.com</td>
-            <td>19/05/2025</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>Laura Pérez</td>
-            <td>laura@example.com</td>
-            <td>18/05/2025</td>
-          </tr>
+          {% for registro in ultimos_usuarios %}
+            <tr>
+              <td>{{ registro.ID_USUARIO }}</td>
+              <td>{{ registro.NOMBRE }} {{ registro.APELLIDO }}</td>
+              <td>{{ registro.CORREO }}</td>
+            </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>

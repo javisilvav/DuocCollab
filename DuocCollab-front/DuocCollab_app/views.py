@@ -51,13 +51,14 @@ def verificar_token_y_api(request, metodo, endpoint, redirecciona, requiere_tkn=
     return result
 
 
+def Escuelas(request):
+  return render(request, 'escuelas.html')
 
 
 def Home(request):
   if request.method == 'GET':
-    sweet_alert = request.session.pop('sweet_alert', None)
     contexto = {
-        'sweet_alert': sweet_alert
+        'sweet_alert': request.session.pop('sweet_alert', None)
     }
   return render(request, 'index.html', contexto)  
 
@@ -141,7 +142,7 @@ def obtener_carreras(request):
         contexto = {'carreras': carreras}
         return render(request, 'nombre_template.html', contexto)
     else:
-        mensaje_error = response.json().get('error', 'No se pudieron obtener las carreras')
+        mensaje_error = 'No se pudieron obtener las carreras'
         request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
         return redirect('alguna_vista_de_error')
     
@@ -171,10 +172,10 @@ def Signup(request):
                 request.session['sweet_alert'] = alert('success', 'Registro Exitoso', 'Usuario registrado correctamente. Por favor, inicia sesión.')
                 return redirect('Login')
             else:
-              error_data = response.json()['errores']
+              
 
-              texto_error = format_errors(error_data)
-              request.session['sweet_alert'] = alert('error', 'Error al registrar usuario.', texto_error)
+              
+              request.session['sweet_alert'] = alert('error', 'Error al registrar usuario.', 'error')
               return redirect('Signup')
                
 
@@ -193,7 +194,7 @@ def Signup(request):
         if response_carrera.status_code == 200:
             carreras = response_carrera.json()
         else:
-          mensaje_error = response_carrera.json().get('error', 'No se pudieron obtener las carreras')
+          mensaje_error = 'No se pudieron obtener las carreras'
           request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
           return redirect('Login')
         
@@ -206,7 +207,7 @@ def Signup(request):
         if response_sede.status_code == 200:
             sedes = response_sede.json()
         else:
-          mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
+          mensaje_error = 'No se pudieron obtener las sedes.'
           request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
           return redirect('Login')
 
@@ -218,7 +219,7 @@ def Signup(request):
         if response_escuela.status_code == 200:
             escuelas = response_escuela.json()
         else:
-          mensaje_error = response_escuela.json().get('error', 'No se pudieron obtener las escuelas.')
+          mensaje_error = 'No se pudieron obtener las escuelas.'
           request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
           return redirect('Login')
   
@@ -319,9 +320,9 @@ def EditarPerfil(request):
             return redirect('Perfil')
         else:
             try:
-                error_data = response.json().get('errores', [])
-                texto_error = format_errors(error_data)
-                request.session['sweet_alert'] = alert('error', 'Error al editar usuario.', texto_error)
+                
+                
+                request.session['sweet_alert'] = alert('error', 'Error al editar usuario.', 'error')
                 return redirect('Perfil')
             except ValueError:
                 error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -407,9 +408,9 @@ def MisProyectos(request):
                 return redirect('Perfil')
             else:
                 try:
-                    error_data = response.json().get('errores', [])
-                    texto_error = format_errors(error_data)
-                    request.session['sweet_alert'] = alert('error', 'Error al aceptar postulación.', texto_error)
+                    
+                    
+                    request.session['sweet_alert'] = alert('error', 'Error al aceptar postulación.', 'error')
                     return redirect('Perfil')
                 except ValueError:
                     error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -431,9 +432,8 @@ def MisProyectos(request):
                 return redirect('Perfil')
             else:
                 try:
-                    error_data = response.json().get('errores', [])
-                    texto_error = format_errors(error_data)
-                    request.session['sweet_alert'] = alert('error', 'Error al rechazar postulación.', texto_error)
+                   
+                    request.session['sweet_alert'] = alert('error', 'Error al rechazar postulación.', 'error')
                     return redirect('Perfil')
                 except ValueError:
                     error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -455,9 +455,9 @@ def MisProyectos(request):
                 return redirect('Perfil')
             else:
                 try:
-                    error_data = response.json().get('errores', [])
-                    texto_error = format_errors(error_data)
-                    request.session['sweet_alert'] = alert('error', 'Error al desactivar proyecto.', texto_error)
+
+                    
+                    request.session['sweet_alert'] = alert('error', 'Error al desactivar proyecto.', 'error')
                     return redirect('Perfil')
                 except ValueError:
                     error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -491,9 +491,7 @@ def MisProyectos(request):
                 return redirect('Perfil')
             else:
                 try:
-                    error_data = response.json()['errores']
-                    texto_error = format_errors(error_data)
-                    request.session['sweet_alert'] = alert('error', 'Error al editar proyecto.', texto_error)
+                    request.session['sweet_alert'] = alert('error', 'Error al editar proyecto.', 'error')
                     return redirect('Perfil')
                 except ValueError:
                     error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -517,6 +515,7 @@ def MisPostulaciones(request):
         if isinstance(result, HttpResponseRedirect):
             return result
         response = result['response']
+        
         if response.status_code == 200:
             postulacion = response.json()
             for i in postulacion:
@@ -540,8 +539,11 @@ def MisPostulaciones(request):
                 context['sweet_alert'] = sweet_alert
             return render(request, 'mispostulaciones.html', context)
         else:
-            error_msg = response.json().get('error', 'Error desconocido al mostrar postulaciones.')
-            return render(request, 'mispostulaciones.html', {'error': error_msg})
+            context = {}
+            sweet_alert = request.session.pop('sweet_alert', None)
+            if sweet_alert:
+                context['sweet_alert'] = sweet_alert
+            return render(request, 'mispostulaciones.html', context)   
     if request.method == 'POST':
         if request.POST.get('accion') == 'cancelar':
             id_postulacion = request.POST.get('id_postulacion')
@@ -559,9 +561,8 @@ def MisPostulaciones(request):
                 return redirect('Perfil')
             else:
                 try:
-                    error_data = response.json().get('errores', [])
-                    texto_error = format_errors(error_data)
-                    request.session['sweet_alert'] = alert('error', 'Error al cancelar postulación.', texto_error)
+
+                    request.session['sweet_alert'] = alert('error', 'Error al cancelar postulación.', 'error')
                     return redirect('Perfil')
                 except ValueError:
                     error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -650,9 +651,8 @@ def ProyectosDetail(request):
             return redirect('Perfil')
         else:
             try:
-                error_data = response.json()['errores']
-                texto_error = format_errors(error_data)
-                request.session['sweet_alert'] = alert('error', 'Error al crear postulación.', texto_error)
+
+                request.session['sweet_alert'] = alert('error', 'Error al crear postulación.', 'error')
                 return redirect('Perfil')
             except ValueError:
                 error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -705,8 +705,7 @@ def SubirProyecto(request):
     if response_sede.status_code == 200:
         sedes = response_sede.json()
     else:
-      mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
-      request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
+      request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener las sedes.')
       return redirect('Login')
 
     context = {
@@ -747,9 +746,9 @@ def SubirProyecto(request):
             return redirect('Perfil')
         else:
             try:
-                error_data = response.json()['error']
-                texto_error = format_errors(error_data)
-                request.session['sweet_alert'] = alert('error', 'Error al crear proyecto.', texto_error)
+                
+                
+                request.session['sweet_alert'] = alert('error', 'Error al crear proyecto.', 'error')
                 return redirect('Perfil')
             except ValueError:
                 error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -785,8 +784,11 @@ def Proyectos(request):
 
 
 def Admin(request):
-
-        return render(request, 'admin/admin.html')
+    if request.method == 'GET':
+        contexto = {
+            'sweet_alert': request.session.pop('sweet_alert', None)
+        }
+    return render(request, 'admin/admin.html', contexto)
 
 
 def Inicio(request):
@@ -819,56 +821,85 @@ def Inicio(request):
         else:
           cont_post_pendiente = 0
 
+
+        result_ultimos_usuarios = verificar_token_y_api(request, 'GET', '/auth/ultimos_usuarios', 'Admin')
+        if isinstance(result_ultimos_usuarios, HttpResponseRedirect):
+            return result_ultimos_usuarios
+        response_ultimos_usuarios = result_ultimos_usuarios['response']
+        if response_ultimos_usuarios.status_code == 200:
+            ultimos_usuarios = response_ultimos_usuarios.json()
+        else:
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los ultimos registros de usuarios.')
+            return redirect('Admin')
    
-    
         contexto = {
             'contador': contador,
             'cont_proyecto': cont_proyecto,
-            'cont_post_pendiente':cont_post_pendiente
+            'cont_post_pendiente':cont_post_pendiente,
+            'ultimos_usuarios':ultimos_usuarios
         }
         return render(request, 'admin/home.html',contexto)
 
 
-def Escuelas(request):
-  if request.method == 'GET':
-    #Obtener ESCUELA
-    result_escuela = verificar_token_y_api(request, 'GET', '/institucion/escuelas', 'Login', False)
-    if isinstance(result_escuela, HttpResponseRedirect):
-        return result_escuela
-    response_escuela = result_escuela['response']
-    if response_escuela.status_code == 200:
-        escuelas = response_escuela.json()
-    else:
-      mensaje_error = response_escuela.json().get('error', 'No se pudieron obtener las escuelas.')
-      request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
-      return redirect('Login')
-    sweet_alert = request.session.pop('sweet_alert', None)
-    contexto = {
-      'escuelas':escuelas,
-      'sweet_alert': sweet_alert
-    }
-    return render(request, 'admin/escuela.html', contexto)
-  if request.method == 'POST':
-        datos = {'nombre_escuela': request.POST.get('nombre')}
-
-        result = verificar_token_y_api(request, 'POST', '/institucion/crear_escuela', 'Escuelas', json=datos, headers={'Content-Type': 'application/json'})
-        if isinstance(result, HttpResponseRedirect):
-            return result
-        response = result['response']
-        print(response)
-        if response.status_code == 201:
-            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Escuela creada correctamente.')
-            return redirect('Escuelas')
+def EscuelasAdmin(request):
+    if request.method == 'GET':
+        #Obtener ESCUELA
+        result_escuela = verificar_token_y_api(request, 'GET', '/institucion/escuelas', 'Login', False)
+        if isinstance(result_escuela, HttpResponseRedirect):
+            return result_escuela
+        response_escuela = result_escuela['response']
+        if response_escuela.status_code == 200:
+            escuelas = response_escuela.json()
         else:
-            try:
-                error_data = response.json()['errores']
-                texto_error = format_errors(error_data)
-                request.session['sweet_alert'] = alert('error', 'Error al crear escuela.', texto_error)
-                return redirect('Escuelas')
-            except ValueError:
-                error = f"Error inesperado ({response.status_code}): {response.text}"
-                request.session['sweet_alert'] = alert('error', 'Error', error)
-                return redirect('Escuelas')
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener las escuelas.')
+            return redirect('Login')
+        sweet_alert = request.session.pop('sweet_alert', None)
+        contexto = {
+        'escuelas':escuelas,
+        'sweet_alert': sweet_alert
+        }
+        return render(request, 'admin/escuela.html', contexto)
+    if request.method == 'POST':
+        if request.POST.get('accion') == 'crear':
+            datos = {'nombre_escuela': request.POST.get('nombre')}
+
+            result = verificar_token_y_api(request, 'POST', '/institucion/crear_escuela', 'Admin', json=datos, headers={'Content-Type': 'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 201:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Escuela creada correctamente.')
+                return redirect('Admin')
+            else:
+                try:
+                    request.session['sweet_alert'] = alert('error', 'Error al crear escuela.', 'error')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
+        if request.POST.get('accion') == 'editar':    
+            datos = {
+                'id': request.POST.get('id_escuela_editar'),
+                'nombre_escuela': request.POST.get('nuevo_nombre'),
+            }
+            print(datos)
+            result = verificar_token_y_api(request, 'POST', '/institucion/editar_escuela', 'Admin', json=datos, headers={'Content-Type': 'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 200:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Nombre de escuela editado correctamente.')
+                return redirect('Admin')
+            else:
+                try:
+                    request.session['sweet_alert'] = alert('error', 'Error al actualizar nombre de la escuela.', 'error')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
+       
 
 
 
@@ -882,7 +913,7 @@ def Carreras(request):
         if response_carrera.status_code == 200:
             carreras = response_carrera.json()
         else:
-            mensaje_error = response_carrera.json().get('error', 'No se pudieron obtener las carreras')
+            mensaje_error = 'No se pudieron obtener las carreras'
             request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
             return redirect('Login')
         
@@ -894,7 +925,7 @@ def Carreras(request):
         if response_escuela.status_code == 200:
             escuelas = response_escuela.json()
         else:
-            mensaje_error = response_escuela.json().get('error', 'No se pudieron obtener las escuelas.')
+            mensaje_error = 'No se pudieron obtener las escuelas.'
             request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
             return redirect('Login')
         
@@ -907,28 +938,54 @@ def Carreras(request):
         return render(request, 'admin/carrera.html', contexto)
     
     if request.method == 'POST':
-        datos = {
-            'nombre_carrera':request.POST.get('nombre'),
-            'id_escuela': request.POST.get('id_escuela')
-        }
+        print(request.POST.get('accion'))
+        if request.POST.get('accion') == 'crear':
+            datos = {
+                'nombre_carrera':request.POST.get('nombre'),
+                'id_escuela': request.POST.get('id_escuela')
+            }
 
-        result = verificar_token_y_api(request, 'POST', '/institucion/crear_carrera', 'Admin', json=datos, headers={'Content-Type':'application/json'})
-        if isinstance(result, HttpResponseRedirect):
-            return result
-        response = result['response']
-        if response.status_code == 201:
-            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Sede creada correctamente.')
-            return redirect('Admin')
-        else:
-            try:
-                error_data = response.json()['error']
-                texto_error = format_errors(error_data)
-                request.session['sweet_alert'] = alert('error', 'Error al crear sede.', texto_error)
+            result = verificar_token_y_api(request, 'POST', '/institucion/crear_carrera', 'Admin', json=datos, headers={'Content-Type':'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 201:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Carrera creada correctamente.')
                 return redirect('Admin')
-            except ValueError:
-                error = f"Error inesperado ({response.status_code}): {response.text}"
-                request.session['sweet_alert'] = alert('error', 'Error', error)
+            else:
+                try:
+                    
+                    
+                    request.session['sweet_alert'] = alert('error', 'Error al crear Carrera.', 'error')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
+        if request.POST.get('accion') == 'editar':
+            datos = {
+                'id': request.POST.get('id_carrera_editar'),
+                'nombre_carrera': request.POST.get('nuevo_nombre'),
+                'id_escuela': request.POST.get('id_escuela_editar'),
+            }
+            print(datos)
+            result = verificar_token_y_api(request, 'POST', '/institucion/editar_carrera', 'Admin', json=datos, headers={'Content-Type': 'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 200:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Nombre de carrera editado correctamente.')
                 return redirect('Admin')
+            else:
+                try:
+                    
+                    
+                    request.session['sweet_alert'] = alert('error', 'Error al actualizar nombre de la carrera.', 'error')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
 
 
 
@@ -944,7 +1001,7 @@ def Sede(request):
         if response_sede.status_code == 200:
             sedes = response_sede.json()
         else:
-          mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
+          mensaje_error = 'No se pudieron obtener las sedes.'
           request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
           return redirect('Login')
         
@@ -967,9 +1024,9 @@ def Sede(request):
             return redirect('Admin')
         else:
             try:
-                error_data = response.json()['error']
-                texto_error = format_errors(error_data)
-                request.session['sweet_alert'] = alert('error', 'Error al crear sede.', texto_error)
+                
+                
+                request.session['sweet_alert'] = alert('error', 'Error al crear sede.', 'error')
                 return redirect('Admin')
             except ValueError:
                 error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -988,7 +1045,7 @@ def SedeEscuela(request):
         if response_sede.status_code == 200:
             sedes = response_sede.json()
         else:
-            mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
+            mensaje_error = 'No se pudieron obtener las sedes.'
             request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
             return redirect('Login')
     
@@ -1000,7 +1057,7 @@ def SedeEscuela(request):
         if response_escuela.status_code == 200:
             escuelas = response_escuela.json()
         else:
-            mensaje_error = response_escuela.json().get('error', 'No se pudieron obtener las escuelas.')
+            mensaje_error = 'No se pudieron obtener las escuelas.'
             request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
             return redirect('Login')
     
@@ -1013,7 +1070,7 @@ def SedeEscuela(request):
         if response_sede_escuela.status_code == 200:
             sede_escuela = response_sede_escuela.json()
         else:
-          mensaje_error = response_sede_escuela.json().get('error', 'No se pudieron obtener las sedes y escuelas.')
+          mensaje_error = 'No se pudieron obtener las sedes y escuelas.'
           request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
           return redirect('Login')
 
@@ -1039,9 +1096,9 @@ def SedeEscuela(request):
             return redirect('Admin')
         else:
             try:
-                error_data = response.json()['error']
-                texto_error = format_errors(error_data)
-                request.session['sweet_alert'] = alert('error', 'Error al relacionar sede y escuela.', texto_error)
+                
+                
+                request.session['sweet_alert'] = alert('error', 'Error al relacionar sede y escuela.', 'error')
                 return redirect('Admin')
             except ValueError:
                 error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -1061,7 +1118,7 @@ def Usuarios(request):
     if response_carrera.status_code == 200:
         carreras = response_carrera.json()
     else:
-        mensaje_error = response_carrera.json().get('error', 'No se pudieron obtener las carreras')
+        mensaje_error = 'No se pudieron obtener las carreras'
         request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
         return redirect('Admin')
     
@@ -1127,9 +1184,9 @@ def Etiquetas(request):
             return redirect('Admin')
         else:
             try:
-                error_data = response.json()['error']
-                texto_error = format_errors(error_data)
-                request.session['sweet_alert'] = alert('error', 'Error al crear etiqueta.', texto_error)
+                
+                
+                request.session['sweet_alert'] = alert('error', 'Error al crear etiqueta.', 'error')
                 return redirect('Admin')
             except ValueError:
                 error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -1148,7 +1205,7 @@ def ProyectosAdmin(request):
     if response_sede.status_code == 200:
         sedes = response_sede.json()
     else:
-        mensaje_error = response_sede.json().get('error', 'No se pudieron obtener las sedes.')
+        mensaje_error = 'No se pudieron obtener las sedes.'
         request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
         return redirect('Login')
     
@@ -1171,7 +1228,7 @@ def ProyectosAdmin(request):
     if response_carrera.status_code == 200:
         carreras = response_carrera.json()
     else:
-        mensaje_error = response_carrera.json().get('error', 'No se pudieron obtener las carreras')
+        mensaje_error = 'No se pudieron obtener las carreras'
         request.session['sweet_alert'] = alert('error', 'Error', mensaje_error)
         return redirect('Admin')
     
@@ -1268,9 +1325,9 @@ def ProyectoEtiqueta(request):
             return redirect('Admin')
         else:
             try:
-                error_data = response.json()['error']
-                texto_error = format_errors(error_data)
-                request.session['sweet_alert'] = alert('error', 'Error al relacionar etiqueta y proyecto.', texto_error)
+                
+                
+                request.session['sweet_alert'] = alert('error', 'Error al relacionar etiqueta y proyecto.', 'error')
                 return redirect('Admin')
             except ValueError:
                 error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -1278,76 +1335,142 @@ def ProyectoEtiqueta(request):
                 return redirect('Admin')
 
 
+def IntegrantesProyecto(request):
+  if request.method == 'GET':
+     #Obtener Usuarios
+    result_usuarios = verificar_token_y_api(request, 'GET', '/auth/usuarios_registrados', 'Admin')
+    if isinstance(result_usuarios, HttpResponseRedirect):
+        return result_usuarios
+    response_usuario = result_usuarios['response']
+    if response_usuario.status_code == 200:
+        usuarios = response_usuario.json()
+    else:
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los registros de usuarios.')
+        return redirect('Admin')
+    
+    #Obtener proyectos e integtantes
+    result_proyectos = verificar_token_y_api(request, 'GET', '/proyecto/proyectos_integrantes', 'Admin')
+    if isinstance(result_proyectos, HttpResponseRedirect):
+        return result_proyectos
+    response_proyecto = result_proyectos['response']
+    if response_proyecto.status_code == 200:
+        proyectos = response_proyecto.json()
+        for i in proyectos:
+            filename = i.get('FOTO_PROYECTO')
+            if filename:
+                filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)   
+
+    contexto = {
+      'proyectos':proyectos,
+      'usuarios': usuarios
+    }
+  return render(request, 'admin/integrantes_proyecto.html', contexto)
 
 
 
+def Postulaciones(request):
+   
+    
+
+  
+  if request.method == 'GET':
+    #Obtener Usuarios
+    result_usuarios = verificar_token_y_api(request, 'GET', '/auth/usuarios_registrados', 'Admin')
+    if isinstance(result_usuarios, HttpResponseRedirect):
+        return result_usuarios
+    response_usuario = result_usuarios['response']
+    if response_usuario.status_code == 200:
+        usuarios = response_usuario.json()
+    else:
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los registros de usuarios.')
+        return redirect('Admin')
+    
+    #Obtener proyectos
+    result_proyectos = verificar_token_y_api(request, 'GET', '/proyecto/proyectos', 'Admin')
+    if isinstance(result_proyectos, HttpResponseRedirect):
+        return result_proyectos
+    response_proyecto = result_proyectos['response']
+    if response_proyecto.status_code == 200:
+        proyectos = response_proyecto.json()
+        for i in proyectos:
+            filename = i.get('FOTO_PROYECTO')
+            if filename:
+                filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)     
+    else:
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los proyectos')
+        return redirect('Admin')    
+    
+    #Obtener postulaciones
+    result_postulaciones = verificar_token_y_api(request, 'GET', '/proyecto/postulaciones', 'Admin')
+    if isinstance(result_postulaciones, HttpResponseRedirect):
+        return result_postulaciones
+    response_proyecto = result_postulaciones['response']
+    if response_proyecto.status_code == 200:
+        postulaciones = response_proyecto.json()
+        for i in postulaciones:
+            filename = i.get('FOTO_PROYECTO')
+            if filename:
+                filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)     
+    else:
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los postulaciones')
+        return redirect('Admin')    
+    
+    result = verificar_token_y_api(request,'GET', '/proyecto/postulaciones', 'Home')
+    if isinstance(result, HttpResponseRedirect):
+        return result
+    response = result['response']
+    if response.status_code == 200:
+        postulacion = response.json()
+        for i in postulacion:
+            fecha = i.get('FECHA_POSTULACION')
+            if fecha:
+                try:
+                    fecha_formateada = datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S.%f")
+                except ValueError:
+                # En caso de que no tenga microsegundos, prueba sin ellos
+                    fecha_formateada = datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S")
+            i['FECHA_POSTULACION'] = fecha_formateada.strftime("%d/%m/%Y")
+            proyecto = i.get('PROYECTO',{})
+            filename = proyecto.get('FOTO_PROYECTO')
+            if filename:
+                filename = proyecto['FOTO_PROYECTO'] = ruta_img_proyecto(filename)      
+    else:
+        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los postulaciones')
+        return redirect('Admin')    
 
 
 
+    contexto = {
+      'postulaciones': postulacion,
+      'proyectos':proyectos,
+      'usuarios':usuarios
+    }
+    return render(request, 'admin/postulacion.html', contexto)
 
-#
-#
-#def obtener_ruta_sin_perfil():
-#    ruta = os.path.join(settings.BASE_DIR, 'DuocCollab_app', 'static', 'img', 'sin_perfil.png')
-#    return ruta
-#
+def AdminLogin(request):
+    if request.method == 'GET':
+        sweet_alert = request.session.pop('sweet_alert', None)
+        contexto = {
+            'sweet_alert': sweet_alert
+        }
+        return render(request, 'admin/signin.html', contexto)
+    if request.method == 'POST':
+        correo = request.POST.get('correo')
+        contrasenia = request.POST.get('contrasena')
+        datos = {'correo':correo,'clave':contrasenia}
+        result = verificar_token_y_api(request, 'POST', '/auth/login', 'Login',False, json=datos, headers={'Content-Type':'application/json'})
+        if isinstance(result, HttpResponseRedirect):
+            return result
 
-#
-#
-
-#
-
-#
-
-#
-#
-
-#
-#
-
-#
-#
-#def IntegrantesProyecto(request):
-#  if request.method == 'GET':
-#    contexto = {
-#      'integrantes':consulta_integrantes(),
-#      'proyectos':consulta_proyecto(),
-#      'usuarios':consulta_usuario()
-#    }
-#  return render(request, 'admin/integrantes_proyecto.html', contexto)
-#
-#def Postulaciones(request):
-#  if request.method == 'GET':
-#    contexto = {
-#      'postulaciones':consulta_postulacion(),
-#      'proyectos':consulta_proyecto(),
-#      'usuarios':consulta_usuario()
-#    }
-#  return render(request, 'admin/postulacion.html', contexto)
-#
-
-#
-#def ProyectosAdmin(request):
-#  if request.method == 'GET':
-#    contexto = {
-#      'proyectos':consulta_proyecto(),
-#      'carreras':consulta_carrera(),
-#      'sedes':consulta_sede(),
-#      'usuarios':consulta_usuario(),
-#    }
-#  return render(request, 'admin/proyecto.html', contexto)
-#
-
-#
-
-#
-
-#
-
-#
-#def AdminLogin(request):
-#  return render(request, 'admin/signin.html')
-
-
-def Escuelas(request):
-  return render(request, 'escuelas.html')
+        
+        response = result['response']
+        if response.status_code == 200:
+            data = response.json()
+            request.session['jwt_token'] = data['token']
+            request.session['usuario'] = data['usuario']
+            request.session['sweet_alert'] = alert('success', 'Bienvenido', 'Has iniciado sesión correctamente.')
+            return redirect('Admin')
+        else:
+            error = response.json().get('error', 'Credenciales inválidas')
+            request.session['sweet_alert'] = alert('error', 'Credenciales inválidas', error)
+            return redirect('AdminLogin')

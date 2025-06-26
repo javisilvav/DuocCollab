@@ -11,7 +11,7 @@
             <select id="usuario" class="form-select" required>
               <option selected>Seleccione un usuario</option>
               {% for usuario in usuarios %}
-                <option value="{{ usuario.ID_USUARIO }}">{{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
+                <option value="{{ usuario.ID_USUARIO }}">({{ usuario.CORREO }}) {{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
               {% endfor %}
             </select>
           </div>
@@ -51,16 +51,18 @@
             </tr>
           </thead>
           <tbody>
-            {% for integrante in integrantes %}
-              <tr>
-                <td>{{ integrante.ID_USUARIO }}</td>
-                <td>{{ integrante.ID_PROYECTO }}</td>
-                <td>{{ integrante.ROL }}</td>
-                <td>
-                  <button class="btn btn-sm btn-warning me-2">Editar</button>
-                  <button class="btn btn-sm btn-danger">Eliminar</button>
-                </td>
-              </tr>
+            {% for proyecto in proyectos %}
+              {% for integrante in proyecto.INTEGRANTES_PROYECTO %}
+                <tr>
+                  <td>{{ proyecto.ID_USUARIO }}</td>
+                  <td>{{ proyecto.ID_PROYECTO }}</td>
+                  <td>{{ integrante.ROL }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-warning me-2">Editar</button>
+                    <button class="btn btn-sm btn-danger">Eliminar</button>
+                  </td>
+                </tr>
+              {% endfor %}
             {% endfor %}
           </tbody>
         </table>

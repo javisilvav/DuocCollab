@@ -7,7 +7,8 @@ from services.auth_services import (
     restablecer_contrasena,
     obtener_correos,
     contar_usuarios,
-    obtener_usuarios_registrados
+    obtener_usuarios_registrados,
+    obtener_tres_ultimos_usuarios,
 )
 from services.auth_consistencia import trae_ruta_imagen
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -52,6 +53,16 @@ def obtener_usuario_actual():
     id_usuario = get_jwt_identity()
     usuario, status = obtener_usuario_por_id(id_usuario)
     return jsonify(usuario), status
+
+
+@auth_bp.route('/ultimos_usuarios', methods=['GET'])
+@jwt_required()
+def obtener_ultimos_usuarios():
+    usuario, status = obtener_tres_ultimos_usuarios()
+    return jsonify(usuario), status
+
+
+
 
 
 @auth_bp.route('/imagen/<tipo>/<nombre>')
