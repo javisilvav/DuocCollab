@@ -8,6 +8,7 @@ def obtener_sede_escuela():
         sede = supabase.table('SEDE').select('NOMBRE_SEDE').eq('ID_SEDE', rel['ID_SEDE']).execute().data
         escuela = supabase.table('ESCUELA').select('NOMBRE_ESC').eq('ID_ESCUELA', rel['ID_ESCUELA']).execute().data
         resultado.append({
+            "ID_tabla":rel['ID_tabla'],
             "ID_SEDE": rel['ID_SEDE'],
             "ID_ESCUELA":rel['ID_ESCUELA'],
             "NOMBRE_SEDE": sede[0]['NOMBRE_SEDE'] if sede else None,
@@ -35,22 +36,19 @@ def cargar_sd_esc(datos):
         return {"error": f"Error al relacionar sede y escuela: {str(e)}"}, 500
 
 def actualizar_sd_esc(datos):
-    id_sede = datos.get('id_sede')
-    id_escuela = datos.get('id_escuela')
+    id = datos.get('id')
     nueva_sede = datos.get('nueva_sede')
     nueva_escuela = datos.get('nueva_escuela')
 
-    if not id_sede:
+    if not id:
         return {'errores': 'ID sede: Campo obligatorio.'}, 400
-    if not id_escuela:
-        return {'errores': 'ID escuela: Campo obligatorio.'}, 400
     if not nueva_sede:
         return {'errores': 'ID sede: Campo obligatorio.'}, 400
     if not nueva_escuela:
         return {'errores': 'ID escuela: Campo obligatorio.'}, 400
     
     try:
-        query = supabase.table("SEDE_ESCUELA").update({'ID_SEDE':nueva_sede,'ID_ESCUELA':nueva_escuela}).eq("ID_SEDE",id_sede).eq('ID_ESCUELA',id_escuela).execute()
+        query = supabase.table("SEDE_ESCUELA").update({'ID_SEDE':nueva_sede,'ID_ESCUELA':nueva_escuela}).eq("ID_tabla",id).execute()
         if query.data == []:
             return {'errores':f'No se encontraron las ID: {id}'},404
         return {'mensaje':'Sede y escuela actualizada correctamente.'},200

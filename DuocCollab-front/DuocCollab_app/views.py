@@ -938,7 +938,6 @@ def Carreras(request):
         return render(request, 'admin/carrera.html', contexto)
     
     if request.method == 'POST':
-        print(request.POST.get('accion'))
         if request.POST.get('accion') == 'crear':
             datos = {
                 'nombre_carrera':request.POST.get('nombre'),
@@ -1013,25 +1012,50 @@ def Sede(request):
 
         return render(request, 'admin/sede.html', contexto)
     if request.method == 'POST':
-        datos = {'nombre_sede': request.POST.get('nombre')}
+        if request.POST.get('accion') == 'crear':
+            datos = {'nombre_sede': request.POST.get('nombre')}
 
-        result = verificar_token_y_api(request, 'POST', '/institucion/crear_sede', 'Admin', json=datos, headers={'Content-Type':'application/json'})
-        if isinstance(result, HttpResponseRedirect):
-            return result
-        response = result['response']
-        if response.status_code == 201:
-            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Sede creada correctamente.')
-            return redirect('Admin')
-        else:
-            try:
-                
-                
-                request.session['sweet_alert'] = alert('error', 'Error al crear sede.', 'error')
+            result = verificar_token_y_api(request, 'POST', '/institucion/crear_sede', 'Admin', json=datos, headers={'Content-Type':'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 201:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Sede creada correctamente.')
                 return redirect('Admin')
-            except ValueError:
-                error = f"Error inesperado ({response.status_code}): {response.text}"
-                request.session['sweet_alert'] = alert('error', 'Error', error)
+            else:
+                try:
+                    
+                    
+                    request.session['sweet_alert'] = alert('error', 'Error al crear sede.', 'error')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
+        
+        if request.POST.get('accion') == 'editar':
+            datos = {
+                'id': request.POST.get('id_sede_editar'),
+                'nombre_sede': request.POST.get('nuevo_nombre'),
+            }
+            print(datos)
+            result = verificar_token_y_api(request, 'POST', '/institucion/editar_sede', 'Admin', json=datos, headers={'Content-Type': 'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 200:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Nombre de sede editado correctamente.')
                 return redirect('Admin')
+            else:
+                try:
+                    
+                    
+                    request.session['sweet_alert'] = alert('error', 'Error al actualizar nombre de la sede.', 'error')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
 
 
 
@@ -1082,28 +1106,51 @@ def SedeEscuela(request):
         }
         return render(request, 'admin/sede_escuela.html', contexto)
     if request.method == 'POST':
-        datos = {
-            "id_sede":request.POST.get('sede'),
-            "id_escuela":request.POST.get('escuela')
-        }
+        if request.POST.get('accion') == 'crear':
+            datos = {
+                "id_sede":request.POST.get('sede'),
+                "id_escuela":request.POST.get('escuela')
+            }
 
-        result = verificar_token_y_api(request, 'POST', '/institucion/crear_sd_esc', 'Admin', json=datos, headers={'Content-Type':'application/json'})
-        if isinstance(result, HttpResponseRedirect):
-            return result
-        response = result['response']
-        if response.status_code == 201:
-            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Sede y escuela relacionada correctamente.')
-            return redirect('Admin')
-        else:
-            try:
-                
-                
-                request.session['sweet_alert'] = alert('error', 'Error al relacionar sede y escuela.', 'error')
+            result = verificar_token_y_api(request, 'POST', '/institucion/crear_sd_esc', 'Admin', json=datos, headers={'Content-Type':'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 201:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Sede y escuela relacionada correctamente.')
                 return redirect('Admin')
-            except ValueError:
-                error = f"Error inesperado ({response.status_code}): {response.text}"
-                request.session['sweet_alert'] = alert('error', 'Error', error)
+            else:
+                try:
+                    
+                    
+                    request.session['sweet_alert'] = alert('error', 'Error', 'Error al relacionar sede y escuela.')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
+                
+        if request.POST.get('accion') == 'editar':
+            datos = {
+                'id': request.POST.get('id_sd_esc_editar'),
+                'nueva_sede': request.POST.get('sede_nueva'),
+                'nueva_escuela': request.POST.get('escuela_nueva'),
+            }
+            result = verificar_token_y_api(request, 'POST', '/institucion/editar_sd_esc', 'Admin', json=datos, headers={'Content-Type': 'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 200:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Nombre de sede y escuela editado correctamente.')
                 return redirect('Admin')
+            else:
+                try:                   
+                    request.session['sweet_alert'] = alert('error', 'Error', 'Error al actualizar nombre de la sede y escuela.')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
 
 
 
