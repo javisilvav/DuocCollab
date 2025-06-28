@@ -197,7 +197,7 @@ def obtener_correos():
 
 def obtener_usuarios_registrados():
     try:
-        resultado = supabase.table("USUARIO").select("ID_USUARIO,NOMBRE,APELLIDO,CORREO,ID_CARRERA, CARRERA(*)").execute()
+        resultado = supabase.table("USUARIO").select("ID_USUARIO,NOMBRE,APELLIDO,CORREO,ID_CARRERA, INTERESES, CARRERA(*)").execute()
         if resultado.data:
             return resultado.data, 200
         else:

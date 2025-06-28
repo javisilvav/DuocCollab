@@ -37,8 +37,7 @@
                 <td> {{ etiqueta.ID_ETIQUETA }} </td>
                 <td> {{ etiqueta.NOMBRE }} </td>
                 <td>
-                  <button class="btn btn-sm btn-warning me-2">Editar</button>
-                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                  <button class="btn btn-sm btn-warning"  data-bs-toggle="modal" data-bs-target="#modalEditar{{ etiqueta.ID_ETIQUETA }}">Editar</button>
                 </td>
               </tr>
             {% endfor %}
@@ -48,3 +47,43 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+{% for etiqueta in etiquetas %}
+<div class="modal fade" id="modalEditar{{ etiqueta.ID_ETIQUETA }}" tabindex="-1" aria-labelledby="modalLabel{{ etiqueta.ID_ETIQUETA }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'Etiquetas' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="editar">
+        <input type="hidden" name="id_etiqueta_editar" value="{{ etiqueta.ID_ETIQUETA }}">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel{{ etiqueta.ID_ETIQUETA }}">Editar Etiqueta</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Nombre actual</label>
+            <input type="text" class="form-control" value="{{ etiqueta.NOMBRE }}" disabled>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nuevo nombre</label>
+            <input type="text" name="nuevo_nombre" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}

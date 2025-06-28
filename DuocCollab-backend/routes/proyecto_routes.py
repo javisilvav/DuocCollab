@@ -19,6 +19,7 @@ from services.proyecto_services import (
     obtener_proyecto_etiqueta,
     cargar_proyecto_etiqueta,
     obtener_integrante_proyecto,
+    editar_etiqueta,
 
 )
 
@@ -159,6 +160,15 @@ def crear_etiquetas():
     data = request.get_json()
     etiqueta, status = cargar_etiqueta(data)
     return jsonify(etiqueta), status
+
+@proyecto_bp.route('/editar_etiqueta', methods=['POST'])
+@jwt_required()
+def modificar_etiqueta():
+    datos = request.get_json()
+    etiqueta, status = editar_etiqueta(datos)
+    return jsonify(etiqueta), status
+
+
 
 
 

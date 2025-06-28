@@ -335,6 +335,17 @@ def cargar_etiqueta(datos):
 
 
 
+def editar_etiqueta(datos):
+    try:
+        id = datos.get('id')
+        nombre = datos.get('nueva_etiqueta')
+        resultado = supabase.table("ETIQUETA").update({"ID_ETIQUETA":id, "NOMBRE":nombre}).eq("ID_ETIQUETA",id).execute()
+        if resultado.data:
+            return resultado.data, 200
+        else:
+            return {"error": "Etiqueta no encontrada."}, 404
+    except Exception as e:
+        return {"error": f"Error al modificar etiqueta: {str(e)}"}, 500
 
 
 

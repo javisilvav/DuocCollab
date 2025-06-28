@@ -70,9 +70,7 @@
               <th>Correo</th>
               <th>Carrera</th>
               <th>Intereses</th>
-              <th>Foto perfil</th>
-              <th>Foto portada</th>
-              <th></th>
+              <th>Opciones</th>
             </tr>
           </thead>
           <tbody>
@@ -84,11 +82,10 @@
                 <td> {{ usuario.CORREO }} </td>
                 <td> {{ usuario.CARRERA.NOMBRE }} </td>
                 <td> {{ usuario.INTERESES }} </td>
-                <td> {{ usuario.FOTO_PERFIL }} </td>
-                <td> {{ usuario.FOTO_PORTADA }} </td>
                 <td>
-                  <button class="btn btn-sm btn-warning me-2">Editar</button>
-                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                  <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalEditar{{ usuario.ID_USUARIO }}">
+                    Editar
+                  </button>
                 </td>
               </tr>
             {% endfor %}
@@ -98,3 +95,91 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+{% for usuario in usuarios %}
+<div class="modal fade" id="modalEditar{{ usuario.ID_USUARIO }}" tabindex="-1" aria-labelledby="modalLabel{{ usuario.ID_USUARIO }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'Usuarios' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="editar">
+        <input type="hidden" name="id_usuario" value="{{ usuario.ID_USUARIO }}">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel{{ usuario.ID_USUARIO }}">Editar usuario {{ usuario.NOMBRE }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="nombre_actual" class="form-label">Nombre</label>
+              <input type="text" name="nombre_actual" class="form-control" id="nombre_actual" value="{{ usuario.NOMBRE }}" disabled>
+            </div>
+            <div class="col-sm-6">
+              <label for="apellido_actual" class="form-label">Apellido</label>
+              <input type="text" name="apellido_actual" class="form-control" id="apellido_actual" value="{{ usuario.APELLIDO }}" disabled>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="correo_actual" class="form-label">Correo</label>
+              <input type="text" name="correo_actual" class="form-control" id="correo_actual" value="{{ usuario.CORREO }}" disabled>
+            </div>
+
+            <div class="col-sm-6">
+              <label for="intereses_actual" class="form-label">Intereses</label>
+              <input type="text" name="intereses_actual" class="form-control" id="intereses_actual" value="{{ usuario.INTERESES }}" disabled>
+            </div>
+          </div>  
+
+
+
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="nombre_nuevo" class="form-label">Nombre</label>
+              <input type="text" name="nombre_nuevo" class="form-control" id="nombre_nuevo" >
+            </div>
+            <div class="col-sm-6">
+              <label for="apellido_nuevo" class="form-label">Apellido</label>
+              <input type="text" name="apellido_nuevo" class="form-control" id="apellido_nuevo" >
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="correo_nuevo" class="form-label">Correo</label>
+              <input type="text" name="correo_nuevo" class="form-control" id="correo_nuevo" >
+            </div>
+
+            <div class="col-sm-6">
+              <label for="intereses_nuevo" class="form-label">Intereses</label>
+              <input type="text" name="intereses_nuevo" class="form-control" id="intereses_nuevo" >
+            </div>
+          </div>  
+
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="contrasena_nueva" class="form-label">Correo</label>
+              <input type="text" name="contrasena_nueva" class="form-control" id="contrasena_nueva" >
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
