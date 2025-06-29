@@ -386,6 +386,29 @@ def cargar_proyecto_etiqueta(datos):
 
 
 
+def actualizar_proyecto_etiqueta(datos):
+    id = datos.get('id')
+    nuevo_proyecto = datos.get('nuevo_proyecto')
+    nueva_etiqueta = datos.get('nueva_etiqueta')
+
+    if not id:
+        return {'errores': 'ID tabla: Campo obligatorio.'}, 400
+    if not nuevo_proyecto:
+        return {'errores': 'ID sede: Campo obligatorio.'}, 400
+    if not nueva_etiqueta:
+        return {'errores': 'ID escuela: Campo obligatorio.'}, 400
+    
+    try:
+        query = supabase.table("PROYECTO_ETIQUETA").update({'ID_PROYECTO':nuevo_proyecto,'ID_ETIQUETA':nueva_etiqueta}).eq("ID_TABLA",id).execute()
+        if query.data == []:
+            return {'errores':f'No se encontraron las ID: {id}'},404
+        return {'mensaje':'Etiqueta de proyecto actualizada correctamente.'},200
+    except Exception as e:
+        return {'error':f'Error al actualizar etiqueta de proyecto: {str(e)}'},500
+    
+
+
+
 
 
 def contar_proyectos():

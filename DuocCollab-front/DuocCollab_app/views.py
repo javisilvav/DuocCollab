@@ -1427,29 +1427,55 @@ def ProyectoEtiqueta(request):
         }
         return render(request, 'admin/proyecto_etiqueta.html', contexto)
     if request.method == 'POST':
-        datos = {
-            'proyecto': request.POST.get('proyecto'),
-            'etiqueta': request.POST.get('etiqueta'),
-        }
+        if request.POST.get('accion') == 'crear':
+            datos = {
+                'proyecto': request.POST.get('proyecto'),
+                'etiqueta': request.POST.get('etiqueta'),
+            }
 
-        result = verificar_token_y_api(request, 'POST', '/proyecto/crear_proyecto_etiqueta', 'Admin', json=datos, headers={'Content-Type':'application/json'})
+            result = verificar_token_y_api(request, 'POST', '/proyecto/crear_proyecto_etiqueta', 'Admin', json=datos, headers={'Content-Type':'application/json'})
 
-        if isinstance(result, HttpResponseRedirect):
-            return result
-        response = result['response']
-        if response.status_code == 201:
-            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Proyecto y etiqueta relacionada correctamente.')
-            return redirect('Admin')
-        else:
-            try:
-                
-                
-                request.session['sweet_alert'] = alert('error', 'Error al relacionar etiqueta y proyecto.', 'error')
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 201:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Proyecto y etiqueta relacionada correctamente.')
                 return redirect('Admin')
-            except ValueError:
-                error = f"Error inesperado ({response.status_code}): {response.text}"
-                request.session['sweet_alert'] = alert('error', 'Error', error)
+            else:
+                try:
+                    
+                    
+                    request.session['sweet_alert'] = alert('error', 'Error al relacionar etiqueta y proyecto.', 'error')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
+
+
+
+        if request.POST.get('accion') == 'editar':
+            datos = {
+                'id': request.POST.get('id_tabla_editar'),
+                'nuevo_proyecto': request.POST.get('proyecto_nuevo'),
+                'nueva_etiqueta': request.POST.get('etiqueta_nueva'),
+            }
+            result = verificar_token_y_api(request, 'POST', '/proyecto/editar_proyecto_etiqueta', 'Admin', json=datos, headers={'Content-Type': 'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 200:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Etiqueta de proyecto editada correctamente.')
                 return redirect('Admin')
+            else:
+                try:                   
+                    request.session['sweet_alert'] = alert('error', 'Error', 'Error al actualizar etiqueta de proyecto.')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
+
 
 
 def IntegrantesProyecto(request):

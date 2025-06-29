@@ -41,18 +41,18 @@
         <table class="table table-bordered table-hover align-middle" id="tablaRelaciones">
           <thead class="table-dark">
             <tr>
-              <th>ID proyecto</th>
-              <th>ID etiqueta</th>
-              <th></th>
+              <th>Proyecto</th>
+              <th>Etiqueta</th>
+              <th>Opciones</th>
             </tr>
           </thead>
           <tbody>
             {% for proyecto_etiqueta in proyecto_etiquetas %}
               <tr>
-                <td>{{ proyecto_etiqueta.ID_PROYECTO }}</td>
-                <td>{{ proyecto_etiqueta.ID_ETIQUETA }}</td>
+                <td>{{ proyecto_etiqueta.PROYECTO.NOMBRE_PROYECTO }}</td>
+                <td>{{ proyecto_etiqueta.ETIQUETA.NOMBRE }}</td>
                 <td>
-                  <button class="btn btn-danger btn-sm">Eliminar</button>
+                  <button class="btn btn-sm btn-warning"  data-bs-toggle="modal" data-bs-target="#modalEditar{{ proyecto_etiqueta.ID_TABLA }}">Editar</button>
                 </td>
               </tr>
             {% endfor %}
@@ -62,3 +62,72 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+
+
+{% for etiqueta in proyecto_etiquetas %}
+<div class="modal fade" id="modalEditar{{ etiqueta.ID_TABLA }}" tabindex="-1" aria-labelledby="modalLabel{{ etiqueta.ID_TABLA }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'ProyectoEtiqueta' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="editar">
+        <input type="hidden" name="id_tabla_editar" value="{{ etiqueta.ID_TABLA }}">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel{{ etiqueta.ID_TABLA }}">Editar Etiqueta de proyecto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        
+
+        <div class="modal-body">
+          <div class="col-md-12">
+            <label for="proyecto_actual" class="form-label">Proyecto</label>
+            <select id="proyecto_actual" name="proyecto_actual" class="form-select" disabled>
+              <option selected>{{ etiqueta.PROYECTO.NOMBRE_PROYECTO }}</option>
+            </select>
+          </div>
+          <div class="col-md-12">
+            <label for="etiqueta_actual" class="form-label">Etiqueta</label>
+            <select id="etiqueta_actual" name="etiqueta_actual" class="form-select" disabled>
+              <option selected>{{ etiqueta.ETIQUETA.NOMBRE }}</option>
+            </select>
+          </div>
+
+
+
+          <div class="col-md-6">
+            <label for="proyecto_nuevo" class="form-label">Nuevo proyecto</label>
+            <select id="proyecto_nuevo" name="proyecto_nuevo" class="form-select" required>
+              <option selected>Seleccione un proyecto</option>
+              {% for proyecto in proyectos %}
+                <option value="{{ proyecto.ID_PROYECTO }}">{{ proyecto.NOMBRE_PROYECTO }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="etiqueta_nueva" class="form-label">Nueva etiqueta</label>
+            <select id="etiqueta_nueva" name="etiqueta_nueva" class="form-select" required>
+                <option selected>Seleccione una etiqueta</option>
+                {% for etiqueta in etiquetas %}
+                  <option value="{{ etiqueta.ID_ETIQUETA }}">{{ etiqueta.NOMBRE }}</option>
+                {% endfor %}
+            </select>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
