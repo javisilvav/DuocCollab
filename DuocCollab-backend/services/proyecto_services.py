@@ -63,40 +63,11 @@ def editar_estado_proyecto(datos):
     
 
 
-
-
-
-
-def obtener_integrante_proyecto():
-    try:
-
-        resultado = supabase.table("PROYECTO").select("*, INTEGRANTES_PROYECTO(ROL, USUARIO(NOMBRE, APELLIDO))").execute()
-        if resultado.data:
-            proyectos = resultado.data
-
-            return proyectos, 200
-        else:
-            return {"error": "Proyectos e integrantes no encontrado."}, 404
-    except Exception as e:
-        return {"error": f"Error al consultar proyectos e integrantes: {str(e)}"}, 500
-
-
-
-
-
-
-
-
-
-
 def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
     errores = []
     campos_obligatorios = ['TITULO', 'NOMBRE_PROYECTO', 'DESCRIPCION',
                            'DURACION', 'ID_SEDE', 'REQUISITOS', 'CARRERA_DESTINO']
     
-
-
-
     for campo in campos_obligatorios:
         if campo not in datos_proyecto or not datos_proyecto[campo][0].strip():
             errores.append(f'{campo}: Campo obligatorio.')
@@ -108,10 +79,8 @@ def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
 
     if errores:
         return {'error': errores}, 400
-
+    
     nombre_imagen = guardar_imagen('proyecto', archivo_imagen)
-
-
     try:
         nuevo_proyecto = {
             "ID_USUARIO": id_usuario,
@@ -126,21 +95,22 @@ def cargar_proyecto(id_usuario, datos_proyecto, archivo_imagen):
             "FOTO_PROYECTO": nombre_imagen,
             "ESTADO": 1
         }
+
         
         respuesta = supabase.table("PROYECTO").insert(nuevo_proyecto).execute() 
         nuevo_id_proyecto = respuesta.data[0]['ID_PROYECTO']  
 
-        for i in datos_proyecto['INTERESES']:
-            datos = {"ID_PROYECTO":nuevo_id_proyecto,"ID_ETIQUETA":int(i)}
-            supabase.table("PROYECTO_ETIQUETA").insert(datos).execute() 
 
-
-        for i in datos_proyecto['COLABORADOR']:
-            resultado = supabase.table("USUARIO").select("ID_USUARIO").eq("CORREO",i).execute()
-            if resultado.data:
-                print(resultado.data[0]["ID_USUARIO"])
-                colaboradores = {"ID_USUARIO": resultado.data[0]["ID_USUARIO"], "ID_PROYECTO":nuevo_id_proyecto,"ROL":'Sin rol especificado'}
-                supabase.table("INTEGRANTES_PROYECTO").insert(colaboradores).execute() 
+        if datos_proyecto.get('COLABORADOR'):
+            for i in datos_proyecto['COLABORADOR']:
+                resultado = supabase.table("USUARIO").select("ID_USUARIO").eq("CORREO",i).execute()
+                if resultado.data:
+                    colaboradores = {"ID_USUARIO": resultado.data[0]["ID_USUARIO"], "ID_PROYECTO":nuevo_id_proyecto,"ROL":'Sin rol especificado'}
+                    supabase.table("INTEGRANTES_PROYECTO").insert(colaboradores).execute() 
+        if datos_proyecto.get('INTERESES'):
+            for i in datos_proyecto['INTERESES']:
+                datos = {"ID_PROYECTO":nuevo_id_proyecto,"ID_ETIQUETA":int(i)}
+                supabase.table("PROYECTO_ETIQUETA").insert(datos).execute() 
                 
         return {"mensaje": "Proyecto creado correctamente."}, 201
     except Exception as e:
@@ -167,7 +137,6 @@ def editar_proyecto(datos_proyecto, archivo_imagen=None):
     if errores:
         return {'errores': errores}, 400
     
-
     try:
         # Traer imagen anterior si no se subió una nueva
         if archivo_imagen:
@@ -221,6 +190,73 @@ def editar_proyecto(datos_proyecto, archivo_imagen=None):
 
 
 
+
+def obtener_integrante_proyecto():
+    try:
+
+        resultado = supabase.table("PROYECTO").select("*, INTEGRANTES_PROYECTO(ROL, USUARIO(NOMBRE, APELLIDO, CORREO))").execute()
+        if resultado.data:
+            proyectos = resultado.data
+
+            return proyectos, 200
+        else:
+            return {"error": "Proyectos e integrantes no encontrado."}, 404
+    except Exception as e:
+        return {"error": f"Error al consultar proyectos e integrantes: {str(e)}"}, 500
+
+
+
+def actualizar_integrante_proyecto(datos):
+    id = datos.get('id')
+    nuevo_proyecto = datos.get('nuevo_proyecto')
+    nueva_etiqueta = datos.get('nueva_etiqueta')
+
+    if not id:
+        return {'errores': 'ID tabla: Campo obligatorio.'}, 400
+    if not nuevo_proyecto:
+        return {'errores': 'ID sede: Campo obligatorio.'}, 400
+    if not nueva_etiqueta:
+        return {'errores': 'ID escuela: Campo obligatorio.'}, 400
+    
+    try:
+        query = supabase.table("PROYECTO_ETIQUETA").update({'ID_PROYECTO':nuevo_proyecto,'ID_ETIQUETA':nueva_etiqueta}).eq("ID_TABLA",id).execute()
+        if query.data == []:
+            return {'errores':f'No se encontraron las ID: {id}'},404
+        return {'mensaje':'Etiqueta de proyecto actualizada correctamente.'},200
+    except Exception as e:
+        return {'error':f'Error al actualizar etiqueta de proyecto: {str(e)}'},500
+
+
+
+
+
+
+
+
+
+
+
+def obtener_postulaciones():
+    try:
+        resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO))').execute()
+        if resultado.data:
+            return resultado.data, 200
+        else:
+            return {"error": "Postulaciones no encontrado."}, 404
+    except Exception as e:
+        return {"error": f"Error al consultar las postulaciones: {str(e)}"}, 500
+
+def obtener_postulacion_usuario(id_usuario):
+    try:
+        resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO))').eq("ID_USUARIO", id_usuario).neq("ESTADO",'Cancelada').execute()
+
+        if resultado.data:
+            return resultado.data, 200
+        else:
+            return {"error": "Proyectos del usuario no encontrado."}, 404
+    except Exception as e:
+        return {"error": f"Error al consultar proyectos del usuario: {str(e)}"}, 500
+    
 def cargar_postulacion(id_usuario, datos_postulacion):
     errores = []
     id_proyecto = datos_postulacion.get('ID_PROYECTO')
@@ -262,17 +298,6 @@ def cargar_postulacion(id_usuario, datos_postulacion):
     except Exception as e:
         return {"error": f"Error al registrar la postulación: {str(e)}"}, 500
 
-
-def obtener_postulacion_usuario(id_usuario):
-    try:
-        resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO))').eq("ID_USUARIO", id_usuario).neq("ESTADO",'Cancelada').execute()
-        print(resultado)
-        if resultado.data:
-            return resultado.data, 200
-        else:
-            return {"error": "Proyectos del usuario no encontrado."}, 404
-    except Exception as e:
-        return {"error": f"Error al consultar proyectos del usuario: {str(e)}"}, 500
     
 def editar_estado_postulacion(datos):
     try:
@@ -289,15 +314,6 @@ def editar_estado_postulacion(datos):
 
 
 
-def obtener_postulaciones():
-    try:
-        resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO))').execute()
-        if resultado.data:
-            return resultado.data, 200
-        else:
-            return {"error": "Postulaciones no encontrado."}, 404
-    except Exception as e:
-        return {"error": f"Error al consultar las postulaciones: {str(e)}"}, 500
 
 
 
@@ -312,7 +328,6 @@ def obtener_etiquetas():
     except Exception as e:
         return {"error": f"Error al consultar los etiquetas: {str(e)}"}, 500
     
-
 
 def cargar_etiqueta(datos):
     errores = []
@@ -334,7 +349,6 @@ def cargar_etiqueta(datos):
         return {"error": f"Error al registrar la etiqueta: {str(e)}"}, 500
 
 
-
 def editar_etiqueta(datos):
     try:
         id = datos.get('id')
@@ -346,6 +360,7 @@ def editar_etiqueta(datos):
             return {"error": "Etiqueta no encontrada."}, 404
     except Exception as e:
         return {"error": f"Error al modificar etiqueta: {str(e)}"}, 500
+
 
 
 
@@ -376,7 +391,7 @@ def cargar_proyecto_etiqueta(datos):
         "ID_ETIQUETA": etiqueta,
         "ID_PROYECTO": proyecto
     }
-    print(nuevo_proyecto_etiqueta)
+
 
     try:
         supabase.table("PROYECTO_ETIQUETA").insert(nuevo_proyecto_etiqueta).execute()

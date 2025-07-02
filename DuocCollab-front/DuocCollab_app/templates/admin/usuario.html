@@ -4,7 +4,11 @@
   <!-- Formulario -->
   <div class="card mb-4 shadow">
     <div class="card-body">
-      <form id="formRelacion">
+      <form id="formRelacion" method = 'POST' action="{% url 'Usuarios' %}">
+
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="crear">
+
         <div class="row g-3">
           <div class="col-md-6">
             <label for="nombre" class="form-label">Nombre</label>
@@ -24,7 +28,7 @@
           </div>
           <div class="col-md-6">
             <label for="carrera" class="form-label">Carrera</label>
-            <select id="carrera" class="form-select" required>
+            <select id="carrera" name="carrera" class="form-select" required>
               <option selected>Seleccione una carrera</option>
               {% for carrera in carreras %}
                 <option value="{{ carrera.ID_CARRERA }}">{{ carrera.NOMBRE }}</option>
@@ -33,21 +37,14 @@
           </div>
           <div class="col-md-6">
             <label for="intereses" class="form-label">Intereses</label>
-            <select id="intereses" class="form-select" required>
+            <select id="intereses" name="intereses" class="form-select" required>
               <option selected>Seleccione un interes</option>
               {% for etiqueta in etiquetas %}
                 <option value="{{ etiqueta.ID_ETIQUETA }}">{{ etiqueta.NOMBRE }}</option>
               {% endfor %}
             </select>
           </div>
-          <div class="col-md-6">
-            <label for="foto_perfil" class="form-label">Foto de perfil</label>
-            <input type="file" class="form-control" id="archivo_perfil">
-          </div>
-          <div class="col-md-6">
-            <label for="foto_portada" class="form-label">Foto de portada</label>
-            <input type="file" class="form-control" id="archivo_portada">
-          </div>
+
         </div>
         <div class="mt-4 text-end">
           <button type="submit" class="btn btn-primary">Agregar Usuario</button>
@@ -146,29 +143,29 @@
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="nombre_nuevo" class="form-label">Nombre</label>
-              <input type="text" name="nombre_nuevo" class="form-control" id="nombre_nuevo" >
+              <input type="text" name="nombre_nuevo" class="form-control" id="nombre_nuevo" value="{{ usuario.NOMBRE }}">
             </div>
             <div class="col-sm-6">
               <label for="apellido_nuevo" class="form-label">Apellido</label>
-              <input type="text" name="apellido_nuevo" class="form-control" id="apellido_nuevo" >
+              <input type="text" name="apellido_nuevo" class="form-control" id="apellido_nuevo" value="{{ usuario.APELLIDO }}">
             </div>
           </div>
 
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="correo_nuevo" class="form-label">Correo</label>
-              <input type="text" name="correo_nuevo" class="form-control" id="correo_nuevo" >
+              <input type="text" name="correo_nuevo" class="form-control" id="correo_nuevo" value="{{ usuario.CORREO }}">
             </div>
 
             <div class="col-sm-6">
               <label for="intereses_nuevo" class="form-label">Intereses</label>
-              <input type="text" name="intereses_nuevo" class="form-control" id="intereses_nuevo" >
+              <input type="text" name="intereses_nuevo" class="form-control" id="intereses_nuevo" value="{{ usuario.INTERESES }}">
             </div>
           </div>  
 
           <div class="row g-3">
             <div class="col-sm-6">
-              <label for="contrasena_nueva" class="form-label">Correo</label>
+              <label for="contrasena_nueva" class="form-label">Contraseña</label>
               <input type="text" name="contrasena_nueva" class="form-control" id="contrasena_nueva" >
             </div>
           </div>

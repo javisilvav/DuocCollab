@@ -85,6 +85,8 @@ def registrar_usuario(datos_usuario, archivo_perfil=None, archivo_portada=None):
     datos_usuario['FOTO_PERFIL'] = guardar_imagen('perfil', archivo_perfil) if archivo_perfil else 'default_perfil.png'
     datos_usuario['FOTO_PORTADA'] = guardar_imagen('portada', archivo_portada) if archivo_portada else 'default_portada.png'
 
+    print(errores)
+
     response = supabase.table('USUARIO').insert(datos_usuario).execute()
     if not response.data:
         return {"error": "Error al registrar usuario, favor volver a intentar."}, 500

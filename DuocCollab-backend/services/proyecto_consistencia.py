@@ -9,8 +9,7 @@ def validar_carga_img(imagen, nombre_campo='Imagen'):
         errores.append(f'{nombre_campo}: No se ha subido ninguna imagen.')
         return errores
     tipos_permitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg']
-    print(imagen)
-    print(imagen.content_type)
+
     if imagen.content_type not in tipos_permitidos:
         errores.append(f'{nombre_campo}: El tipo de archivo no es válido. Solo se permiten {ALLOWED_EXTENSIONS}')
     # Calcular tamaño del archivo correctamente

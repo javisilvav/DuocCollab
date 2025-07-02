@@ -81,11 +81,15 @@ def valida_form_usuario(data,modo):
             errores.append('El correo debe se de propiedad "@duocuc.cl".')
         elif not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', correo):
             errores.append('Correo: Formato inválido.')
+
+    
     
     if modo == 'crear' or id_carrera_dict in data:
         id_carrera = data.get(id_carrera_dict,'')
         if not id_carrera:
             errores.append('La carrera es obligatoria.')
+        
+        print(id_carrera)
         valida_id_carrera_num = id_carrera.isdigit()
         if valida_id_carrera_num == False:
             errores.append('Formato de carrera incorrecto.')

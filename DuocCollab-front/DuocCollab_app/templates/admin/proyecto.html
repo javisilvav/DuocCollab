@@ -4,14 +4,16 @@
   <!-- Formulario -->
   <div class="card mb-4 shadow">
     <div class="card-body">
-      <form id="formRelacion">
+      <form id="formRelacion" method="POST" action="{% url 'ProyectosAdmin' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="crear">
         <div class="row g-3">
           <div class="col-md-6">
             <label for="usuario" class="form-label">Usuario</label>
             <select id="usuario" class="form-select" required>
               <option selected>Seleccione un usuario</option>
               {% for usuario in usuarios %}
-                <option value="{{ usuario.ID_USUARIO }}">{{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
+                <option value="{{ usuario.ID_USUARIO }}">{{ usuario.CORREO }}</option>
               {% endfor %}
             </select>
           </div>
@@ -27,17 +29,16 @@
             <label for="descripcion" class="form-label">Descripción</label>
             <input type="text" name="descripcion" class="form-control" id="descripcion" placeholder="Descripción del proyecto" required>
           </div>
-          <div class="col-md-6">
-            <label for="fecha" class="form-label">Fecha inicio</label>
-            <input type="date" name="fecha" class="form-control" id="fecha" required>
-          </div>
+
+          
+
           <div class="col-md-6">
             <label for="duracion" class="form-label">Duración</label>
             <input type="text" name="duracion" class="form-control" id="duracion" required>
           </div>
           <div class="col-md-6">
             <label for="sede" class="form-label">Sede</label>
-            <select id="sede" class="form-select" required>
+            <select id="sede" name="sede" class="form-select" required>
               <option selected>Seleccione una sede</option>
               {% for sede in sedes %}
                 <option value="{{ sede.ID_SEDE }}">{{ sede.NOMBRE_SEDE }}</option>
@@ -50,7 +51,7 @@
           </div>
           <div class="col-md-6">
             <label for="carrera" class="form-label">Carrera</label>
-            <select id="carrera" class="form-select" required>
+            <select id="carrera" name="carrera" class="form-select" required>
               <option selected>Seleccione una carrera</option>
               {% for carrera in carreras %}
                 <option value="{{ carrera.ID_CARRERA }}">{{ carrera.NOMBRE }}</option>
@@ -59,7 +60,7 @@
           </div>
           <div class="col-md-6">
             <label for="foto_proyecto" class="form-label">Foto de proyecto</label>
-            <input type="file" class="form-control" id="foto_proyecto">
+            <input type="file" class="form-control" id="foto_proyecto" name="foto_proyecto">
           </div>
         </div>
         <div class="mt-4 text-end">
@@ -104,10 +105,9 @@
               <td>{{ proyecto.SEDE.NOMBRE_SEDE }}</td>
               <td>{{ proyecto.REQUISITOS }}</td>
               <td>{{ proyecto.CARRERA_DESTINO }}</td>
-              <td>{{ proyecto.FOTO_PROYECTO }}</td>
               <td>{{ proyecto.ESTADO }}</td>
               <td>
-                <button class="btn btn-sm btn-warning me-2">Editar</button>
+                <button class="btn btn-sm btn-warning"  data-bs-toggle="modal" data-bs-target="#modalEditar{{ proyecto.ID_PROYECTO }}">Editar</button>
                 <button class="btn btn-sm btn-danger">Desactivar</button>
               </td>
             </tr>
@@ -118,3 +118,128 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+
+
+{% for proyecto in proyectos %}
+<div class="modal fade" id="modalEditar{{ proyecto.ID_PROYECTO }}" tabindex="-1" aria-labelledby="modalLabel{{ proyecto.ID_PROYECTO }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+
+     
+
+      <form method="POST" action="{% url 'ProyectosAdmin' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="editar">
+        <input type="hidden" name="id_proyecto_editar" value="{{ proyecto.ID_PROYECTO }}">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel{{ escuela.ID_CARRERA }}">Editar Proyecto: "{{ proyecto.NOMBRE_PROYECTO }}"</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="row g-3">
+            
+            <div class="col-md-6">
+              <label for="titulo_actual" class="form-label">Titulo</label>
+              <input type="text" name="titulo_actual" class="form-control" id="titulo_actual" value="{{ proyecto.TITULO }}" disabled>
+            </div>
+            <div class="col-md-6">
+              <label for="nombre_actual" class="form-label">Nombre proyecto</label>
+              <input type="text" name="nombre_actual" class="form-control" id="nombre_actual" value="{{ proyecto.NOMBRE_PROYECTO }}" disabled>
+            </div>
+            <div class="col-md-6">
+              <label for="descripcion_actual" class="form-label">Descripción</label>
+              <input type="text" name="descripcion_actual" class="form-control" id="descripcion_actual" value="{{ proyecto.DESCRIPCION }}" disabled>
+            </div>
+  
+            <div class="col-md-6">
+              <label for="duracion_actual" class="form-label">Duración</label>
+              <input type="text" name="duracion_actual" class="form-control" id="duracion_actual" value="{{ proyecto.DURACION }}" disabled>
+            </div>
+            <div class="col-md-6">
+              <label for="sede_actual" class="form-label">Sede</label>
+              <select id="sede_actual" name="sede_actual" class="form-select" disabled>
+                <option selected>{{ proyecto.SEDE.NOMBRE_SEDE }}</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="requisitos_actual" class="form-label">Requisitos</label>
+              <input type="text" name="requisitos_actual" class="form-control" id="requisitos_actual"  value="{{ proyecto.REQUISITOS }}" disabled>
+            </div>
+            <div class="col-md-6">
+              <label for="carrera_actual" class="form-label">Carrera</label>
+              <select id="carrera_actual" name="carrera_actual" class="form-select" disabled>
+                <option selected>{{ proyecto.CARRERA_DESTINO }}</option>
+              </select>
+            </div>
+          </div>  
+          <div class="row g-3">            
+  
+            <div class="col-md-6">
+              <label for="titulo_nuevo" class="form-label">Titulo</label>
+              <input type="text" name="titulo_nuevo" class="form-control" id="titulo_nuevo" value="{{ proyecto.TITULO }}" required>
+            </div>
+            <div class="col-md-6">
+              <label for="nombre_nuevo" class="form-label">Nombre proyecto</label>
+              <input type="text" name="nombre_nuevo" class="form-control" id="nombre_nuevo" value="{{ proyecto.NOMBRE_PROYECTO }}" required>
+            </div>
+            <div class="col-md-6">
+              <label for="descripcion_nuevo" class="form-label">Descripción</label>
+              <input type="text" name="descripcion_nuevo" class="form-control" id="descripcion_nuevo" value="{{ proyecto.DESCRIPCION }}" required>
+            </div>
+            
+            <div class="col-md-6">
+              <label for="duracion_nuevo" class="form-label">Duración</label>
+              <input type="text" name="duracion_nuevo" class="form-control" id="duracion_nuevo" value="{{ proyecto.DURACION }}" required>
+            </div>
+            <div class="col-md-6">
+              <label for="sede_nuevo" class="form-label">Sede</label>
+              <select id="sede_nuevo" name="sede_nuevo" class="form-select" required>
+                <option selected>{{ proyecto.SEDE.NOMBRE_SEDE }}</option>
+                {% for sede in sedes %}
+                  <option value="{{ sede.ID_SEDE }}">{{ sede.NOMBRE_SEDE }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="requisitos_nuevo" class="form-label">Requisitos</label>
+              <input type="text" name="requisitos_nuevo" class="form-control" id="requisitos_nuevo" value="{{ proyecto.REQUISITOS }}" required>
+            </div>
+            <div class="col-md-6">
+              <label for="carrera_nuevo" class="form-label">Carrera</label>
+              <select id="carrera_nuevo" name="carrera_nuevo" class="form-select" required>
+                <option selected>{{ proyecto.CARRERA_DESTINO }}</option>
+                {% for carrera in carreras %}
+                  <option value="{{ carrera.ID_CARRERA }}">{{ carrera.NOMBRE }}</option>
+                {% endfor %}
+              </select>
+            </div>
+  
+  
+  
+  
+            <div class="col-md-6">
+              <label for="foto_proyecto_nuevo" class="form-label">Foto de proyecto</label>
+              <input type="file" class="form-control" id="foto_proyecto_nuevo" name="foto_proyecto_nuevo">
+            </div>
+          </div>
+          <div class="mt-4 text-end">
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
