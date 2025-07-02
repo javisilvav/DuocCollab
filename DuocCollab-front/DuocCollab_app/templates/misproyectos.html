@@ -45,7 +45,7 @@
                 {% endfor %}
             </p>
             <p><strong>Sede:</strong> {{ proyecto.SEDE.NOMBRE_SEDE }}</p>
-            <p><strong>Carrera:</strong> ESTO ES HTML</p>
+            <p><strong>Carrera:</strong> {{ proyecto.CARRERA_DESTINO }}</p>
             <p><strong>Etiquetas:</strong>
               {% for etiqueta in proyecto.PROYECTO_ETIQUETA %}
                 #{{ etiqueta.ETIQUETA.NOMBRE }}
@@ -91,19 +91,10 @@
 
           {% endfor %}
         </div>
-        <div class="modal-footer">
-          <form id="formDesactivarProyecto{{ proyecto.ID_PROYECTO }}" method="POST" action="{% url 'MisProyectos' %}" style="display: inline;">
-            {% csrf_token %}
-            <input type="hidden" name="id_proyecto" value="{{ proyecto.ID_PROYECTO }}">
-            <input type="hidden" name="accion" value="desactivar_proyecto">
-            <button type="submit" class="btn btn-outline-danger">Desactivar proyecto</button>
-          </form>
-
-
-
-          
-          <button class="btn btn-outline-primary" data-bs-target="#editarProyecto{{ proyecto.ID_PROYECTO }}" data-bs-toggle="modal">Editar proyecto</button>
-
+        <div class="modal-footer">          
+          <button class="btn btn-outline-primary" data-bs-target="#editarProyecto{{ proyecto.ID_PROYECTO }}" data-bs-toggle="modal">
+            Editar proyecto
+          </button>
           <button type="button" class="btn" onclick="verProyecto({{ proyecto.ID_PROYECTO }})"
                   style="font-size: 16px; font-weight: 700; background-color: #FFB800; border-radius: 5px;">
             Ver proyecto
@@ -112,6 +103,8 @@
       </div>
     </div>
   </div>
+
+
   <div class="modal fade" id="editarProyecto{{ proyecto.ID_PROYECTO }}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
       <div class="modal-content">
@@ -165,25 +158,27 @@
             <div class="mb-3">
               <label for="carrera" class="form-label">Carrera</label>
               <select class="form-select mb-3" id="carrera" name="carrera" disabled>
-                <option>ESTO ES HTML</option>
+                <option>{{ proyecto.CARRERA_DESTINO }}</option>
               </select>
             </div>  
-            <button  class="btn" data-bs-target="#exampleModal" data-bs-toggle="modal" style="font-size: 16px; font-weight: 700; background-color: #FFB800; border-radius: 5px;">Guardar cambios</button>
+
+
+         
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label>
+                  <input type="checkbox" name="estado_proyecto" {% if proyecto.ESTADO %}checked{% endif %}>
+                  Estado del proyecto
+                </label>
+              </div>
+            </div> 
+
+            <div class="modal-footer">
+              <button  class="btn" data-bs-target="#exampleModal" data-bs-toggle="modal" style="font-size: 16px; font-weight: 700; background-color: #FFB800; border-radius: 5px;">Guardar cambios</button>
+            </div>
           </form>
         </div>
-        <div class="modal-footer">
-
-          <form id="formDesactivarProyecto{{ proyecto.ID_PROYECTO }}" method="POST" action="{% url 'MisProyectos' %}" style="display: inline;">
-            {% csrf_token %}
-            <input type="hidden" name="id_proyecto" value="{{ proyecto.ID_PROYECTO }}">
-            <input type="hidden" name="accion" value="desactivar_proyecto">
-            <button type="submit" class="btn btn-outline-danger">Desactivar proyecto</button>
-          </form>
-          
-          
-
-
-        </div>
+      
       </div>
     </div>
   </div>

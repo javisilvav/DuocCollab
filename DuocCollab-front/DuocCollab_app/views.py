@@ -463,6 +463,12 @@ def MisProyectos(request):
                     request.session['sweet_alert'] = alert('error', 'Error', error)
                     return redirect('Perfil')    
         if request.POST.get('accion') == 'editar_proyecto':
+            estado = None
+
+            if request.POST.get('estado_proyecto') == 'on':
+                estado = 'TRUE'
+            else:
+                estado = 'FALSE'
             datos = {
                 "ID_PROYECTO": request.POST.get('id_proyecto'),
                 'TITULO': request.POST.get('titulo'),
@@ -472,9 +478,11 @@ def MisProyectos(request):
                 'ID_SEDE': request.POST.get('sede'),
                 'REQUISITOS':request.POST.get('requisitos'),
                 'CARRERA_DESTINO':request.POST.get('carrera'),
+                'ESTADO': estado,
                 #'INTERESES':request.POST.getlist('intereses[]'),
                 #'COLABORADOR':request.POST.getlist('colaboradores[]')
             }
+            print(datos)
 
             archivos = {}
             if 'foto_proyecto' in request.FILES:
@@ -490,7 +498,7 @@ def MisProyectos(request):
                 return redirect('Perfil')
             else:
                 try:
-                    request.session['sweet_alert'] = alert('error', 'Error al editar proyecto.', 'error')
+                    request.session['sweet_alert'] = alert('error', 'Error', 'Error al editar proyecto.')
                     return redirect('Perfil')
                 except ValueError:
                     error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -1439,39 +1447,52 @@ def ProyectosAdmin(request):
                     return redirect('Admin')
         
         if request.POST.get('accion') == 'editar':
+
+
+            estado = None
+
+            if request.POST.get('estado_proyecto') == 'on':
+                estado = 'TRUE'
+            else:
+                estado = 'FALSE'
+
             datos = {
-                "ID_PROYECTO": request.POST.get('id_proyecto'),
-                'TITULO': request.POST.get('titulo'),
-                'NOMBRE_PROYECTO': request.POST.get('nombre_proyecto'),
-                'DESCRIPCION': request.POST.get('descripcion'),
-                'DURACION': request.POST.get('duracion'),
-                'ID_SEDE': request.POST.get('sede'),
-                'REQUISITOS':request.POST.get('requisitos'),
-                'CARRERA_DESTINO':request.POST.get('carrera'),
+                "ID_PROYECTO": request.POST.get('id_proyecto_editar'),
+                'TITULO': request.POST.get('titulo_nuevo'),
+                'NOMBRE_PROYECTO': request.POST.get('nombre_nuevo'),
+                'DESCRIPCION': request.POST.get('descripcion_nuevo'),
+                'DURACION': request.POST.get('duracion_nuevo'),
+                'ID_SEDE': request.POST.get('sede_nuevo'),
+                'REQUISITOS':request.POST.get('requisitos_nuevo'),
+                'CARRERA_DESTINO':request.POST.get('carrera_nuevo'),
                 #'INTERESES':request.POST.getlist('intereses[]'),
-                #'COLABORADOR':request.POST.getlist('colaboradores[]')
+                #'COLABORADOR':request.POST.getlist('colaboradores[]'),
+                'ESTADO': estado
             }
+            
 
             archivos = {}
-            if 'foto_proyecto' in request.FILES:
-                f = request.FILES['foto_proyecto']
+            if 'foto_proyecto_nuevo' in request.FILES:
+                f = request.FILES['foto_proyecto_nuevo']
                 archivos['FOTO_PROYECTO'] = (f.name, f.file, f.content_type)
 
-            result = verificar_token_y_api(request, 'POST', '/proyecto/editar', 'Perfil', data=datos, files=archivos)
+            
+
+            result = verificar_token_y_api(request, 'POST', '/proyecto/editar', 'Admin', data=datos, files=archivos)
             if isinstance(result, HttpResponseRedirect):
                 return result
             response = result['response']
             if response.status_code == 201:
                 request.session['sweet_alert'] = alert('success', '¡Listo!', 'Proyecto editado correctamente.')
-                return redirect('Perfil')
+                return redirect('Admin')
             else:
                 try:
                     request.session['sweet_alert'] = alert('error', 'Error al editar proyecto.', 'error')
-                    return redirect('Perfil')
+                    return redirect('Admin')
                 except ValueError:
                     error = f"Error inesperado ({response.status_code}): {response.text}"
                     request.session['sweet_alert'] = alert('error', 'Error', error)
-                    return redirect('Perfil')
+                    return redirect('Admin')
         
 
 

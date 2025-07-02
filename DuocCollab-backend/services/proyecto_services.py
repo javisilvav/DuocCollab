@@ -157,6 +157,7 @@ def editar_proyecto(datos_proyecto, archivo_imagen=None):
             "REQUISITOS": datos_proyecto['REQUISITOS'][0],
             "CARRERA_DESTINO": datos_proyecto['CARRERA_DESTINO'][0],
             "FOTO_PROYECTO": nombre_imagen,
+            "ESTADO":datos_proyecto['ESTADO'][0],
         }
 
         supabase.table("PROYECTO").update(datos_actualizados).eq("ID_PROYECTO", id_proyecto).execute()
@@ -184,6 +185,7 @@ def editar_proyecto(datos_proyecto, archivo_imagen=None):
         return {"mensaje": "Proyecto actualizado correctamente."}, 201
 
     except Exception as e:
+        print(e)
         return {"errores": f"Error al actualizar proyecto: {str(e)}"}, 500
 
 
