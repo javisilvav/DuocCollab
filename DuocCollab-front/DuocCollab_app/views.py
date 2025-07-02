@@ -1571,37 +1571,84 @@ def ProyectoEtiqueta(request):
 
 
 def IntegrantesProyecto(request):
-  if request.method == 'GET':
-     #Obtener Usuarios
-    result_usuarios = verificar_token_y_api(request, 'GET', '/auth/usuarios_registrados', 'Admin')
-    if isinstance(result_usuarios, HttpResponseRedirect):
-        return result_usuarios
-    response_usuario = result_usuarios['response']
-    if response_usuario.status_code == 200:
-        usuarios = response_usuario.json()
-    else:
-        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los registros de usuarios.')
-        return redirect('Admin')
+    if request.method == 'GET':
+        #Obtener Usuarios
+        result_usuarios = verificar_token_y_api(request, 'GET', '/auth/usuarios_registrados', 'Admin')
+        if isinstance(result_usuarios, HttpResponseRedirect):
+            return result_usuarios
+        response_usuario = result_usuarios['response']
+        if response_usuario.status_code == 200:
+            usuarios = response_usuario.json()
+        else:
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los registros de usuarios.')
+            return redirect('Admin')
     
-    #Obtener proyectos e integtantes
-    result_proyectos = verificar_token_y_api(request, 'GET', '/proyecto/proyectos_integrantes', 'Admin')
-    if isinstance(result_proyectos, HttpResponseRedirect):
-        return result_proyectos
-    response_proyecto = result_proyectos['response']
-    if response_proyecto.status_code == 200:
-        proyectos = response_proyecto.json()
-        for i in proyectos:
-            filename = i.get('FOTO_PROYECTO')
-            if filename:
-                filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)   
+        #Obtener proyectos e integtantes
+        result_proyectos = verificar_token_y_api(request, 'GET', '/proyecto/proyectos_integrantes', 'Admin')
+        if isinstance(result_proyectos, HttpResponseRedirect):
+            return result_proyectos
+        response_proyecto = result_proyectos['response']
+        if response_proyecto.status_code == 200:
+            proyectos = response_proyecto.json()
+            for i in proyectos:
+                filename = i.get('FOTO_PROYECTO')
+                if filename:
+                    filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)   
 
-    contexto = {
-      'proyectos':proyectos,
-      'usuarios': usuarios
-    }
-    return render(request, 'admin/integrantes_proyecto.html', contexto)
+        contexto = {
+        'proyectos':proyectos,
+        'usuarios': usuarios
+        }
+        return render(request, 'admin/integrantes_proyecto.html', contexto)
 
+    if request.method == 'POST':
+        if request.POST.get('accion') == 'crear':
+            datos = {
+                'usuario': request.POST.get('usuario'),
+                'proyecto': request.POST.get('proyecto'),
+                'rol': request.POST.get('rol'),
+            }
 
+            result = verificar_token_y_api(request, 'POST', '/proyecto/crear_proyectos_integrantes', 'Admin', json=datos, headers={'Content-Type':'application/json'})
+
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 201:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Integrante y proyecto creado correctamente.')
+                return redirect('Admin')
+            else:
+                try:
+                    request.session['sweet_alert'] = alert('error', 'Error al relacionar integrante y proyecto.', 'error')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
+                
+
+        if request.POST.get('accion') == 'editar':
+            datos = {
+                'id': request.POST.get('id_tabla_editar'),
+                'proyecto': request.POST.get('proyecto_nuevo'),
+                'usuario': request.POST.get('integrante_nuevo'),
+                'rol':request.POST.get('rol_nuevo'),
+            }
+            result = verificar_token_y_api(request, 'POST', '/proyecto/editar_proyectos_integrantes', 'Admin', json=datos, headers={'Content-Type': 'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 200:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Integrantes de proyecto editado correctamente.')
+                return redirect('Admin')
+            else:
+                try:                   
+                    request.session['sweet_alert'] = alert('error', 'Error', 'Error al actualizar integrantes de proyecto.')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
 
 
 

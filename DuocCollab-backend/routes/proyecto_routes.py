@@ -21,6 +21,8 @@ from services.proyecto_services import (
     obtener_integrante_proyecto,
     editar_etiqueta,
     actualizar_proyecto_etiqueta,
+    actualizar_integrante_proyecto,
+    cargar_integrante_proyecto,
 
 )
 
@@ -138,8 +140,26 @@ def modificar_proyecto():
 @proyecto_bp.route('/proyectos_integrantes', methods=['GET'])
 @jwt_required()
 def proyecto_integrante():
-    proyecto_integrante, status = obtener_integrante_proyecto()
+    proyecto_integrantes, status = obtener_integrante_proyecto()
+    return jsonify(proyecto_integrantes), status
+
+@proyecto_bp.route('/crear_proyectos_integrantes', methods=['POST'])
+@jwt_required()
+def crear_proyecto_integrante():
+    datos = request.get_json()
+    proyecto_integrante, status = cargar_integrante_proyecto(datos)
     return jsonify(proyecto_integrante), status
+
+
+
+@proyecto_bp.route('/editar_proyectos_integrantes', methods=['POST'])
+@jwt_required()
+def editar_proyecto_integrante():
+    datos = request.get_json()
+    proyecto_integrante, status = actualizar_integrante_proyecto(datos)
+    return jsonify(proyecto_integrante), status
+
+
 
 
 

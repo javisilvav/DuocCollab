@@ -196,7 +196,7 @@ def editar_proyecto(datos_proyecto, archivo_imagen=None):
 def obtener_integrante_proyecto():
     try:
 
-        resultado = supabase.table("PROYECTO").select("*, INTEGRANTES_PROYECTO(ROL, USUARIO(NOMBRE, APELLIDO, CORREO))").execute()
+        resultado = supabase.table("PROYECTO").select("*, INTEGRANTES_PROYECTO(ID_TABLA, ROL, USUARIO(ID_USUARIO,NOMBRE, APELLIDO, CORREO))").execute()
         if resultado.data:
             proyectos = resultado.data
 
@@ -207,26 +207,65 @@ def obtener_integrante_proyecto():
         return {"error": f"Error al consultar proyectos e integrantes: {str(e)}"}, 500
 
 
+def cargar_integrante_proyecto(datos):
+    errores = []
+    usuario = datos.get('usuario')
+    proyecto = datos.get('proyecto')
+    rol = datos.get('rol')
+
+
+    if not usuario or not str(usuario).strip():
+        errores.append('Usuario: Campo obligatorio.')
+    if not proyecto or not str(proyecto).strip():
+        errores.append('Proyecto: Campo obligatorio.')
+    if not rol or not str(rol).strip():
+        errores.append('Rol: Campo obligatorio.')
+
+    if errores:
+        return {"error": errores}, 400 
+
+    nuevo_integrante_proyecto = {
+        "ID_USUARIO": usuario,
+        "ID_PROYECTO": proyecto,
+        "ROL": rol,
+    }
+
+    try:
+        supabase.table("INTEGRANTES_PROYECTO").insert(nuevo_integrante_proyecto).execute()
+        return {"mensaje": "Integrante proyecto generado correctamente."}, 201
+    except Exception as e:
+        print(e)
+        return {"error": f"Error al registrar integrante de proyecto: {str(e)}"}, 500
+
+
+
 
 def actualizar_integrante_proyecto(datos):
     id = datos.get('id')
-    nuevo_proyecto = datos.get('nuevo_proyecto')
-    nueva_etiqueta = datos.get('nueva_etiqueta')
+    id_usuario = datos.get('usuario')
+    id_proyecto = datos.get('proyecto')
+    rol = datos.get('rol')
 
+    errores= []
     if not id:
-        return {'errores': 'ID tabla: Campo obligatorio.'}, 400
-    if not nuevo_proyecto:
-        return {'errores': 'ID sede: Campo obligatorio.'}, 400
-    if not nueva_etiqueta:
-        return {'errores': 'ID escuela: Campo obligatorio.'}, 400
+        return errores.append('ID tabla: Campo obligatorio.')
+    if not id_usuario:
+        return errores.append('ID usuario: Campo obligatorio.')
+    if not id_proyecto:
+        return errores.append('ID proyecto: Campo obligatorio.')
+    if not rol:
+        return errores.append('ROL: Campo obligatorio.')
     
+    if errores:
+        return {'error':errores},400
     try:
-        query = supabase.table("PROYECTO_ETIQUETA").update({'ID_PROYECTO':nuevo_proyecto,'ID_ETIQUETA':nueva_etiqueta}).eq("ID_TABLA",id).execute()
+        query = supabase.table("INTEGRANTES_PROYECTO").update({'ID_PROYECTO':id_proyecto,'ID_USUARIO':id_usuario,'ROL':rol}).eq("ID_TABLA",id).execute()
         if query.data == []:
-            return {'errores':f'No se encontraron las ID: {id}'},404
-        return {'mensaje':'Etiqueta de proyecto actualizada correctamente.'},200
+            return {'errores':f'No se encontraro la ID: {id}'},404
+        return {'mensaje':'Integrantes de proyecto actualizado correctamente.'},200
     except Exception as e:
-        return {'error':f'Error al actualizar etiqueta de proyecto: {str(e)}'},500
+        print(e)
+        return {'error':f'Error al actualizar integrantes de proyecto: {str(e)}'},500
 
 
 

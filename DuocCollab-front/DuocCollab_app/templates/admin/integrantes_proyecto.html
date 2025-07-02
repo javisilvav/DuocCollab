@@ -4,11 +4,14 @@
   <!-- Formulario -->
   <div class="card mb-4 shadow">
     <div class="card-body">
-      <form id="formRelacion">
+      <form id="formRelacion"method="POST" action="{% url 'IntegrantesProyecto' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="crear">
+
         <div class="row g-3">
           <div class="col-md-6">
             <label for="usuario" class="form-label">Usuario</label>
-            <select id="usuario" class="form-select" required>
+            <select id="usuario" name="usuario" class="form-select" required>
               <option selected>Seleccione un usuario</option>
               {% for usuario in usuarios %}
                 <option value="{{ usuario.ID_USUARIO }}">({{ usuario.CORREO }}) {{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
@@ -17,7 +20,7 @@
           </div>
           <div class="col-md-6">
             <label for="proyecto" class="form-label">Proyecto</label>
-            <select id="proyecto" class="form-select" required>
+            <select id="proyecto" name="proyecto" class="form-select" required>
               <option selected>Seleccione un proyecto</option>
               {% for proyecto in proyectos %}
                 <option value="{{ proyecto.ID_PROYECTO }}">{{ proyecto.NOMBRE_PROYECTO }}</option>
@@ -60,7 +63,7 @@
                   <td>{{ proyecto.NOMBRE_PROYECTO }}</td>
                   <td>{{ integrante.ROL }}</td>
                   <td>
-                    <button class="btn btn-sm btn-warning"  data-bs-toggle="modal" data-bs-target="#modalEditar{{ proyecto.ID_TABLA }}">Editar</button>
+                    <button class="btn btn-sm btn-warning"  data-bs-toggle="modal" data-bs-target="#modalEditar{{ integrante.ID_TABLA }}">Editar</button>
                   </td>
                 </tr>
               {% endfor %}
@@ -86,16 +89,16 @@
 
 {% for proyecto in proyectos %}
   {% for integrante in proyecto.INTEGRANTES_PROYECTO %}
-  <div class="modal fade" id="modalEditar{{ proyecto.ID_TABLA }}" tabindex="-1" aria-labelledby="modalLabel{{ proyecto.ID_TABLA }}" aria-hidden="true">
+  <div class="modal fade" id="modalEditar{{ integrante.ID_TABLA }}" tabindex="-1" aria-labelledby="modalLabel{{ integrante.ID_TABLA }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <form method="POST" action="{% url 'IntegrantesProyecto' %}">
           {% csrf_token %}
           <input type="hidden" name="accion" value="editar">
-          <input type="hidden" name="id_tabla_editar" value="{{ proyecto.ID_TABLA }}">
+          <input type="hidden" name="id_tabla_editar" value="{{ integrante.ID_TABLA }}">
 
           <div class="modal-header">
-            <h5 class="modal-title" id="modalLabel{{ proyecto.ID_TABLA }}">Editar Integrantes del Proyecto</h5>
+            <h5 class="modal-title" id="modalLabel{{ integrante.ID_TABLA }}">Editar Integrantes del Proyecto</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           
@@ -117,7 +120,7 @@
 
             <div class="mb-12">
               <label class="form-label">Rol actual</label>
-              <input type="text" class="form-control" value="{{ integrante.ROL }}" disabled>
+              <input type="text" class="form-control" name="rol_actual" value="{{ integrante.ROL }}" disabled>
             </div>
 
 
@@ -125,16 +128,16 @@
             <div class="col-md-6">
               <label for="proyecto_nuevo" class="form-label">Nuevo proyecto</label>
               <select id="proyecto_nuevo" name="proyecto_nuevo" class="form-select" required>
-                <option selected>{{ proyecto.NOMBRE_PROYECTO }}</option>
-                {% for proyecto in proyectos %}
-                  <option value="{{ proyecto.ID_PROYECTO }}">{{ proyecto.NOMBRE_PROYECTO }}</option>
+                <option value="{{ proyecto.ID_PROYECTO }}" selected>{{ proyecto.NOMBRE_PROYECTO }}</option>
+                {% for p in proyectos %}
+                  <option value="{{ p.ID_PROYECTO }}">{{ p.NOMBRE_PROYECTO }}</option>
                 {% endfor %}
               </select>
             </div>
             <div class="col-md-6">
               <label for="integrante_nuevo" class="form-label">Nuevo integrante</label>
               <select id="integrante_nuevo" name="integrante_nuevo" class="form-select" required>
-                  <option selected>({{ integrante.USUARIO.CORREO }}) {{ integrante.USUARIO.NOMBRE }} {{ integrante.USUARIO.APELLIDO }}</option>
+                  <option value="{{ integrante.USUARIO.ID_USUARIO }}" selected>({{ integrante.USUARIO.CORREO }}) {{ integrante.USUARIO.NOMBRE }} {{ integrante.USUARIO.APELLIDO }}</option>
                   {% for usuario in usuarios %}
                   <option value="{{ usuario.ID_USUARIO }}">({{ usuario.CORREO }}) {{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
                   {% endfor %}
@@ -143,11 +146,10 @@
 
             <div class="mb-12">
               <label class="form-label">Rol</label>
-              <input type="text" class="form-control" value="{{ integrante.ROL }}">
+              <input type="text" class="form-control" name="rol_nuevo" value="{{ integrante.ROL }}">
             </div>
 
           </div>
-
           <div class="modal-footer">
             <button type="submit" class="btn btn-warning">Guardar cambios</button>
           </div>
