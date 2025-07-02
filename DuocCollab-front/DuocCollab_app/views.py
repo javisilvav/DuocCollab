@@ -1688,27 +1688,52 @@ def Postulaciones(request):
 
 
     if request.method == 'POST':
-        id_proyecto = request.POST.get('id_proyecto') 
-        datos = {"ID_PROYECTO": id_proyecto}
-        comentario = request.POST.get('comentario')
-        if comentario:
-            datos["COMENTARIO"] = comentario
+        if request.POST.get('accion') == 'crear':
+            datos = {
+                "ID_USUARIO": request.POST.get('usuario'),
+                "ID_PROYECTO": request.POST.get('id_proyecto') , 
+            }
+            comentario = request.POST.get('comentario')
+            if comentario:
+                datos["COMENTARIO"] = 'Panel admin añadio: ' + comentario
 
-        result = verificar_token_y_api(request, 'POST', '/proyecto/crear_postulacion', 'Perfil', json=datos, headers={'Content-Type': 'application/json'})
-        if isinstance(result, HttpResponseRedirect):
-            return result
-        response = result['response']
-        if response.status_code == 201:
-            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Postulación creada correctamente.')
-            return redirect('Perfil')
-        else:
-            try:
-                request.session['sweet_alert'] = alert('error', 'Error', 'Error al crear postulación.')
-                return redirect('Perfil')
-            except ValueError:
-                error = f"Error inesperado ({response.status_code}): {response.text}"
-                request.session['sweet_alert'] = alert('error', 'Error', error)
-                return redirect('Perfil')
+            result = verificar_token_y_api(request, 'POST', '/proyecto/crear_postulacion_admin', 'Admin', json=datos, headers={'Content-Type': 'application/json'})
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            response = result['response']
+            if response.status_code == 201:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Postulación creada correctamente.')
+                return redirect('Admin')
+            else:
+                try:
+                    request.session['sweet_alert'] = alert('error', 'Error', 'Error al crear postulación.')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')
+        if request.POST.get('accion') == 'editar':
+            datos = {
+                "ID_POSTULACION":request.POST.get('id_postular_editar'),
+                "ESTADO": request.POST.get('estado_nuevo')
+            }
+            result = verificar_token_y_api(request,'POST', '/proyecto/editar_postulacion', 'Admin', json=datos)
+            if isinstance(result, HttpResponseRedirect):
+                return result
+            
+            response = result['response']
+            if response.status_code == 200:
+                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Error al cambiar estado de postulación.')
+                return redirect('Admin')
+            else:
+                try:
+
+                    request.session['sweet_alert'] = alert('error','Error', 'Error al cambiar estado de postulación.')
+                    return redirect('Admin')
+                except ValueError:
+                    error = f"Error inesperado ({response.status_code}): {response.text}"
+                    request.session['sweet_alert'] = alert('error', 'Error', error)
+                    return redirect('Admin')      
 
 
 

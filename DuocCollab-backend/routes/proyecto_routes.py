@@ -57,6 +57,15 @@ def crear_postulacion():
     resultado, status = cargar_postulacion(id_usuario, datos)
     return jsonify(resultado), status
 
+@proyecto_bp.route('/crear_postulacion_admin', methods=['POST'])
+@jwt_required()
+def crear_postulacion_admin():
+    datos = request.get_json()
+    id_usuario = datos.get('ID_USUARIO')
+    resultado, status = cargar_postulacion(id_usuario, datos)
+    return jsonify(resultado), status
+
+
 @proyecto_bp.route('/mis_postulaciones', methods=['GET'])
 @jwt_required()
 def postulaciones_usuario():

@@ -4,11 +4,15 @@
   <!-- Formulario -->
   <div class="card mb-4 shadow">
     <div class="card-body">
-      <form id="formRelacion">
+      <form id="formRelacion" method = 'POST' action="{% url 'PostulacionesAdmin' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="crear">
+
+
         <div class="row g-3">
           <div class="col-md-6">
             <label for="usuario" class="form-label">Usuario</label>
-            <select id="usuario" class="form-select" required>
+            <select id="usuario" name="usuario" class="form-select" required>
               <option selected>Seleccione un usuario</option>
               {% for usuario in usuarios %}
                 <option value="{{ usuario.ID_USUARIO }}">({{ usuario.CORREO }}) {{ usuario.NOMBRE }} {{ usuario.APELLIDO }}</option>
@@ -17,13 +21,23 @@
           </div>
           <div class="col-md-6">
             <label for="proyecto" class="form-label">Proyecto</label>
-            <select id="proyecto" class="form-select" required>
+            <select id="proyecto" name="id_proyecto" class="form-select" required>
               <option selected>Seleccione un proyecto</option>
               {% for proyecto in proyectos %}
                 <option value="{{ proyecto.ID_PROYECTO }}">Titulo: {{ proyecto.TITULO }}  -  Nombre: {{ proyecto.NOMBRE_PROYECTO }}</option>
               {% endfor %}
             </select>
           </div>
+
+          <div class="col-md-6">
+            <label for="descripcion" class="form-label">Descripción</label>
+             <input type="text" name="descripcion" class="form-control" id="descripcion" value="{{ usuario.APELLIDO }}">
+          </div>
+
+
+
+
+
         </div>
         <div class="mt-4 text-end">
           <button type="submit" class="btn btn-primary">Agregar Postulación</button>
@@ -62,8 +76,9 @@
                 <td>{{ postulacion.FECHA_RESOLUCION }}</td>
                 <td>{{ postulacion.ESTADO }}</td>
                 <td>
-                  <button class="btn btn-sm btn-warning me-2">Editar</button>
-                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                   <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalEditar{{ postulacion.ID_POSTULACION }}">
+                    Editar
+                  </button>
                 </td>
               </tr>
             {% endfor %}
@@ -79,3 +94,68 @@
 
 
 
+
+
+
+{% for postulacion in postulaciones %}
+<div class="modal fade" id="modalEditar{{ postulacion.ID_POSTULACION }}" tabindex="-1" aria-labelledby="modalLabel{{ postulacion.ID_POSTULACION }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'PostulacionesAdmin' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="editar">
+        <input type="hidden" name="id_postular_editar" value="{{ postulacion.ID_POSTULACION }}">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel{{ postulacion.ID_CARRERA }}">Editar postulación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label for="usuario_actual" class="form-label">Usuario</label>
+              <select id="usuario_actual" name="usuario_actual" class="form-select" disabled>
+                <option selected>({{ postulacion.PROYECTO.USUARIO.CORREO }}) {{ postulacion.PROYECTO.USUARIO.NOMBRE }} {{ postulacion.PROYECTO.USUARIO.APELLIDO }}</option>
+              </select>
+            </div>
+            <div class="col-md-12">
+              <label for="proyecto_actual" class="form-label">Proyecto</label>
+              <select id="proyecto_actual" name="proyecto_actual" class="form-select" disabled>
+                <option selected>Titulo: {{ postulacion.PROYECTO.TITULO }}  -  Nombre: {{ postulacion.PROYECTO.NOMBRE_PROYECTO }}</option>
+              </select>
+            </div>
+            <div class="col-md-12">
+              <label for="estado_actual" class="form-label">Estado</label>
+              <select id="estado_actual" name="estado_actual" class="form-select" disabled>
+                <option selected>{{ postulacion.ESTADO }}</option>
+              </select>
+            </div>
+          </div>
+
+
+          <br>
+
+          <div class="row g-3">
+             <div class="col-md-6">
+              <label for="estado_nuevo" class="form-label">Estado</label>
+              <select id="estado_nuevo" name="estado_nuevo" class="form-select" required>
+                <option value="{{ postulacion.ESTADO }}" selected>{{ postulacion.ESTADO }}</option>
+                  <option value="Aceptada">Aceptada</option>
+                  <option value="Rechazada">Rechazada</option>
+                  <option value="Cancelada">Cancelada</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
