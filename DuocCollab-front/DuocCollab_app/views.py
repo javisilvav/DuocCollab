@@ -438,30 +438,7 @@ def MisProyectos(request):
                     error = f"Error inesperado ({response.status_code}): {response.text}"
                     request.session['sweet_alert'] = alert('error', 'Error', error)
                     return redirect('Perfil')    
-        if request.POST.get('accion') == 'desactivar_proyecto':
-            id_proyecto = request.POST.get('id_proyecto')
-            datos = {
-                "ID_PROYECTO":id_proyecto,
-                "ESTADO":0
-            }
-            result = verificar_token_y_api(request,'POST', '/proyecto/editar_estado_proyecto', 'Perfil', json=datos)
-            if isinstance(result, HttpResponseRedirect):
-                return result
-            
-            response = result['response']
-            if response.status_code == 200:
-                request.session['sweet_alert'] = alert('success', '¡Listo!', 'Proyecto desactivado.')
-                return redirect('Perfil')
-            else:
-                try:
-
-                    
-                    request.session['sweet_alert'] = alert('error', 'Error al desactivar proyecto.', 'error')
-                    return redirect('Perfil')
-                except ValueError:
-                    error = f"Error inesperado ({response.status_code}): {response.text}"
-                    request.session['sweet_alert'] = alert('error', 'Error', error)
-                    return redirect('Perfil')    
+        
         if request.POST.get('accion') == 'editar_proyecto':
             estado = None
 
@@ -647,8 +624,6 @@ def ProyectosDetail(request):
         if comentario:
             datos["COMENTARIO"] = comentario
 
-
-
         result = verificar_token_y_api(request, 'POST', '/proyecto/crear_postulacion', 'Perfil', json=datos, headers={'Content-Type': 'application/json'})
         if isinstance(result, HttpResponseRedirect):
             return result
@@ -658,8 +633,7 @@ def ProyectosDetail(request):
             return redirect('Perfil')
         else:
             try:
-
-                request.session['sweet_alert'] = alert('error', 'Error al crear postulación.', 'error')
+                request.session['sweet_alert'] = alert('error', 'Error', 'Error al crear postulación.')
                 return redirect('Perfil')
             except ValueError:
                 error = f"Error inesperado ({response.status_code}): {response.text}"
@@ -1639,84 +1613,104 @@ def IntegrantesProyecto(request):
 
 
 
-def Postulaciones(request):
-   
+def Postulaciones(request):  
+    if request.method == 'GET':
+        #Obtener Usuarios
+        result_usuarios = verificar_token_y_api(request, 'GET', '/auth/usuarios_registrados', 'Admin')
+        if isinstance(result_usuarios, HttpResponseRedirect):
+            return result_usuarios
+        response_usuario = result_usuarios['response']
+        if response_usuario.status_code == 200:
+            usuarios = response_usuario.json()
+        else:
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los registros de usuarios.')
+            return redirect('Admin')
     
-
-  
-  if request.method == 'GET':
-    #Obtener Usuarios
-    result_usuarios = verificar_token_y_api(request, 'GET', '/auth/usuarios_registrados', 'Admin')
-    if isinstance(result_usuarios, HttpResponseRedirect):
-        return result_usuarios
-    response_usuario = result_usuarios['response']
-    if response_usuario.status_code == 200:
-        usuarios = response_usuario.json()
-    else:
-        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los registros de usuarios.')
-        return redirect('Admin')
+        #Obtener proyectos
+        result_proyectos = verificar_token_y_api(request, 'GET', '/proyecto/proyectos', 'Admin')
+        if isinstance(result_proyectos, HttpResponseRedirect):
+            return result_proyectos
+        response_proyecto = result_proyectos['response']
+        if response_proyecto.status_code == 200:
+            proyectos = response_proyecto.json()
+            for i in proyectos:
+                filename = i.get('FOTO_PROYECTO')
+                if filename:
+                    filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)     
+        else:
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los proyectos')
+            return redirect('Admin')    
     
-    #Obtener proyectos
-    result_proyectos = verificar_token_y_api(request, 'GET', '/proyecto/proyectos', 'Admin')
-    if isinstance(result_proyectos, HttpResponseRedirect):
-        return result_proyectos
-    response_proyecto = result_proyectos['response']
-    if response_proyecto.status_code == 200:
-        proyectos = response_proyecto.json()
-        for i in proyectos:
-            filename = i.get('FOTO_PROYECTO')
-            if filename:
-                filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)     
-    else:
-        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los proyectos')
-        return redirect('Admin')    
+        #Obtener postulaciones
+        result_postulaciones = verificar_token_y_api(request, 'GET', '/proyecto/postulaciones', 'Admin')
+        if isinstance(result_postulaciones, HttpResponseRedirect):
+            return result_postulaciones
+        response_proyecto = result_postulaciones['response']
+        if response_proyecto.status_code == 200:
+            postulaciones = response_proyecto.json()
+            for i in postulaciones:
+                filename = i.get('FOTO_PROYECTO')
+                if filename:
+                    filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)     
+        else:
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los postulaciones')
+            return redirect('Admin')    
     
-    #Obtener postulaciones
-    result_postulaciones = verificar_token_y_api(request, 'GET', '/proyecto/postulaciones', 'Admin')
-    if isinstance(result_postulaciones, HttpResponseRedirect):
-        return result_postulaciones
-    response_proyecto = result_postulaciones['response']
-    if response_proyecto.status_code == 200:
-        postulaciones = response_proyecto.json()
-        for i in postulaciones:
-            filename = i.get('FOTO_PROYECTO')
-            if filename:
-                filename = i['FOTO_PROYECTO'] = ruta_img_proyecto(filename)     
-    else:
-        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los postulaciones')
-        return redirect('Admin')    
-    
-    result = verificar_token_y_api(request,'GET', '/proyecto/postulaciones', 'Home')
-    if isinstance(result, HttpResponseRedirect):
-        return result
-    response = result['response']
-    if response.status_code == 200:
-        postulacion = response.json()
-        for i in postulacion:
-            fecha = i.get('FECHA_POSTULACION')
-            if fecha:
-                try:
-                    fecha_formateada = datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S.%f")
-                except ValueError:
-                # En caso de que no tenga microsegundos, prueba sin ellos
-                    fecha_formateada = datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S")
-            i['FECHA_POSTULACION'] = fecha_formateada.strftime("%d/%m/%Y")
-            proyecto = i.get('PROYECTO',{})
-            filename = proyecto.get('FOTO_PROYECTO')
-            if filename:
-                filename = proyecto['FOTO_PROYECTO'] = ruta_img_proyecto(filename)      
-    else:
-        request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los postulaciones')
-        return redirect('Admin')    
+        result = verificar_token_y_api(request,'GET', '/proyecto/postulaciones', 'Home')
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        response = result['response']
+        if response.status_code == 200:
+            postulacion = response.json()
+            for i in postulacion:
+                fecha = i.get('FECHA_POSTULACION')
+                if fecha:
+                    try:
+                        fecha_formateada = datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S.%f")
+                    except ValueError:
+                    # En caso de que no tenga microsegundos, prueba sin ellos
+                        fecha_formateada = datetime.strptime(fecha, "%Y-%m-%dT%H:%M:%S")
+                i['FECHA_POSTULACION'] = fecha_formateada.strftime("%d/%m/%Y")
+                proyecto = i.get('PROYECTO',{})
+                filename = proyecto.get('FOTO_PROYECTO')
+                if filename:
+                    filename = proyecto['FOTO_PROYECTO'] = ruta_img_proyecto(filename)      
+        else:
+            request.session['sweet_alert'] = alert('error', 'Error', 'No se pudieron obtener los postulaciones')
+            return redirect('Admin')    
+
+        contexto = {
+        'postulaciones': postulacion,
+        'proyectos':proyectos,
+        'usuarios':usuarios
+        }
+        return render(request, 'admin/postulacion.html', contexto)
 
 
+    if request.method == 'POST':
+        id_proyecto = request.POST.get('id_proyecto') 
+        datos = {"ID_PROYECTO": id_proyecto}
+        comentario = request.POST.get('comentario')
+        if comentario:
+            datos["COMENTARIO"] = comentario
 
-    contexto = {
-      'postulaciones': postulacion,
-      'proyectos':proyectos,
-      'usuarios':usuarios
-    }
-    return render(request, 'admin/postulacion.html', contexto)
+        result = verificar_token_y_api(request, 'POST', '/proyecto/crear_postulacion', 'Perfil', json=datos, headers={'Content-Type': 'application/json'})
+        if isinstance(result, HttpResponseRedirect):
+            return result
+        response = result['response']
+        if response.status_code == 201:
+            request.session['sweet_alert'] = alert('success', '¡Listo!', 'Postulación creada correctamente.')
+            return redirect('Perfil')
+        else:
+            try:
+                request.session['sweet_alert'] = alert('error', 'Error', 'Error al crear postulación.')
+                return redirect('Perfil')
+            except ValueError:
+                error = f"Error inesperado ({response.status_code}): {response.text}"
+                request.session['sweet_alert'] = alert('error', 'Error', error)
+                return redirect('Perfil')
+
+
 
 def AdminLogin(request):
     if request.method == 'GET':

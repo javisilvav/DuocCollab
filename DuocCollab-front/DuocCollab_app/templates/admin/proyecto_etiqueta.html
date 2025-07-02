@@ -105,7 +105,7 @@
           <div class="col-md-6">
             <label for="proyecto_nuevo" class="form-label">Nuevo proyecto</label>
             <select id="proyecto_nuevo" name="proyecto_nuevo" class="form-select" required>
-              <option selected>Seleccione un proyecto</option>
+              <option value="{{ etiqueta.ID_PROYECTO }}"  selected>{{ etiqueta.PROYECTO.NOMBRE_PROYECTO }}</option>
               {% for proyecto in proyectos %}
                 <option value="{{ proyecto.ID_PROYECTO }}">{{ proyecto.NOMBRE_PROYECTO }}</option>
               {% endfor %}
@@ -114,7 +114,7 @@
           <div class="col-md-6">
             <label for="etiqueta_nueva" class="form-label">Nueva etiqueta</label>
             <select id="etiqueta_nueva" name="etiqueta_nueva" class="form-select" required>
-                <option selected>Seleccione una etiqueta</option>
+                <option value="{{ etiqueta.ID_ETIQUETA }}" selected>{{ etiqueta.ETIQUETA.NOMBRE }}</option>
                 {% for etiqueta in etiquetas %}
                   <option value="{{ etiqueta.ID_ETIQUETA }}">{{ etiqueta.NOMBRE }}</option>
                 {% endfor %}

@@ -20,17 +20,9 @@
             <select id="proyecto" class="form-select" required>
               <option selected>Seleccione un proyecto</option>
               {% for proyecto in proyectos %}
-                <option value="{{ proyecto.ID_PROYECTO }}">{{ proyecto.NOMBRE_PROYECTO }}</option>
+                <option value="{{ proyecto.ID_PROYECTO }}">Titulo: {{ proyecto.TITULO }}  -  Nombre: {{ proyecto.NOMBRE_PROYECTO }}</option>
               {% endfor %}
             </select>
-          </div>
-          <div class="col-md-6">
-            <label for="fecha_post" class="form-label">Fecha postulación</label>
-            <input type="datetime-local" name="fecha_post" class="form-control" id="fecha_post" required>
-          </div>
-          <div class="col-md-6">
-            <label for="fecha_res" class="form-label">Fecha resolución</label>
-            <input type="datetime-local" name="fecha_res" class="form-control" id="fecha_res">
           </div>
         </div>
         <div class="mt-4 text-end">
@@ -39,6 +31,9 @@
       </form>
     </div>
   </div>
+
+
+
 
   <!-- Tabla de relaciones -->
   <div class="card shadow">
@@ -78,3 +73,9 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
