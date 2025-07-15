@@ -145,7 +145,7 @@ def editar_proyecto(datos_proyecto, archivo_imagen=None):
             
             resultado = supabase.table("PROYECTO").select("FOTO_PROYECTO").eq("ID_PROYECTO", id_proyecto).execute()
             if not resultado.data:
-                return {"errores": "Proyecto no encontrado."}, 404
+                return {"error": "Proyecto no encontrado."}, 404
             nombre_imagen = resultado.data[0]["FOTO_PROYECTO"]
 
         datos_actualizados = {
@@ -186,7 +186,7 @@ def editar_proyecto(datos_proyecto, archivo_imagen=None):
 
     except Exception as e:
         print(e)
-        return {"errores": f"Error al actualizar proyecto: {str(e)}"}, 500
+        return {"error": f"Error al actualizar proyecto: {str(e)}"}, 500
 
 
 
@@ -308,13 +308,12 @@ def cargar_postulacion(id_usuario, datos_postulacion):
     proyecto = supabase.table("PROYECTO").select("ID_PROYECTO").eq("ID_PROYECTO", id_proyecto).execute()
     if not proyecto.data:
         errores.append('ID_PROYECTO: Proyecto no encontrado.')
-    print("mis;: ", errores)
     if errores:
-        return {"errores": errores}, 400 
+        return {"error": errores}, 400 
 
     propietario = supabase.table("PROYECTO").select("*").eq("ID_PROYECTO", id_proyecto).eq("ID_USUARIO", id_usuario).execute()
     if propietario.data:
-        return {"errores":"No puedes postular a tus proyectos."}, 409
+        return {"error":"No puedes postular a tus proyectos."}, 409
         
     existente = supabase.table("POSTULACION").select("*").match({
         "ID_USUARIO": id_usuario,
@@ -322,7 +321,7 @@ def cargar_postulacion(id_usuario, datos_postulacion):
     }).execute()
 
     if existente.data:
-        return {"errores": ["Ya existe una postulación a este proyecto."]}, 409
+        return {"error": ["Ya existe una postulación a este proyecto."]}, 409
 
     nueva_postulacion = {
         "ID_USUARIO": id_usuario,

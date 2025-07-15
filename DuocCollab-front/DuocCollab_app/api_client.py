@@ -46,12 +46,12 @@ def ruta_img_proyecto(img):
 
 def verificar_token_y_api(token, metodo, endpoint, requiere_tkn=True,**kwargs):
     if requiere_tkn and not token:
-       return 'No existe token'
+       return {'response':{'error':'No existe token'}}
     result = api_request(metodo, endpoint, token=token, **kwargs)
     if result.get('expired'):
-        return 'Sesión Expirada'
+        return {'response':{'error':'Sesión Expirada'}}
     if 'error' in result:
-        return result['error']
+        return {'response':{'error':result['error']}}
 
     return result
 
@@ -90,6 +90,7 @@ def realiza_nueva_cuenta(datos):
 
 def consulta_usuario_actual(token):
     result = verificar_token_y_api(token,'GET', '/auth/usuario_actual')
+    print('ver',result)
     response = result.get('response', {})
     return response
 
@@ -133,6 +134,46 @@ def realiza_crear_postulacion(token, datos):
     result = verificar_token_y_api(token,'POST', '/proyecto/crear_postulacion', json=datos,headers={'Content-Type': 'application/json'})
     response = result.get('response', {})
     return response
+
+def consulta_correos(token):
+    result = verificar_token_y_api(token,'GET', '/auth/correos')
+    response = result.get('response', {})
+    return response
+
+def realiza_crear_proyecto(token, datos, archivos):
+    result = verificar_token_y_api(token,'POST', '/proyecto/crear', data=datos, files=archivos)
+    response = result.get('response', {})
+    return response
+
+def consulta_proyectos(token):
+    result = verificar_token_y_api(token,'GET', '/proyecto/proyectos')
+    response = result.get('response', {})
+    return response
+
+def consulta_contador_usuarios(token):
+    result = verificar_token_y_api(token,'GET', '/auth/count_user')
+    response = result.get('response', {})
+    return response
+
+def consulta_contador_proyectos(token):
+    result = verificar_token_y_api(token,'GET', '/proyecto/count_project')
+    response = result.get('response', {})
+    return response
+
+def consulta_contador_postulacion(token):
+    result = verificar_token_y_api(token,'GET', '/proyecto/count_postulacion_pendiente')
+    response = result.get('response', {})
+    return response
+
+def consulta_ultimos_usuarios(token):
+    result = verificar_token_y_api(token,'GET', '/auth/ultimos_usuarios')
+    response = result.get('response', {})
+    return response
+
+
+
+
+
 
 
 #result = verificar_token_y_api('dsa', 'GET', '/institucion/sedes', False)
