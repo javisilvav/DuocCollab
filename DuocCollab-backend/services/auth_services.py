@@ -73,7 +73,7 @@ def registrar_usuario(datos_usuario, archivo_perfil=None, archivo_portada=None):
 
     errores = valida_form_usuario(datos_usuario,'crear')
     if errores:
-        return {'errores': errores},400
+        return {'error': errores},400
     correo_existe = supabase.table('USUARIO').select('CORREO').eq('CORREO', datos_usuario['CORREO']).execute()
     if correo_existe.data:
         return {'error':'Correo ya existe, Te recomendamos inciar sesión porque ya tienes está cuenta registrada.'}, 409       
@@ -108,7 +108,7 @@ def editar_usuario_servicio(id_usuario, datos_usuario, archivo_perfil=None, arch
     if archivo_portada:
         errores += validar_carga_img(archivo_portada, 'Foto de portada')
     if errores:
-        return {'errores':errores}, 400
+        return {'error':errores}, 400
     if 'CONTRASENIA' in datos_usuario and datos_usuario['CONTRASENIA']:
         actualizaciones['CONTRASENIA'] = generate_password_hash(datos_usuario['CONTRASENIA'])
     for campo in ['NOMBRE', 'APELLIDO', 'CORREO','INTERESES']:
@@ -164,20 +164,22 @@ def obtener_usuario_por_id(id_usuario):
 def restablecer_contrasena(datos):
     correo = datos.get('correo')
     if not correo:
-        return {'message','Correo es requerido'}, 400
-    resultado = supabase.table("USUARIO").select("*").eq("CORREO", correo).single().execute()
+        return {'error':'Correo es requerido.'}, 400
+    resultado = supabase.table("USUARIO").select("*").eq("CORREO", correo).limit(1).execute()
+
     if not resultado.data:
-        return {"error": "Correo no encontrado"}, 404
+        return {"error": "Correo no encontrado."}, 404
     
     nueva_pss = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
     hash_pss = generate_password_hash(nueva_pss)
 
     try:
+        print("Entro")
         supabase.table("USUARIO").update({"CONTRASENIA": hash_pss}).eq("CORREO", correo).execute()
         enviar = enviar_correo_recuperacion(correo, nueva_pss)
         if not enviar:
             return {"error": "Error al envia correo."}, 500
-        return {"mensaje": f"Contraseña actualizada y reenviada al correo {correo}"}, 200
+        return {"mensaje": f"Te enviamos un correo para recuperar tu sesión."}, 200
     except Exception as e:
         return {"error": f"Error al actualizar contraseña: {str(e)}"}, 500
     

@@ -58,6 +58,7 @@ def valida_form_usuario(data,modo):
     intereses_dict = 'INTERESES'
     #confirma_clave = 'S1,wqewqeqw'
 
+    
     errores = []
     if modo =='crear' or nombre_dict in data:
         nombre = data.get(nombre_dict,'').strip()
