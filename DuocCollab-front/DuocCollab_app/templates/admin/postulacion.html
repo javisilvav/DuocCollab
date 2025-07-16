@@ -58,8 +58,8 @@
           <thead class="table-dark">
             <tr>
               <th>ID postulación</th>
-              <th>ID usuario</th>
-              <th>ID proyecto</th>
+              <th>Usuario</th>
+              <th>Proyecto</th>
               <th>Fecha postulación</th>
               <th>Fecha resolución</th>
               <th>Estado</th>
@@ -70,8 +70,8 @@
             {% for postulacion in postulaciones %}
               <tr>
                 <td>{{ postulacion.ID_POSTULACION }}</td>
-                <td>{{ postulacion.ID_USUARIO }}</td>
-                <td>{{ postulacion.ID_PROYECTO }}</td>
+                <td>({{ postulacion.USUARIO.CORREO }}) {{ postulacion.USUARIO.NOMBRE }} {{ postulacion.USUARIO.APELLIDO }}</td>
+                <td>{{ postulacion.PROYECTO.NOMBRE_PROYECTO }}</td>
                 <td>{{ postulacion.FECHA_POSTULACION }}</td>
                 <td>{{ postulacion.FECHA_RESOLUCION }}</td>
                 <td>{{ postulacion.ESTADO }}</td>
@@ -117,7 +117,7 @@
             <div class="col-md-12">
               <label for="usuario_actual" class="form-label">Usuario</label>
               <select id="usuario_actual" name="usuario_actual" class="form-select" disabled>
-                <option selected>({{ postulacion.PROYECTO.USUARIO.CORREO }}) {{ postulacion.PROYECTO.USUARIO.NOMBRE }} {{ postulacion.PROYECTO.USUARIO.APELLIDO }}</option>
+                <option selected>({{ postulacion.USUARIO.CORREO }}) {{ postulacion.USUARIO.NOMBRE }} {{ postulacion.USUARIO.APELLIDO }}</option>
               </select>
             </div>
             <div class="col-md-12">
@@ -131,6 +131,10 @@
               <select id="estado_actual" name="estado_actual" class="form-select" disabled>
                 <option selected>{{ postulacion.ESTADO }}</option>
               </select>
+            </div>
+            <div class="col-md-12">
+              <p>Comentario:</p>
+              <p>{{ postulacion.comentario }}</p>
             </div>
           </div>
 

@@ -6,6 +6,7 @@
     <div class="card-body">
       <form id="formRelacion" method="POST" action="{% url 'ProyectoEtiqueta' %}">
         {% csrf_token %}
+        <input type="hidden" name="accion" value="crear">
         <div class="row g-3">
           <div class="col-md-6">
             <label for="proyecto" class="form-label">Proyecto</label>

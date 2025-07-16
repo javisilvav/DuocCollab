@@ -13,17 +13,14 @@ def api_request(method, endpoint, token=None, **kwargs):
     headers = kwargs.pop('headers',{})
     if token:
         headers['Authorization'] = f'Bearer {token}'
-    
     try:
         response = requests.request(method,f'{API_URL}{endpoint}',headers=headers,**kwargs)
-        
         if response.status_code == 401 and endpoint not in ['/auth/login', '/auth/registro']:
             return {'expired': True, 'message': 'Sesión expirada, favor iniciar sesión nuevamente'}
-
         try:
             data = response.json()
         except ValueError:
-            data = {'error': 'La respuesta no es JSON', 'status_code': response.status_code}
+            data = {'error': 'La respuesta no es JSON.', 'status_code': response.status_code}
         
         return {'expired':False,'status_code': response.status_code, 'response':data}
     except requests.exceptions.RequestException as e:
@@ -170,40 +167,111 @@ def consulta_ultimos_usuarios(token):
     response = result.get('response', {})
     return response
 
+def realiza_crear_escuela(token, datos):
+    result = verificar_token_y_api(token,'POST', '/institucion/crear_escuela', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
 
+def realiza_editar_escuela(token, datos):
+    result = verificar_token_y_api(token,'POST', '/institucion/editar_escuela', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
 
+def realiza_crear_carrera(token, datos):
+    result = verificar_token_y_api(token,'POST', '/institucion/crear_carrera', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
 
+def realiza_editar_carrera(token, datos):
+    result = verificar_token_y_api(token,'POST', '/institucion/editar_carrera', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
 
+def realiza_crear_sede(token, datos):
+    result = verificar_token_y_api(token,'POST', '/institucion/crear_sede', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
 
+def realiza_editar_sede(token, datos):
+    result = verificar_token_y_api(token,'POST', '/institucion/editar_sede', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
+
+def consulta_sede_escuela(token):
+    result = verificar_token_y_api(token,'GET', '/institucion/sede_escuela')
+    response = result.get('response', {})
+    return response
+
+def realiza_crear_sede_escuela(token, datos):
+    result = verificar_token_y_api(token,'POST', '/institucion/crear_sd_esc', json=datos)
+    response = result.get('response', {})
+    return response
+
+def realiza_editar_sede_escuela(token, datos):
+    result = verificar_token_y_api(token,'POST', '/institucion/editar_sd_esc', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
+
+def consulta_usuarios_registrados(token):
+    result = verificar_token_y_api(token,'GET', '/auth/usuarios_registrados')
+    response = result.get('response', {})
+    return response
+
+def realiza_crear_etiqueta(token, datos):
+    result = verificar_token_y_api(token,'POST', '/proyecto/crear_etiqueta', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
+
+def realiza_editar_etiqueta(token, datos):
+    result = verificar_token_y_api(token,'POST', '/proyecto/editar_etiqueta', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
+
+def consulta_etiqueta_proyecto(token):
+    result = verificar_token_y_api(token,'GET', '/proyecto/proyecto_etiqueta')
+    response = result.get('response', {})
+    return response
+
+def realiza_crear_etiqueta_proyecto(token, datos):
+    result = verificar_token_y_api(token,'POST', '/proyecto/crear_proyecto_etiqueta', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
+
+def realiza_editar_etiqueta_proyecto(token, datos):
+    result = verificar_token_y_api(token,'POST', '/proyecto/editar_proyecto_etiqueta', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
+
+def consulta_proyectos_integrante(token):
+    result = verificar_token_y_api(token,'GET', '/proyecto/proyectos_integrantes')
+    response = result.get('response', {})
+    return response
+
+def realiza_crear_proyecto_integrante(token, datos):
+    result = verificar_token_y_api(token,'POST', '/proyecto/crear_proyectos_integrantes', json=datos, headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
+
+def realiza_editar_proyecto_integrante(token, datos):
+    result = verificar_token_y_api(token,'POST', '/proyecto/editar_proyectos_integrantes', json=datos, headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
+
+def consulta_postulacion(token):
+    result = verificar_token_y_api(token,'GET', '/proyecto/postulaciones')
+    response = result.get('response', {})
+    return response
+
+def realiza_crear_postulacion(token, datos):
+    result = verificar_token_y_api(token,'POST', '/proyecto/crear_postulacion_admin', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
+
+def realiza_editar_postulacion(token, datos):
+    result = verificar_token_y_api(token,'POST', '/proyecto/editar_postulacion', json=datos,headers={'Content-Type': 'application/json'})
+    response = result.get('response', {})
+    return response
 
 #result = verificar_token_y_api('dsa', 'GET', '/institucion/sedes', False)
 #
 #print(result)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
-#    
-#def consulta_escuela():
-#    response = requests.get(f'{BASE_API_URL}escuelas', headers=headers_auth())
-#    if response.ok:
-#        return response.json()
-#    else:
-#        print(f'Error en la API: {response.status_code} - {response.text}')
-#        return []

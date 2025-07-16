@@ -223,6 +223,15 @@ def cargar_integrante_proyecto(datos):
 
     if errores:
         return {"error": errores}, 400 
+    
+
+    usuario_proyecto_repetido = supabase.table("INTEGRANTES_PROYECTO").select("*").eq("ID_PROYECTO", proyecto).eq("ID_USUARIO", usuario).limit(1).execute()
+    if usuario_proyecto_repetido.data:
+        return {"error":"El usuario ya es integrante del proyecto."}, 400
+    
+    propietario = supabase.table("PROYECTO").select("*").eq("ID_PROYECTO", proyecto).eq("ID_USUARIO", usuario).execute()
+    if propietario.data:
+        return {"error":"El usuario seleccionado es propietario del proyecto, no es posible llevar acabo está acción."}, 400
 
     nuevo_integrante_proyecto = {
         "ID_USUARIO": usuario,
@@ -234,7 +243,6 @@ def cargar_integrante_proyecto(datos):
         supabase.table("INTEGRANTES_PROYECTO").insert(nuevo_integrante_proyecto).execute()
         return {"mensaje": "Integrante proyecto generado correctamente."}, 201
     except Exception as e:
-        print(e)
         return {"error": f"Error al registrar integrante de proyecto: {str(e)}"}, 500
 
 
@@ -248,16 +256,26 @@ def actualizar_integrante_proyecto(datos):
 
     errores= []
     if not id:
-        return errores.append('ID tabla: Campo obligatorio.')
+        errores.append('ID tabla: Campo obligatorio.')
     if not id_usuario:
-        return errores.append('ID usuario: Campo obligatorio.')
+        errores.append('ID usuario: Campo obligatorio.')
     if not id_proyecto:
-        return errores.append('ID proyecto: Campo obligatorio.')
+        errores.append('ID proyecto: Campo obligatorio.')
     if not rol:
-        return errores.append('ROL: Campo obligatorio.')
+        errores.append('ROL: Campo obligatorio.')
     
     if errores:
         return {'error':errores},400
+    
+    usuario_proyecto_repetido = supabase.table("INTEGRANTES_PROYECTO").select("*").eq("ID_PROYECTO", id_proyecto).eq("ID_USUARIO", id_usuario).neq("ID_TABLA",id).limit(1).execute()
+    if usuario_proyecto_repetido.data:
+        return {"error":"El usuario ya es integrante del proyecto."}, 400
+    
+    propietario = supabase.table("PROYECTO").select("*").eq("ID_PROYECTO", id_proyecto).eq("ID_USUARIO", id_usuario).execute()
+    if propietario.data:
+        return {"error":"El usuario seleccionado es propietario del proyecto, no es posible llevar acabo está acción."}, 400
+    
+
     try:
         query = supabase.table("INTEGRANTES_PROYECTO").update({'ID_PROYECTO':id_proyecto,'ID_USUARIO':id_usuario,'ROL':rol}).eq("ID_TABLA",id).execute()
         if query.data == []:
@@ -279,7 +297,7 @@ def actualizar_integrante_proyecto(datos):
 
 def obtener_postulaciones():
     try:
-        resultado = supabase.table("POSTULACION").select('*,PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO, CORREO))').execute()
+        resultado = supabase.table("POSTULACION").select('*,USUARIO(NOMBRE,APELLIDO, CORREO), PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO, CORREO))').execute()
         if resultado.data:
             return resultado.data, 200
         else:
@@ -294,9 +312,9 @@ def obtener_postulacion_usuario(id_usuario):
         if resultado.data:
             return resultado.data, 200
         else:
-            return {"error": "Proyectos del usuario no encontrado."}, 404
+            return {"error": "Postulaciones del usuario no encontrado."}, 404
     except Exception as e:
-        return {"error": f"Error al consultar proyectos del usuario: {str(e)}"}, 500
+        return {"error": f"Error al consultar postulaciones del usuario: {str(e)}"}, 500
     
 def cargar_postulacion(id_usuario, datos_postulacion):
     errores = []
@@ -314,6 +332,12 @@ def cargar_postulacion(id_usuario, datos_postulacion):
     propietario = supabase.table("PROYECTO").select("*").eq("ID_PROYECTO", id_proyecto).eq("ID_USUARIO", id_usuario).execute()
     if propietario.data:
         return {"error":"No puedes postular a tus proyectos."}, 409
+    
+    repetido = supabase.table("POSTULACION").select("*").eq("ID_PROYECTO", id_proyecto).eq("ID_USUARIO", id_usuario).limit(1).execute()
+    if repetido.data:
+        return {"error":"Ya existe una postulación del usuario para este proyecto."}, 409
+
+
         
     existente = supabase.table("POSTULACION").select("*").match({
         "ID_USUARIO": id_usuario,
@@ -345,7 +369,6 @@ def editar_estado_postulacion(datos):
     try:
         id_postulacion = datos.get('ID_POSTULACION')
         estado = datos.get('ESTADO')
-        print(datos)
         resultado = supabase.table("POSTULACION").update({"ESTADO":estado, "FECHA_RESOLUCION": datetime.now().isoformat()}).eq("ID_POSTULACION",id_postulacion).execute()
         if resultado.data:
             return resultado.data, 200
@@ -381,6 +404,10 @@ def cargar_etiqueta(datos):
 
     if errores:
         return {"error": errores}, 400 
+    
+    query = supabase.table("ETIQUETA").select("*").eq("NOMBRE",nombre_etiqueta).limit(1).execute()
+    if query.data != []:
+        return {'error': f'Ya existe una etiqueta con el nombre: {nombre_etiqueta}.'}, 400
 
     nueva_etiqueta = {
         "NOMBRE": nombre_etiqueta
@@ -397,6 +424,19 @@ def editar_etiqueta(datos):
     try:
         id = datos.get('id')
         nombre = datos.get('nueva_etiqueta')
+        errores = []
+        if not nombre or not str(nombre).strip():
+            errores.append('Nombre etiqueta: Campo obligatorio.')
+        if not id or not str(id).strip():
+            errores.append('ID etiqueta: Campo obligatorio.')
+        if errores:
+            return {"error": errores}, 400 
+
+
+        query = supabase.table("ETIQUETA").select("*").eq("NOMBRE",nombre).limit(1).execute()
+        if query.data != []:
+            return {'error': f'Ya existe una etiqueta con el nombre: {nombre}.'}, 400
+        
         resultado = supabase.table("ETIQUETA").update({"ID_ETIQUETA":id, "NOMBRE":nombre}).eq("ID_ETIQUETA",id).execute()
         if resultado.data:
             return resultado.data, 200
@@ -430,6 +470,12 @@ def cargar_proyecto_etiqueta(datos):
 
     if errores:
         return {"error": errores}, 400 
+    
+    query = supabase.table("PROYECTO_ETIQUETA").select("*").eq("ID_PROYECTO",proyecto).eq("ID_ETIQUETA",etiqueta).limit(1).execute()
+    if query.data != []:
+        return {'error': f'Ya existe una relación entre proyecto y etiqueta.'}, 400
+    
+
 
     nuevo_proyecto_etiqueta = {
         "ID_ETIQUETA": etiqueta,
@@ -456,6 +502,11 @@ def actualizar_proyecto_etiqueta(datos):
         return {'errores': 'ID sede: Campo obligatorio.'}, 400
     if not nueva_etiqueta:
         return {'errores': 'ID escuela: Campo obligatorio.'}, 400
+    
+
+    query = supabase.table("PROYECTO_ETIQUETA").select("*").eq("ID_PROYECTO",nuevo_proyecto).eq("ID_ETIQUETA",nueva_etiqueta).limit(1).execute()
+    if query.data != []:
+        return {'error': f'Ya existe una relación entre proyecto y etiqueta.'}, 400
     
     try:
         query = supabase.table("PROYECTO_ETIQUETA").update({'ID_PROYECTO':nuevo_proyecto,'ID_ETIQUETA':nueva_etiqueta}).eq("ID_TABLA",id).execute()

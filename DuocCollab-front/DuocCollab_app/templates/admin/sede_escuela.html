@@ -6,6 +6,7 @@
     <div class="card-body">   
       <form id="formRelacion"  method="POST" action="{% url 'SedeEscuela' %}">
         {% csrf_token %}
+        <input type="hidden" name="accion" value="crear">
         <div class="row g-3">
           <div class="col-md-6">
             <label for="sede" class="form-label">Sede</label>
@@ -84,40 +85,39 @@
         
 
         <div class="modal-body">
-          <div class="col-md-12">
-            <label for="sede_actual" class="form-label">Sede</label>
-            <select id="sede_actual" name="sede_actual" class="form-select" disabled>
-              <option selected>{{relacion.NOMBRE_SEDE }}</option>
-            </select>
-          </div>
-          <div class="col-md-12">
-            <label for="escuela_actual" class="form-label">Escuela</label>
-            <select id="escuela_actual" name="escuela_actual" class="form-select" disabled>
-              <option selected>{{relacion.NOMBRE_ESC }}</option>
-            </select>
-          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="sede_actual_{{ relacion.ID_tabla }}" class="form-label">Sede</label>
+              <select id="sede_actual_{{ relacion.ID_tabla }}" name="sede_actual" class="form-select" disabled>
+                <option selected>{{relacion.NOMBRE_SEDE }}</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="escuela_actual_{{ relacion.ID_tabla }}" class="form-label">Escuela</label>
+              <select id="escuela_actual_{{ relacion.ID_tabla }}" name="escuela_actual" class="form-select" disabled>
+                <option selected>{{relacion.NOMBRE_ESC }}</option>
+              </select>
+            </div>
 
-
-
-          <div class="col-md-6">
-            <label for="sede_nueva" class="form-label">Sede</label>
-            <select id="sede_nueva" name="sede_nueva" class="form-select" required>
-              <option value="{{ relacion.ID_SEDE }}" selected>{{ relacion.NOMBRE_SEDE }}</option>
-              {% for sede in sedes %}
-                <option value="{{ sede.ID_SEDE }}">{{ sede.NOMBRE_SEDE }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="escuela_nueva" class="form-label">Escuela</label>
-            <select id="escuela_nueva" name="escuela_nueva" class="form-select" required>
+            <div class="col-md-6">
+              <label for="sede_nueva_{{ relacion.ID_tabla }}" class="form-label">Sede nueva</label>
+              <select id="sede_nueva_{{ relacion.ID_tabla }}" name="sede_nueva" class="form-select" required>
+                <option value="{{ relacion.ID_SEDE }}" selected>{{ relacion.NOMBRE_SEDE }}</option>
+                {% for sede in sedes %}
+                  <option value="{{ sede.ID_SEDE }}">{{ sede.NOMBRE_SEDE }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="escuela_nueva_{{ relacion.ID_tabla }}" class="form-label">Escuela nueva</label>
+              <select id="escuela_nueva_{{ relacion.ID_tabla }}" name="escuela_nueva" class="form-select" required>
                 <option value="{{ relacion.ID_ESCUELA }}" selected>{{ relacion.NOMBRE_ESC }}</option>
                 {% for escuela in escuelas %}
                   <option value="{{ escuela.ID_ESCUELA }}">{{ escuela.NOMBRE_ESC }}</option>
                 {% endfor %}
-            </select>
+              </select>
+            </div>
           </div>
-
         </div>
 
         <div class="modal-footer">

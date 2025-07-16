@@ -22,9 +22,14 @@ def cargar_sd_esc(datos):
     id_sede = datos.get('id_sede')
     id_escuela = datos.get('id_escuela')
     if not id_sede:
-        return {'errores': 'Nombre sede: Campo obligatorio.'}, 400
+        return {'error': 'Nombre sede: Campo obligatorio.'}, 400
     if not id_escuela:
-        return {'errores': 'Nombre escuela: Campo obligatorio.'}, 400
+        return {'error': 'Nombre escuela: Campo obligatorio.'}, 400
+    
+    query = supabase.table("SEDE_ESCUELA").select("*").eq("ID_SEDE",id_sede).eq("ID_ESCUELA",id_escuela).limit(1).execute()
+    if query.data != []:
+        return {'error': 'Ya existe la relación entre sede y escuela.'}, 400
+
     try:
         nuevo = {
             'ID_SEDE': id_sede,
@@ -41,16 +46,20 @@ def actualizar_sd_esc(datos):
     nueva_escuela = datos.get('nueva_escuela')
 
     if not id:
-        return {'errores': 'ID sede: Campo obligatorio.'}, 400
+        return {'error': 'ID sede: Campo obligatorio.'}, 400
     if not nueva_sede:
-        return {'errores': 'ID sede: Campo obligatorio.'}, 400
+        return {'error': 'ID sede: Campo obligatorio.'}, 400
     if not nueva_escuela:
-        return {'errores': 'ID escuela: Campo obligatorio.'}, 400
+        return {'error': 'ID escuela: Campo obligatorio.'}, 400
+    
+    query = supabase.table("SEDE_ESCUELA").select("*").eq("ID_SEDE",nueva_sede).eq("ID_ESCUELA",nueva_escuela).limit(1).execute()
+    if query.data != []:
+        return {'error': 'Ya existe la relación entre sede y escuela.'}, 400
     
     try:
         query = supabase.table("SEDE_ESCUELA").update({'ID_SEDE':nueva_sede,'ID_ESCUELA':nueva_escuela}).eq("ID_tabla",id).execute()
         if query.data == []:
-            return {'errores':f'No se encontraron las ID: {id}'},404
+            return {'error':f'No se encontraron las ID: {id}'},404
         return {'mensaje':'Sede y escuela actualizada correctamente.'},200
     except Exception as e:
         return {'error':f'Error al actualizar sede y escuela: {str(e)}'},500
@@ -70,7 +79,7 @@ def obtener_escuelas():
 def cargar_escuela(datos):
     nombre = datos['nombre_escuela'].strip()
     if not nombre:
-        return {'errores': 'Nombre escuela: Campo obligatorio.'}, 400
+        return {'error': 'Nombre escuela: Campo obligatorio.'}, 400
     try:
         nuevo = {'NOMBRE_ESC': nombre}
         supabase.table("ESCUELA").insert(nuevo).execute()
@@ -83,14 +92,14 @@ def actualizar_escuela(datos):
     nuevo_nombre = datos.get('nombre_escuela','').strip()
 
     if not id:
-        return {'errores':'ID: Campo obligatorio'}, 400
+        return {'error':'ID: Campo obligatorio'}, 400
     if not nuevo_nombre:
-        return {'errores':'Nombre escuela: Campo obligatorio.'},400
+        return {'error':'Nombre escuela: Campo obligatorio.'},400
     
     try:
         query = supabase.table("ESCUELA").update({'NOMBRE_ESC':nuevo_nombre}).eq("ID_ESCUELA",id).execute()
         if query.data == []:
-            return {'errores':f'No se encontró escuela con ID: {id}'},404
+            return {'error':f'No se encontró escuela con ID: {id}'},404
         return {'mensaje':'Escuela actualizada correctamente.'},200
     except Exception as e:
         return {'error':f'Error al actualizar escuela: {str(e)}'},500
@@ -99,14 +108,14 @@ def actualizar_escuela(datos):
 def eliminar_escuela(datos):
     id = datos.get('id')
     if not id:
-        return {'errores':'ID: Campo obligatorio'}, 400
+        return {'error':'ID: Campo obligatorio'}, 400
 
     
     try:
         id = int(id)
         query = supabase.table("ESCUELA").delete().eq("ID_ESCUELA",id).execute()
         if not query.data:
-            return {'errores':f"No se encontró escuela con ID {id}."}, 404
+            return {'error':f"No se encontró escuela con ID {id}."}, 404
         return {'mensaje':'Escuela eliminada correctamente.'},200
     except Exception as e:
         return {'error':f'Error al eliminar escuela: {str(e)}'},500
@@ -118,7 +127,7 @@ def eliminar_escuela(datos):
 
 def obtener_carreras():
     try:
-        return supabase.table('CARRERA').select('*').execute().data, 200
+        return supabase.table('CARRERA').select('*,ESCUELA(NOMBRE_ESC)').execute().data, 200
     except:
         return {'error':'No se lograron cargar las carreras.'},500
     
@@ -127,9 +136,15 @@ def cargar_carrera(datos):
     nombre = datos.get('nombre_carrera','').strip()
     id_escuela = datos.get('id_escuela')
     if not nombre:
-        return {'errores': 'Nombre carrera: Campo obligatorio.'}, 400
+        return {'error': 'Nombre carrera: Campo obligatorio.'}, 400
     if not id_escuela:
-        return {'errores':'ID escuela: Campo obligatorio'}, 400
+        return {'error':'ID escuela: Campo obligatorio'}, 400
+    
+    query = supabase.table("CARRERA").select("*").eq("NOMBRE",nombre).eq("ID_ESCUELA",id_escuela).limit(1).execute()
+    if query.data != []:
+        return {'error': 'Ya existe la relación entre escuela y carrera.'}, 400
+    
+
     try:
         nuevo = {
             'NOMBRE': nombre,
@@ -146,16 +161,20 @@ def actualizar_carrera(datos):
     id_escuela = datos.get('id_escuela')
     
     if not id:
-        return {'errores':'ID: Campo obligatorio'}, 400
+        return {'error':'ID: Campo obligatorio'}, 400
     if not nuevo_nombre:
-        return {'errores':'Nombre carrera: Campo obligatorio.'},400
+        return {'error':'Nombre carrera: Campo obligatorio.'},400
     if not id_escuela:
-        return {'errores':'ID escuela: Campo obligatorio'}, 400
+        return {'error':'ID escuela: Campo obligatorio'}, 400
+    
+    query = supabase.table("CARRERA").select("*").eq("NOMBRE",nuevo_nombre).eq("ID_ESCUELA",id_escuela).limit(1).execute()
+    if query.data != []:
+        return {'error': 'Ya existe la relación entre escuela y carrera.'}, 400
     
     try:
         query = supabase.table("CARRERA").update({'NOMBRE':nuevo_nombre, 'ID_ESCUELA':id_escuela}).eq("ID_CARRERA",id).execute()
         if query.data == []:
-            return {'errores':f'No se encontró carrera con ID: {id}'},404
+            return {'error':f'No se encontró carrera con ID: {id}'},404
         return {'mensaje':'Carrera actualizada correctamente.'},200
     except Exception as e:
         return {'error':f'Error al actualizar carrera: {str(e)}'},500
@@ -175,7 +194,7 @@ def obtener_sedes():
 def cargar_sede(datos):
     nombre = datos.get('nombre_sede','').strip()
     if not nombre:
-        return {'errores': 'Nombre sede: Campo obligatorio.'}, 400
+        return {'error': 'Nombre sede: Campo obligatorio.'}, 400
     try:
         nuevo = {'NOMBRE_SEDE': nombre}
         supabase.table("SEDE").insert(nuevo).execute()
@@ -188,14 +207,14 @@ def actualizar_sede(datos):
     nuevo_nombre = datos.get('nombre_sede','').strip()
 
     if not id:
-        return {'errores':'ID: Campo obligatorio'}, 400
+        return {'error':'ID: Campo obligatorio'}, 400
     if not nuevo_nombre:
-        return {'errores':'Nombre sede: Campo obligatorio.'},400
+        return {'error':'Nombre sede: Campo obligatorio.'},400
     
     try:
         query = supabase.table("SEDE").update({'NOMBRE_SEDE':nuevo_nombre}).eq("ID_SEDE",id).execute()
         if query.data == []:
-            return {'errores':f'No se encontró sede con ID: {id}'},404
+            return {'error':f'No se encontró sede con ID: {id}'},404
         return {'mensaje':'Sede actualizada correctamente.'},200
     except Exception as e:
         return {'error':f'Error al actualizar sede: {str(e)}'},500

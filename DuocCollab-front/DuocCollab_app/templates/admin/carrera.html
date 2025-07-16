@@ -39,7 +39,6 @@
         <table class="table table-bordered table-hover align-middle" id="tablaRelaciones">
           <thead class="table-dark">
             <tr>
-              <th>ID</th>
               <th>Nombre Carrera</th>
               <th>Escuela</th>
               <th>Acciones</th>
@@ -48,9 +47,8 @@
           <tbody>
             {% for carrera in carreras %}
               <tr>
-                <td>{{ carrera.ID_CARRERA }}</td>
                 <td>{{ carrera.NOMBRE }}</td>
-                <td>{{ carrera.ID_ESCUELA }}</td>
+                <td>{{ carrera.ESCUELA.NOMBRE_ESC }}</td>
                 <td>
                   <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalEditar{{ carrera.ID_CARRERA }}">
                     Editar
@@ -82,13 +80,36 @@
 
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">Nombre actual</label>
+            <label class="form-label">Nombre carrera actual</label>
             <input type="text" class="form-control" value="{{ carrera.NOMBRE }}" disabled>
           </div>
+
+          <div class="mb-3">
+            <label for="escuela_actual" class="form-label">Escuela actual</label>
+            <select id="escuela_actual" name="escuela_actual" class="form-select" disabled>
+                <option selected>{{ carrera.ESCUELA.NOMBRE_ESC }}</option>
+            </select>
+          </div>
+
+
+
+
           <div class="mb-3">
             <label class="form-label">Nuevo nombre</label>
             <input type="text" name="nuevo_nombre" class="form-control" required>
           </div>
+
+           <div class="mb-3">
+            <label class="form-label">Nueva escuela</label>
+            <select id="nueva_escuela" name="nueva_escuela" class="form-select" required>
+              <option value="{{ carrera.ID_ESCUELA}}" selected>{{ carrera.ESCUELA.NOMBRE_ESC }}</option>
+              {% for escuela in escuelas %}
+                <option value="{{ escuela.ID_ESCUELA }}">{{ escuela.NOMBRE_ESC }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+
         </div>
 
         <div class="modal-footer">
