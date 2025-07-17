@@ -26,8 +26,8 @@ def validar_carga_img(imagen, nombre_campo='Imagen'):
         errores.append(f'{nombre_campo}: No se ha subido ninguna imagen.')
         return errores
     tipos_permitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg']
-    print(imagen)
-    print(imagen.content_type)
+    #print(imagen)
+    #print(imagen.content_type)
     if imagen.content_type not in tipos_permitidos:
         errores.append(f'{nombre_campo}: El tipo de archivo no es válido. Solo se permiten {ALLOWED_EXTENSIONS}')
     # Calcular tamaño del archivo correctamente
@@ -52,7 +52,7 @@ def valida_form_usuario(data,modo):
     apellido_dict = 'APELLIDO'
     correo_dict = 'CORREO'
     clave_dict = 'CONTRASENIA'
-    sede_dict = ''
+    sede_dict = 'ID_SEDE'
     id_carrera_dict = 'ID_CARRERA'
     escuela_dict = ''
     intereses_dict = 'INTERESES'
@@ -75,7 +75,7 @@ def valida_form_usuario(data,modo):
             errores.append('Apellido: Solo debe contener letras.')
 
     if modo == 'crear' or correo_dict in data:
-        correo = data.get(correo_dict,'').strip()
+        correo = data.get(correo_dict,'').strip().lower()
         if not correo:
             errores.append('El correo es obligatorio.')
         elif not correo.endswith('@duocuc.cl'):
@@ -90,10 +90,19 @@ def valida_form_usuario(data,modo):
         if not id_carrera:
             errores.append('La carrera es obligatoria.')
         
-        print(id_carrera)
         valida_id_carrera_num = id_carrera.isdigit()
         if valida_id_carrera_num == False:
             errores.append('Formato de carrera incorrecto.')
+    
+    if modo == 'crear' or sede_dict in data:
+        sede = data.get(sede_dict,'')
+        print(sede)
+        if not sede:
+            errores.append('La sede es obligatoria.')
+        
+        valida_sede_num = sede.isdigit()
+        if valida_sede_num == False:
+            errores.append('Formato de sede incorrecto.')
 
 
     if modo == 'crear' or intereses_dict in data:

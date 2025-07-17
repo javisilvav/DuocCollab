@@ -131,6 +131,7 @@ def Signup(request):
             "CORREO": request.POST.get('correo'),
             "CONTRASENIA": request.POST.get('contrasena'),
             "ID_CARRERA": request.POST.get('carrera'),
+            "ID_SEDE": request.POST.get('sede'),
             "INTERESES": request.POST.get('intereses'),
             "FOTO_PERFIL": None,
             "FOTO_PORTADA": None

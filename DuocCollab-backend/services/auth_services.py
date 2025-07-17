@@ -14,11 +14,12 @@ from .auth_consistencia import (
 )
 
 
-def login_usuario(correo, clave):
-    valida_usuario = valida_form_login(correo, clave)
+def login_usuario(data_correo, clave):
+    valida_usuario = valida_form_login(data_correo, clave)
     if valida_usuario != None:
         return(jsonify(valida_usuario)),400
 
+    correo = str(data_correo).strip().lower()
     response = supabase.table('USUARIO').select('*').eq('CORREO',correo).execute()
     usuarios = response.data
     if not usuarios:
@@ -61,25 +62,25 @@ def obtener_tres_ultimos_usuarios():
 
 def registrar_usuario(datos_usuario, archivo_perfil=None, archivo_portada=None):
     errores=[]
-    
-    """
-    REVISAR
-    REVISAR
-    REVISAR
-    REVISAR
-    Quitar variables staticas mientras modifican front con SEDE, ESCUELA
-    """
-    datos_usuario['INTERESES'] = 'Interes por defecto en backend'
+    #datos_usuario['INTERESES'] = 'Interes por defecto en backend'
 
     errores = valida_form_usuario(datos_usuario,'crear')
     if errores:
         return {'error': errores},400
-    correo_existe = supabase.table('USUARIO').select('CORREO').eq('CORREO', datos_usuario['CORREO']).execute()
+    correo = str(datos_usuario['CORREO']).strip().lower()
+    datos_usuario['CORREO'] = correo
+    correo_existe = supabase.table('USUARIO').select('CORREO').eq('CORREO', correo).execute()
     if correo_existe.data:
         return {'error':'Correo ya existe, Te recomendamos inciar sesión porque ya tienes está cuenta registrada.'}, 409       
     carrera_existe = supabase.table('CARRERA').select('NOMBRE').eq('ID_CARRERA',datos_usuario['ID_CARRERA']).execute()
     if not carrera_existe.data:
         return {'error':'Carrera no existe.'},409
+
+    sede_existe = supabase.table('SEDE').select('NOMBRE_SEDE').eq('ID_SEDE',datos_usuario['ID_SEDE']).execute()
+    if not sede_existe.data:
+        return {'error':'Sede no existe.'},409
+    
+
 
     datos_usuario['CONTRASENIA'] = generate_password_hash(datos_usuario['CONTRASENIA'])
     datos_usuario['FOTO_PERFIL'] = guardar_imagen('perfil', archivo_perfil) if archivo_perfil else 'default_perfil.png'
@@ -111,12 +112,17 @@ def editar_usuario_servicio(id_usuario, datos_usuario, archivo_perfil=None, arch
         actualizaciones['CONTRASENIA'] = generate_password_hash(datos_usuario['CONTRASENIA'])
     for campo in ['NOMBRE', 'APELLIDO', 'CORREO','INTERESES']:
         if campo in datos_usuario:
-            actualizaciones[campo]= datos_usuario[campo].strip()
+            if campo == 'CORREO':
+                correo = str(datos_usuario[campo]).strip().lower()
+                actualizaciones[campo]= correo
+            else:    
+                actualizaciones[campo]= datos_usuario[campo].strip()
     
     if 'CORREO' in datos_usuario:
-        correo_existe = supabase.table('USUARIO').select('CORREO').eq('CORREO', datos_usuario['CORREO']).neq('ID_USUARIO', id_usuario).execute()
+        correo_existe = supabase.table('USUARIO').select('CORREO').eq('CORREO', correo).neq('ID_USUARIO', id_usuario).execute()
         if correo_existe.data:
             return {'error':'Correo: Se encuentra registrado por otro usuario.'}, 400
+        
     
     if 'ID_CARRERA' in datos_usuario:
         carrera_existe = supabase.table('CARRERA').select('NOMBRE').eq('ID_CARRERA', datos_usuario['ID_CARRERA']).execute()
@@ -146,7 +152,7 @@ def editar_usuario_servicio(id_usuario, datos_usuario, archivo_perfil=None, arch
 
 def obtener_usuario_por_id(id_usuario):
     try:
-        resultado = supabase.table("USUARIO").select("*").eq("ID_USUARIO", id_usuario).single().execute()
+        resultado = supabase.table("USUARIO").select("*,SEDE(ID_SEDE,NOMBRE_SEDE), CARRERA(ID_CARRERA, NOMBRE)").eq("ID_USUARIO", id_usuario).single().execute()
         if resultado.data:
             return resultado.data, 200
         else:
@@ -160,9 +166,11 @@ def obtener_usuario_por_id(id_usuario):
 
 
 def restablecer_contrasena(datos):
-    correo = datos.get('correo')
-    if not correo:
+    data_correo = datos.get('correo')
+    if not data_correo:
         return {'error':'Correo es requerido.'}, 400
+    
+    correo = str(data_correo).strip().lower()
     resultado = supabase.table("USUARIO").select("*").eq("CORREO", correo).limit(1).execute()
 
     if not resultado.data:
@@ -172,7 +180,6 @@ def restablecer_contrasena(datos):
     hash_pss = generate_password_hash(nueva_pss)
 
     try:
-        print("Entro")
         supabase.table("USUARIO").update({"CONTRASENIA": hash_pss}).eq("CORREO", correo).execute()
         enviar = enviar_correo_recuperacion(correo, nueva_pss)
         if not enviar:

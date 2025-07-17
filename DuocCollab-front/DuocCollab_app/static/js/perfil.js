@@ -19,16 +19,16 @@ function cargarContenido(seccion) {
       }
 
       // Inicializar Select2 si existe el campo
-      setTimeout(() => {
-        const intereses = document.getElementById('intereses');
-        if (intereses) {
-          $('#intereses').select2({
-            placeholder: 'Selecciona tus intereses',
-            tags: true,
-            width: '100%'
-          });
-        }
-      }, 100);
+//      setTimeout(() => {
+//        const intereses = document.getElementById('intereses');
+//        if (intereses) {
+//          $('#intereses').select2({
+//            placeholder: 'Selecciona tus intereses',
+//            tags: true,
+//            width: '100%'
+//          });
+//        }
+//      }, 100);
     })
     .catch(error => {
       console.error('Error al cargar la sección:', error);

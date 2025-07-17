@@ -36,13 +36,8 @@
             </select>
           </div>
           <div class="col-md-6">
-            <label for="intereses" class="form-label">Intereses</label>
-            <select id="intereses" name="intereses" class="form-select" required>
-              <option selected>Seleccione un interes</option>
-              {% for etiqueta in etiquetas %}
-                <option value="{{ etiqueta.ID_ETIQUETA }}">{{ etiqueta.NOMBRE }}</option>
-              {% endfor %}
-            </select>
+             <label for="intereses" class="form-label">Intereses</label>
+            <input type="text" name="intereses" class="form-control" id="intereses" placeholder="Programar, electronica">
           </div>
 
         </div>
