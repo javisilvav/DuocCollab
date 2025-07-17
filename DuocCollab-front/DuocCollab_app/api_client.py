@@ -87,7 +87,6 @@ def realiza_nueva_cuenta(datos):
 
 def consulta_usuario_actual(token):
     result = verificar_token_y_api(token,'GET', '/auth/usuario_actual')
-    print('ver',result)
     response = result.get('response', {})
     return response
 

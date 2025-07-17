@@ -243,6 +243,15 @@ def MisProyectos(request):
         if 'error' in response:
             request.session['sweet_alert'] = alert('error', 'Error', response['error'])
             return redirect('Login')
+        elif 'mensaje' in response:
+            sweet_alert = request.session.pop('sweet_alert', None)
+            context = {
+                'proyectos': [],
+                'etiquetas':[]
+            }
+            if sweet_alert:
+                context['sweet_alert'] = sweet_alert
+            return render(request, 'misproyectos.html', context)
         else:
             proyecto = response
             for i in proyecto:
@@ -420,7 +429,7 @@ def ProyectosDetail(request):
             "id_proyecto": id_proyecto
         }
         token = request.session.get('jwt_token')
-        response = consulta_mis_proyectos(token)
+        response = consulta_detalle_proyecto(token, datos)
         
         if 'error' in response:
             request.session['sweet_alert'] = alert('error', 'Error', response['error'])
