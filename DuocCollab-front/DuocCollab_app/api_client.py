@@ -129,6 +129,7 @@ def consulta_detalle_proyecto(token, datos):
 
 def realiza_crear_postulacion(token, datos):
     result = verificar_token_y_api(token,'POST', '/proyecto/crear_postulacion', json=datos,headers={'Content-Type': 'application/json'})
+    print(result)
     response = result.get('response', {})
     return response
 
@@ -262,7 +263,7 @@ def consulta_postulacion(token):
     response = result.get('response', {})
     return response
 
-def realiza_crear_postulacion(token, datos):
+def realiza_crear_postulacion_admin(token, datos):
     result = verificar_token_y_api(token,'POST', '/proyecto/crear_postulacion_admin', json=datos,headers={'Content-Type': 'application/json'})
     response = result.get('response', {})
     return response

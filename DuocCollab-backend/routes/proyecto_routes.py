@@ -55,8 +55,10 @@ def obtener_imagen(tipo, nombre):
 @jwt_required()
 def crear_postulacion():
     id_usuario = get_jwt_identity()
+    print("aquiiiii",id_usuario)
     datos = request.get_json()
     resultado, status = cargar_postulacion(id_usuario, datos)
+    print(resultado, status)
     return jsonify(resultado), status
 
 @proyecto_bp.route('/crear_postulacion_admin', methods=['POST'])

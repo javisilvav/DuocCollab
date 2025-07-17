@@ -1271,7 +1271,7 @@ def Postulaciones(request):
             if comentario:
                 datos["COMENTARIO"] = 'Panel admin añadio: ' + comentario
             
-            response_postulacion = realiza_crear_postulacion(token, datos)
+            response_postulacion = realiza_crear_postulacion_admin(token, datos)
             if 'error' in response_postulacion:
                 request.session['sweet_alert'] = alert('error', 'Error', response_postulacion['error'])
                 return redirect('Admin')

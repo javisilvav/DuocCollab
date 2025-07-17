@@ -297,7 +297,8 @@ def actualizar_integrante_proyecto(datos):
 
 def obtener_postulaciones():
     try:
-        resultado = supabase.table("POSTULACION").select('*,USUARIO(NOMBRE,APELLIDO, CORREO), PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO, CORREO))').eq("ESTADO", "Solicitado").execute()
+        resultado = supabase.table("POSTULACION").select('*,USUARIO(NOMBRE,APELLIDO, CORREO), PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO, CORREO))').eq("ESTADO","Solicitado").execute()
+        
         if resultado.data:
             return resultado.data, 200
         else:
@@ -323,11 +324,14 @@ def cargar_postulacion(id_usuario, datos_postulacion):
     if not id_proyecto or not str(id_proyecto).strip():
         errores.append('ID_PROYECTO: Campo obligatorio.')
 
+
+
     proyecto = supabase.table("PROYECTO").select("ID_PROYECTO").eq("ID_PROYECTO", id_proyecto).execute()
     if not proyecto.data:
         errores.append('ID_PROYECTO: Proyecto no encontrado.')
     if errores:
         return {"error": errores}, 400 
+
 
     propietario = supabase.table("PROYECTO").select("*").eq("ID_PROYECTO", id_proyecto).eq("ID_USUARIO", id_usuario).execute()
     if propietario.data:
