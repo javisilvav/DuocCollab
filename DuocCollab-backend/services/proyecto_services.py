@@ -297,7 +297,7 @@ def actualizar_integrante_proyecto(datos):
 
 def obtener_postulaciones():
     try:
-        resultado = supabase.table("POSTULACION").select('*,USUARIO(NOMBRE,APELLIDO, CORREO), PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO, CORREO))').execute()
+        resultado = supabase.table("POSTULACION").select('*,USUARIO(NOMBRE,APELLIDO, CORREO), PROYECTO(NOMBRE_PROYECTO,TITULO, FOTO_PROYECTO,USUARIO(NOMBRE,APELLIDO, CORREO))').eq("ESTADO", "Solicitado").execute()
         if resultado.data:
             return resultado.data, 200
         else:
@@ -539,6 +539,6 @@ def contar_postulacion_pendiente():
         if resultado.count:
             return {"total":resultado.count}, 200
         else:
-            return {'error':f'No se encontró cantidad de postulaciones pendientes.'},404
+            return {"total":0}, 200
     except Exception as e:
         return {'error':f'Error al consultar cantidad de postulaciones pendientes.'},500

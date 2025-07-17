@@ -590,9 +590,7 @@ def Inicio(request):
         if 'error' in response:
             contador = 0
             request.session['sweet_alert'] = alert('error', 'Error', response['error'])
-            if 'No existe token' in  response['error'] or 'Sesión Expirada' in  response['error']:
-                return redirect('Login')
-            
+                       
         else:
             contador = response
 

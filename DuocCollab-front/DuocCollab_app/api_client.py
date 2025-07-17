@@ -15,6 +15,7 @@ def api_request(method, endpoint, token=None, **kwargs):
         headers['Authorization'] = f'Bearer {token}'
     try:
         response = requests.request(method,f'{API_URL}{endpoint}',headers=headers,**kwargs)
+        print(endpoint,response)
         if response.status_code == 401 and endpoint not in ['/auth/login', '/auth/registro']:
             return {'expired': True, 'message': 'Sesión expirada, favor iniciar sesión nuevamente'}
         try:
@@ -268,6 +269,7 @@ def realiza_crear_postulacion(token, datos):
 
 def realiza_editar_postulacion(token, datos):
     result = verificar_token_y_api(token,'POST', '/proyecto/editar_postulacion', json=datos,headers={'Content-Type': 'application/json'})
+    print(result)
     response = result.get('response', {})
     return response
 
